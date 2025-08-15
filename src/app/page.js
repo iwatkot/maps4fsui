@@ -65,9 +65,9 @@ export default function Home() {
           label="Coordinates"
           value={textInput}
           onChange={setTextInput}
-          placeholder="45.269442974603706, 19.794450719382542"
+          placeholder="45.26, 19.79"
           validator={validateCoordinates}
-          errorMessage="Enter valid coordinates (latitude, longitude) separated by comma or space. Example: 45.269, 19.794"
+          errorMessage="Enter valid coordinates (latitude, longitude) separated by comma or space. Example: 45.26, 19.79"
         />
 
         {/* Current Values Display */}
