@@ -24,3 +24,123 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Maps4FS Design System - Using Tailwind v4 syntax */
+
+.gradient-surface {
+  background: linear-gradient(to right, white, #f9fafb);
+  border: 1px solid #d1d5db;
+  border-radius: 0.75rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .gradient-surface {
+    background: linear-gradient(to right, #374151, #1f2937);
+    border-color: #4b5563;
+  }
+}
+
+.interactive-shadow {
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  transition: all 0.2s;
+}
+
+.interactive-shadow:hover,
+.interactive-shadow:focus {
+  box-shadow: 0 25px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.1);
+}
+
+.focus-ring:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #3b82f6;
+  border-color: #3b82f6;
+}
+
+.panel-backdrop {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  box-shadow: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+}
+
+@media (prefers-color-scheme: dark) {
+  .panel-backdrop {
+    background: rgba(31, 41, 55, 0.95);
+    border-color: #4b5563;
+  }
+}
+
+.input-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  .input-label {
+    color: #d1d5db;
+  }
+}
+
+.dropdown-option {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transition: colors 0.15s;
+  color: #111827;
+}
+
+.dropdown-option:hover {
+  background-color: #eff6ff;
+}
+
+@media (prefers-color-scheme: dark) {
+  .dropdown-option {
+    color: white;
+  }
+  
+  .dropdown-option:hover {
+    background-color: rgba(30, 58, 138, 0.3);
+  }
+}
+
+.dropdown-option--selected {
+  background-color: #eff6ff;
+}
+
+@media (prefers-color-scheme: dark) {
+  .dropdown-option--selected {
+    background-color: rgba(30, 58, 138, 0.3);
+  }
+}
+
+.status-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  transition: background-color 0.15s;
+}
+
+.status-dot--active {
+  background-color: #3b82f6;
+}
+
+.status-dot--inactive {
+  background-color: #d1d5db;
+}
+
+@media (prefers-color-scheme: dark) {
+  .status-dot--inactive {
+    background-color: #4b5563;
+  }
+}
+
+.dropdown-option:hover .status-dot--inactive {
+  background-color: #60a5fa;
+}
