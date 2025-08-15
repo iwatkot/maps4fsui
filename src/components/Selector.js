@@ -20,30 +20,36 @@ export default function Selector({
 
   return (
     <div className="mb-6">
-      <label className="input-label">
-        {label}
-      </label>
-      
       <div className="relative">
-        {/* Dropdown Button */}
+        {/* Dropdown Button with integrated label */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="gradient-surface interactive-shadow focus-ring w-full px-4 py-3 text-left flex items-center justify-between group"
+          className="gradient-surface interactive-shadow focus-ring w-full text-left flex items-center group"
         >
-          <div className="flex items-center space-x-3">
-            <div className={`status-dot ${selectedOption ? 'status-dot--active' : 'status-dot--inactive'}`}></div>
-            <span className="text-gray-900 dark:text-white font-medium">
-              {selectedOption ? selectedOption.label : placeholder}
+          {/* Label Section (not clickable area) */}
+          <div className="px-4 py-3 border-r border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 flex items-center min-w-0 flex-shrink-0 rounded-l-xl">
+            <span className="text-sm font-medium text-gray-600 dark:text-gray-300 whitespace-nowrap">
+              {label}
             </span>
           </div>
-          <svg 
-            className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`}
-            fill="none" 
-            stroke="currentColor" 
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
+          
+          {/* Clickable Content Section */}
+          <div className="flex-1 px-4 py-3 flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <span className="text-gray-900 dark:text-white font-medium">
+                {selectedOption ? selectedOption.label : placeholder}
+              </span>
+            </div>
+            
+            <svg 
+              className={`w-5 h-5 text-gray-400 transition-transform duration-200 ${isOpen ? 'transform rotate-180' : ''}`}
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
         </button>
 
         {/* Dropdown Panel */}
