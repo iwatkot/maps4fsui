@@ -11,7 +11,8 @@ export default function TextInput({
   labelWidth = "auto",  // Same as Selector for consistency
   validator = null,     // Function to validate input
   errorMessage = "Invalid input",  // Error message to show
-  tooltip = null        // Optional tooltip text
+  tooltip = null,        // Optional tooltip text
+  showTooltip = true     // Controls whether tooltip is shown even if tooltip text is provided
 }) {
   const [isValid, setIsValid] = useState(null); // null = not validated, true = valid, false = invalid
   const [showError, setShowError] = useState(false);
@@ -42,7 +43,7 @@ export default function TextInput({
             <span className="text-sm font-medium text-gray-600 dark:text-gray-300 whitespace-nowrap">
               {label}
             </span>
-            <InfoIcon tooltip={tooltip} />
+            <InfoIcon tooltip={tooltip} showTooltip={showTooltip} />
           </div>
           
           {/* Input Section */}

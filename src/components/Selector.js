@@ -10,7 +10,8 @@ export default function Selector({
   onChange, 
   placeholder = "Select an option...",
   labelWidth = "auto",  // "auto" for content-based, or Tailwind class like "w-32"
-  tooltip = null  // Optional tooltip text
+  tooltip = null,  // Optional tooltip text
+  showTooltip = true  // Controls whether tooltip is shown even if tooltip text is provided
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -34,7 +35,7 @@ export default function Selector({
             <span className="text-sm font-medium text-gray-600 dark:text-gray-300 whitespace-nowrap">
               {label}
             </span>
-            <InfoIcon tooltip={tooltip} />
+            <InfoIcon tooltip={tooltip} showTooltip={showTooltip} />
           </div>
           
           {/* Clickable Content Section */}
