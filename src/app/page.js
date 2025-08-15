@@ -21,10 +21,26 @@ export default function Home() {
     }
   ];
 
-  // Example validation function
-  const validateMapName = (value) => {
-    // Map name should be at least 3 characters and contain only letters, numbers, spaces, and hyphens
-    return value.length >= 3 && /^[a-zA-Z0-9\s\-_]+$/.test(value);
+  // Coordinate validation function
+  const validateCoordinates = (value) => {
+    // Remove extra whitespace and split by comma or whitespace
+    const trimmed = value.trim();
+    if (!trimmed) return false;
+    
+    // Split by comma or whitespace (or both)
+    const parts = trimmed.split(/[,\s]+/).filter(part => part.length > 0);
+    
+    // Must have exactly 2 parts
+    if (parts.length !== 2) return false;
+    
+    // Both parts must be valid floats
+    const lat = parseFloat(parts[0]);
+    const lng = parseFloat(parts[1]);
+    
+    // Check if parsing was successful (not NaN) and values are reasonable coordinates
+    return !isNaN(lat) && !isNaN(lng) && 
+           lat >= -90 && lat <= 90 &&    // Valid latitude range
+           lng >= -180 && lng <= 180;    // Valid longitude range
   };
 
   return (
@@ -44,14 +60,14 @@ export default function Home() {
           placeholder="Choose your game version..."
         />
 
-        {/* Map Name Input */}
+        {/* Coordinates Input */}
         <TextInput
-          label="Map Name"
+          label="Coordinates"
           value={textInput}
           onChange={setTextInput}
-          placeholder="Enter map name..."
-          validator={validateMapName}
-          errorMessage="Map name must be at least 3 characters and contain only letters, numbers, spaces, and hyphens"
+          placeholder="45.269442974603706, 19.794450719382542"
+          validator={validateCoordinates}
+          errorMessage="Enter valid coordinates (latitude, longitude) separated by comma or space. Example: 45.269, 19.794"
         />
 
         {/* Current Values Display */}
