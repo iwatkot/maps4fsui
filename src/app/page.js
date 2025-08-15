@@ -28,7 +28,7 @@ export default function Home() {
     { value: 4096, label: '4096 x 4096 meters', description: '' },
     { value: 8192, label: '8192 x 8192 meters', description: '' },
     { value: 16384, label: '16384 x 16384 meters', description: '' },
-    { value: "custom", label: "Custom Size", description: "Giants Editor supports only maps which size is a power of 2." }
+    { value: "custom", label: "Custom Size", description: "Giants Editor requires map dimensions to be powers of 2." }
   ];
 
   // Coordinate validation function
@@ -104,7 +104,7 @@ export default function Home() {
           labelWidth='w-40'
           validator={validateCoordinates}
           errorMessage="Enter valid coordinates (latitude, longitude) separated by comma or space. Example: 45.26, 19.79"
-          tooltip="Coordinates of the center point of your map area in decimal (not degrees) format."
+          tooltip="Coordinates of the center point of the map in decimal latitude and longitude."
         />
 
         {/* Map Size Selector */}
@@ -116,6 +116,7 @@ export default function Home() {
           placeholder="Choose your map size..."
           labelWidth='w-40'
           showTooltip={noobMode}
+          tooltip="Represents the real-world area your map will cover, measured in meters."
         />
 
         {/* Current Values Display */}
