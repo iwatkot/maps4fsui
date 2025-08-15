@@ -7,7 +7,8 @@ export default function Selector({
   options, 
   value, 
   onChange, 
-  placeholder = "Select an option..." 
+  placeholder = "Select an option...",
+  labelWidth = "auto"  // "auto" for content-based, or Tailwind class like "w-32"
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -27,7 +28,7 @@ export default function Selector({
           className="gradient-surface interactive-shadow focus-ring w-full text-left flex items-center group"
         >
           {/* Label Section (not clickable area) */}
-          <div className="px-4 py-3 border-r border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 flex items-center min-w-0 flex-shrink-0 rounded-l-xl">
+          <div className={`px-4 py-3 border-r border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 flex items-center min-w-0 flex-shrink-0 rounded-l-xl ${labelWidth !== 'auto' ? labelWidth : ''}`}>
             <span className="text-sm font-medium text-gray-600 dark:text-gray-300 whitespace-nowrap">
               {label}
             </span>
