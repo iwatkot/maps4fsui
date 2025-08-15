@@ -58,6 +58,7 @@ export default function Home() {
           value={selectedOption}
           onChange={setSelectedOption}
           placeholder="Choose your game version..."
+          tooltip="Select which version of Farming Simulator you're using. FS25 has full feature support."
         />
 
         {/* Coordinates Input */}
@@ -65,9 +66,10 @@ export default function Home() {
           label="Coordinates"
           value={textInput}
           onChange={setTextInput}
-          placeholder="45.26, 19.79"
+          placeholder="45.269442974603706, 19.794450719382542"
           validator={validateCoordinates}
-          errorMessage="Enter valid coordinates (latitude, longitude) separated by comma or space. Example: 45.26, 19.79"
+          errorMessage="Enter valid coordinates (latitude, longitude) separated by comma or space. Example: 45.269, 19.794"
+          tooltip="Enter the center coordinates of your map area. You can copy these from Google Maps by right-clicking on a location."
         />
 
         {/* Current Values Display */}
