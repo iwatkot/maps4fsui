@@ -2,15 +2,11 @@
 
 import { useState } from 'react';
 import Selector from '../components/Selector';
+import TextInput from '../components/TextInput';
 
 export default function Home() {
   const [selectedOption, setSelectedOption] = useState('fs25');
   const [textInput, setTextInput] = useState('');
-
-  const handleTextChange = (e) => {
-    setTextInput(e.target.value);
-    console.log('Text input:', e.target.value);
-  };
 
   const gameOptions = [
     { 
@@ -24,6 +20,12 @@ export default function Home() {
       description: 'Support discontinued, some features may not work.' 
     }
   ];
+
+  // Example validation function
+  const validateMapName = (value) => {
+    // Map name should be at least 3 characters and contain only letters, numbers, spaces, and hyphens
+    return value.length >= 3 && /^[a-zA-Z0-9\s\-_]+$/.test(value);
+  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 flex">
@@ -42,19 +44,15 @@ export default function Home() {
           placeholder="Choose your game version..."
         />
 
-        {/* Text Input Widget */}
-        <div className="mb-6">
-          <label className="input-label">
-            Text Input
-          </label>
-          <input
-            type="text"
-            value={textInput}
-            onChange={handleTextChange}
-            placeholder="Enter your text here..."
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
-          />
-        </div>
+        {/* Map Name Input */}
+        <TextInput
+          label="Map Name"
+          value={textInput}
+          onChange={setTextInput}
+          placeholder="Enter map name..."
+          validator={validateMapName}
+          errorMessage="Map name must be at least 3 characters and contain only letters, numbers, spaces, and hyphens"
+        />
 
         {/* Current Values Display */}
         <div className="bg-white dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
