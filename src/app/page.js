@@ -3,6 +3,12 @@
 import { useState } from 'react';
 import Selector from '../components/Selector';
 import TextInput from '../components/TextInput';
+import config from './config';
+import logger from '../utils/logger';
+
+const isPublicVersion = config.isPublicVersion;
+const backendUrl = config.backendUrl;
+logger.info(`Running in public version: ${isPublicVersion}. Backend URL: ${backendUrl}`);
 
 export default function Home() {
   const [selectedOption, setSelectedOption] = useState('fs25');
@@ -23,13 +29,15 @@ export default function Home() {
     }
   ];
 
-  const sizeOptions = [
+  const availableSizeOptions = [
     { value: 2048, label: '2048 x 2048 meters', description: '' },
     { value: 4096, label: '4096 x 4096 meters', description: '' },
     { value: 8192, label: '8192 x 8192 meters', description: '' },
     { value: 16384, label: '16384 x 16384 meters', description: '' },
     { value: "custom", label: "Custom Size", description: "Giants Editor requires map dimensions to be powers of 2." }
   ];
+  
+  const sizeOptions = !isPublicVersion ? availableSizeOptions.slice(0, 2) : availableSizeOptions;
 
   // Coordinate validation function
   const validateCoordinates = (value) => {
@@ -105,6 +113,7 @@ export default function Home() {
           validator={validateCoordinates}
           errorMessage="Enter valid coordinates (latitude, longitude) separated by comma or space. Example: 45.26, 19.79"
           tooltip="Coordinates of the center point of the map in decimal latitude and longitude."
+          showTooltip={noobMode}
         />
 
         {/* Map Size Selector */}
