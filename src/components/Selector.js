@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import InfoIcon from './InfoIcon';
 
 export default function Selector({ 
   label, 
@@ -12,7 +13,6 @@ export default function Selector({
   tooltip = null  // Optional tooltip text
 }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [showTooltip, setShowTooltip] = useState(false);
 
   const handleSelect = (selectedValue) => {
     onChange(selectedValue);
@@ -34,22 +34,7 @@ export default function Selector({
             <span className="text-sm font-medium text-gray-600 dark:text-gray-300 whitespace-nowrap">
               {label}
             </span>
-            {tooltip && (
-              <div className="relative ml-2">
-                <div 
-                  className="w-4 h-4 rounded-full border border-gray-400 dark:border-gray-500 flex items-center justify-center hover:border-blue-500 dark:hover:border-blue-400 transition-colors"
-                  onMouseEnter={() => setShowTooltip(true)}
-                  onMouseLeave={() => setShowTooltip(false)}
-                >
-                  <span className="text-xs font-bold text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-300 transition-colors">?</span>
-                </div>
-                {showTooltip && (
-                  <div className="absolute top-0 left-full ml-2 px-3 py-2 panel-backdrop text-xs z-50 w-64 tooltip-popup whitespace-normal">
-                    <span className="text-gray-800 dark:text-gray-200 block">{tooltip}</span>
-                  </div>
-                )}
-              </div>
-            )}
+            <InfoIcon tooltip={tooltip} />
           </div>
           
           {/* Clickable Content Section */}
