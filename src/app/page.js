@@ -7,7 +7,8 @@ import TextInput from '../components/TextInput';
 export default function Home() {
   const [selectedOption, setSelectedOption] = useState('fs25');
   const [textInput, setTextInput] = useState('');
-  const [noobMode, setNoobMode] = useState(true); // Toggle for showing all tooltips
+  const [selectedSize, setSelectedSize] = useState(2048);
+  const [noobMode, setNoobMode] = useState(true);
 
   const gameOptions = [
     { 
@@ -20,6 +21,14 @@ export default function Home() {
       label: 'Farming Simulator 22', 
       description: 'Support discontinued, some features may not work.' 
     }
+  ];
+
+  const sizeOptions = [
+    { value: 2048, label: '2048 x 2048 meters', description: '' },
+    { value: 4096, label: '4096 x 4096 meters', description: '' },
+    { value: 8192, label: '8192 x 8192 meters', description: '' },
+    { value: 16384, label: '16384 x 16384 meters', description: '' },
+    { value: "custom", label: "Custom Size", description: "Giants Editor supports only maps which size is a power of 2." }
   ];
 
   // Coordinate validation function
@@ -81,7 +90,8 @@ export default function Home() {
           value={selectedOption}
           onChange={setSelectedOption}
           placeholder="Choose your game version..."
-          tooltip="Select which version of Farming Simulator you're using. FS25 has full feature support."
+          labelWidth='w-40'
+          tooltip="Game for which map should be generated."
           showTooltip={noobMode}
         />
 
@@ -90,10 +100,21 @@ export default function Home() {
           label="Coordinates"
           value={textInput}
           onChange={setTextInput}
-          placeholder="45.269442974603706, 19.794450719382542"
+          placeholder="45.26, 19.79"
+          labelWidth='w-40'
           validator={validateCoordinates}
-          errorMessage="Enter valid coordinates (latitude, longitude) separated by comma or space. Example: 45.269, 19.794"
-          tooltip="Enter the center coordinates of your map area. You can copy these from Google Maps by right-clicking on a location."
+          errorMessage="Enter valid coordinates (latitude, longitude) separated by comma or space. Example: 45.26, 19.79"
+          tooltip="Coordinates of the center point of your map area in decimal (not degrees) format."
+        />
+
+        {/* Map Size Selector */}
+        <Selector
+          label="Map Size"
+          options={sizeOptions}
+          value={selectedSize}
+          onChange={setSelectedSize}
+          placeholder="Choose your map size..."
+          labelWidth='w-40'
           showTooltip={noobMode}
         />
 
