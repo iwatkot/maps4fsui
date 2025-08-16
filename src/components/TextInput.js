@@ -39,7 +39,7 @@ export default function TextInput({
         {/* Input with integrated label */}
         <div className="gradient-surface interactive-shadow focus-ring w-full text-left flex items-center group">
           {/* Label Section */}
-          <div className={`px-4 py-3 border-r border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 flex items-center min-w-0 flex-shrink-0 rounded-l-xl ${labelWidth !== 'auto' ? labelWidth : ''}`}>
+          <div className={`px-4 py-3 border-r border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 flex items-center justify-between min-w-0 flex-shrink-0 rounded-l-xl ${labelWidth !== 'auto' ? labelWidth : ''}`}>
             <span className="text-sm font-medium text-gray-600 dark:text-gray-300 whitespace-nowrap">
               {label}
             </span>
