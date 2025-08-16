@@ -12,8 +12,8 @@ logger.info(`Running in public version: ${isPublicVersion}. Backend URL: ${backe
 logger.info(`Public hostname: ${config.publicHostName}`);
 
 export default function Home() {
-  const [selectedOption, setSelectedOption] = useState('fs25');
-  const [textInput, setTextInput] = useState('');
+  const [selectedGame, setSelectedGame] = useState('fs25');
+  const [coordinatesInput, setCoordinatesInput] = useState('');
   const [selectedSize, setSelectedSize] = useState(2048);
   const [noobMode, setNoobMode] = useState(true);
 
@@ -103,8 +103,8 @@ export default function Home() {
         <Selector
           label="Game Version"
           options={gameOptions}
-          value={selectedOption}
-          onChange={setSelectedOption}
+          value={selectedGame}
+          onChange={setSelectedGame}
           placeholder="Choose your game version..."
           labelWidth='w-40'
           tooltip="Game for which map should be generated."
@@ -114,8 +114,8 @@ export default function Home() {
         {/* Coordinates Input */}
         <TextInput
           label="Coordinates"
-          value={textInput}
-          onChange={setTextInput}
+          value={coordinatesInput}
+          onChange={setCoordinatesInput}
           placeholder="45.26, 19.79"
           labelWidth='w-40'
           validator={validateCoordinates}
@@ -135,32 +135,19 @@ export default function Home() {
           showTooltip={noobMode}
           tooltip="Represents the real-world area your map will cover, measured in meters."
         />
-
-        {/* Current Values Display */}
-        <div className="bg-white dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
-          <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-white">
-            Current Values
-          </h3>
-          <p className="text-gray-700 dark:text-gray-300">
-            <strong>Selected:</strong> {selectedOption}
-          </p>
-          <p className="text-gray-700 dark:text-gray-300">
-            <strong>Text:</strong> {textInput || 'Empty'}
-          </p>
-        </div>
       </div>
 
       {/* Right Panel */}
       <div className="w-1/2 p-8 flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-            Maps4FS Interface
-          </h2>
-          <p className="text-gray-600 dark:text-gray-400 text-lg">
-            This is where your map content will go.
+          <p className="text-gray-700 dark:text-gray-300">
+            <strong>Selected game:</strong> {selectedGame}
           </p>
-          <p className="text-gray-500 dark:text-gray-500 mt-4">
-            Theme automatically follows your system preference.
+          <p className="text-gray-700 dark:text-gray-300">
+            <strong>Text:</strong> {coordinatesInput || 'Empty'}
+          </p>
+          <p className="text-gray-700 dark:text-gray-300">
+            <strong>Map Size:</strong> {selectedSize}
           </p>
         </div>
       </div>
