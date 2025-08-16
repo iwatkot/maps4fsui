@@ -107,6 +107,15 @@ body {
   background-color: #eff6ff;
 }
 
+.dropdown-option--disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.dropdown-option--disabled:hover {
+  background-color: transparent !important;
+}
+
 @media (prefers-color-scheme: dark) {
   .dropdown-option--selected {
     background-color: rgba(30, 58, 138, 0.3);
@@ -126,6 +135,10 @@ body {
 
 .status-dot--inactive {
   background-color: #d1d5db;
+}
+
+.status-dot--disabled {
+  background-color: #9ca3af;
 }
 
 @media (prefers-color-scheme: dark) {

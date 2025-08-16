@@ -15,7 +15,8 @@ export default function Selector({
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleSelect = (selectedValue) => {
+  const handleSelect = (selectedValue, option) => {
+    if (option.disabled) return; // Don't select disabled options
     onChange(selectedValue);
     setIsOpen(false);
   };
@@ -68,25 +69,36 @@ export default function Selector({
             {options.map((option) => (
               <button
                 key={option.value}
-                onClick={() => handleSelect(option.value)}
+                onClick={() => handleSelect(option.value, option)}
+                disabled={option.disabled}
                 className={`dropdown-option ${
                   value === option.value ? 'dropdown-option--selected' : ''
-                }`}
+                } ${option.disabled ? 'dropdown-option--disabled' : ''}`}
               >
                 <div className={`status-dot ${
-                  value === option.value ? 'status-dot--active' : 'status-dot--inactive'
+                  value === option.value ? 'status-dot--active' : 
+                  option.disabled ? 'status-dot--disabled' : 'status-dot--inactive'
                 }`}></div>
-                <div>
-                  <div className="text-gray-900 dark:text-white font-medium">
+                <div className="flex-1">
+                  <div className={`font-medium ${
+                    option.disabled ? 'text-gray-400 dark:text-gray-600' : 'text-gray-900 dark:text-white'
+                  }`}>
                     {option.label}
                   </div>
                   {option.description && (
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                    <div className={`text-xs ${
+                      option.disabled ? 'text-gray-300 dark:text-gray-700' : 'text-gray-500 dark:text-gray-400'
+                    }`}>
                       {option.description}
                     </div>
                   )}
                 </div>
-                {value === option.value && (
+                {option.disabled && (
+                  <svg className="w-4 h-4 text-gray-400 ml-2" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M13.477 14.89A6 6 0 015.11 6.524l8.367 8.368zm1.414-1.414L6.524 5.11a6 6 0 018.367 8.367zM18 10a8 8 0 11-16 0 8 8 0 0116 0z" clipRule="evenodd" />
+                  </svg>
+                )}
+                {!option.disabled && value === option.value && (
                   <svg className="w-4 h-4 text-blue-500 ml-auto" fill="currentColor" viewBox="0 0 20 20">
                     <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                   </svg>

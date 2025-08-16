@@ -9,6 +9,7 @@ import logger from '../utils/logger';
 const isPublicVersion = config.isPublicVersion;
 const backendUrl = config.backendUrl;
 logger.info(`Running in public version: ${isPublicVersion}. Backend URL: ${backendUrl}`);
+logger.info(`Public hostname: ${config.publicHostName}`);
 
 export default function Home() {
   const [selectedOption, setSelectedOption] = useState('fs25');
@@ -37,7 +38,14 @@ export default function Home() {
     { value: "custom", label: "Custom Size", description: "Giants Editor requires map dimensions to be powers of 2." }
   ];
   
-  const sizeOptions = !isPublicVersion ? availableSizeOptions.slice(0, 2) : availableSizeOptions;
+  const sizeOptions = isPublicVersion ? [
+    ...availableSizeOptions.slice(0, 2), // First two options enabled
+    ...availableSizeOptions.slice(2).map(option => ({ // Rest disabled with info
+      ...option,
+      disabled: true,
+      description: option.description || 'Available in local version only'
+    }))
+  ] : availableSizeOptions;
 
   // Coordinate validation function
   const validateCoordinates = (value) => {
