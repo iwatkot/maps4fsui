@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Selector from '../components/Selector';
 import TextInput from '../components/TextInput';
+import NumberInput from '../components/NumberInput';
 import config from './config';
 import logger from '../utils/logger';
 
@@ -15,6 +16,8 @@ export default function Home() {
   const [selectedGame, setSelectedGame] = useState('fs25');
   const [coordinatesInput, setCoordinatesInput] = useState('');
   const [selectedSize, setSelectedSize] = useState(2048);
+  const [customSize, setCustomSize] = useState(2048);
+  const [outputSize, setOutputSize] = useState(2048);
   const [noobMode, setNoobMode] = useState(true);
 
   const gameOptions = [
@@ -35,7 +38,7 @@ export default function Home() {
     { value: 4096, label: '4096 x 4096 meters', description: '' },
     { value: 8192, label: '8192 x 8192 meters', description: '' },
     { value: 16384, label: '16384 x 16384 meters', description: '' },
-    { value: "custom", label: "Custom Size", description: "Giants Editor requires map dimensions to be powers of 2." }
+    { value: "custom", label: "Custom Size", description: '' }
   ];
   
   const sizeOptions = isPublicVersion ? [
@@ -135,6 +138,34 @@ export default function Home() {
           showTooltip={noobMode}
           tooltip="Represents the real-world area your map will cover, measured in meters."
         />
+
+        {selectedSize === "custom" && (
+          <>
+            <NumberInput
+              label="Custom Size"
+              value={customSize}
+              onChange={setCustomSize}
+              min={1}
+              max={50000}
+              step={1}
+              labelWidth='w-40'
+              tooltip="Size of the map in meters. Note, that Giants Editor requires map dimensions to be powers of 2."
+              showTooltip={noobMode}
+            />
+
+            <NumberInput
+              label="Output Size"
+              value={outputSize}
+              onChange={setOutputSize}
+              min={1}
+              max={50000}
+              step={1}
+              labelWidth='w-40'
+              tooltip="Real-world map area will be scaled to match the selected in-game size."
+              showTooltip={noobMode}
+            />
+          </>
+        )}
       </div>
 
       {/* Right Panel */}
@@ -149,6 +180,16 @@ export default function Home() {
           <p className="text-gray-700 dark:text-gray-300">
             <strong>Map Size:</strong> {selectedSize}
           </p>
+          {selectedSize === "custom" && (
+            <>
+              <p className="text-gray-700 dark:text-gray-300">
+                <strong>Custom Size:</strong> {customSize} meters
+              </p>
+              <p className="text-gray-700 dark:text-gray-300">
+                <strong>Output Size:</strong> {outputSize} pixels
+              </p>
+            </>
+          )}
         </div>
       </div>
     </div>
