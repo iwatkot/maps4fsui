@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Selector from '../components/Selector';
 import TextInput from '../components/TextInput';
 import NumberInput from '../components/NumberInput';
+import Slider from '../components/Slider';
 import config from './config';
 import logger from '../utils/logger';
 
@@ -18,6 +19,7 @@ export default function Home() {
   const [selectedSize, setSelectedSize] = useState(2048);
   const [customSize, setCustomSize] = useState(2048);
   const [outputSize, setOutputSize] = useState(2048);
+  const [rotation, setRotation] = useState(0);
   const [noobMode, setNoobMode] = useState(true);
 
   const gameOptions = [
@@ -166,6 +168,19 @@ export default function Home() {
             />
           </>
         )}
+
+        {/* Map Rotation Slider */}
+        <Slider
+          label="Map Rotation"
+          value={rotation}
+          onChange={setRotation}
+          min={-90}
+          max={90}
+          step={1}
+          labelWidth='w-40'
+          tooltip="Rotate the map clockwise in degrees. 0° = North up, positive values rotate clockwise, negative values rotate counterclockwise."
+          showTooltip={noobMode}
+        />
       </div>
 
       {/* Right Panel */}
@@ -179,6 +194,9 @@ export default function Home() {
           </p>
           <p className="text-gray-700 dark:text-gray-300">
             <strong>Map Size:</strong> {selectedSize}
+          </p>
+          <p className="text-gray-700 dark:text-gray-300">
+            <strong>Rotation:</strong> {rotation}
           </p>
           {selectedSize === "custom" && (
             <>
