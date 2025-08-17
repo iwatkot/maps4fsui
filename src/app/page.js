@@ -5,6 +5,7 @@ import Selector from '../components/Selector';
 import TextInput from '../components/TextInput';
 import NumberInput from '../components/NumberInput';
 import Slider from '../components/Slider';
+import Expander from '../components/Expander';
 import config from './config';
 import logger from '../utils/logger';
 
@@ -21,6 +22,10 @@ export default function Home() {
   const [outputSize, setOutputSize] = useState(2048);
   const [rotation, setRotation] = useState(0);
   const [noobMode, setNoobMode] = useState(true);
+  
+  // Example Expander values
+  const [quality, setQuality] = useState(85);
+  const [compressionLevel, setCompressionLevel] = useState(6);
 
   const gameOptions = [
     { 
@@ -181,6 +186,39 @@ export default function Home() {
           tooltip="Rotate the map clockwise in degrees. 0° = North up, positive values rotate clockwise, negative values rotate counterclockwise."
           showTooltip={noobMode}
         />
+
+        {/* Example Expander with Number Inputs */}
+        <Expander 
+          label="Export Options"
+          summary={`Quality: ${quality}%, Compression: ${compressionLevel}`}
+          tooltip="Configure export quality and compression settings"
+          showTooltip={noobMode}
+          labelWidth='w-40'
+        >
+          <NumberInput
+            label="Quality"
+            value={quality}
+            onChange={setQuality}
+            min={1}
+            max={100}
+            step={1}
+            labelWidth='w-40'
+            tooltip="Export quality percentage. Higher values mean better quality but larger file size."
+            showTooltip={noobMode}
+          />
+          
+          <NumberInput
+            label="Compression"
+            value={compressionLevel}
+            onChange={setCompressionLevel}
+            min={0}
+            max={9}
+            step={1}
+            labelWidth='w-40'
+            tooltip="Compression level from 0 (no compression) to 9 (maximum compression)."
+            showTooltip={noobMode}
+          />
+        </Expander>
       </div>
 
       {/* Right Panel */}
@@ -197,6 +235,12 @@ export default function Home() {
           </p>
           <p className="text-gray-700 dark:text-gray-300">
             <strong>Rotation:</strong> {rotation}
+          </p>
+          <p className="text-gray-700 dark:text-gray-300">
+            <strong>Quality:</strong> {quality}%
+          </p>
+          <p className="text-gray-700 dark:text-gray-300">
+            <strong>Compression:</strong> {compressionLevel}
           </p>
           {selectedSize === "custom" && (
             <>
