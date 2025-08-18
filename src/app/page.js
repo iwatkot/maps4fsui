@@ -1,16 +1,22 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Selector from '../components/Selector';
 import TextInput from '../components/TextInput';
 import NumberInput from '../components/NumberInput';
 import Slider from '../components/Slider';
 import Expander from '../components/Expander';
 import ErrorDisplay from '../components/ErrorDisplay';
-import { useApiCall } from '../hooks/useApi';
-import { getDTMProviders } from '../api/dtm';
+import { validateCoordinates } from '../api/dtm';
+import { useDTMProviders } from '../hooks/useDTMProviders';
 import config from './config';
 import logger from '../utils/logger';
+import { 
+  gameOptions, 
+  createSizeOptions, 
+  defaultValues, 
+  constraints 
+} from '../config/formOptions';
 
 const isPublicVersion = config.isPublicVersion;
 const backendUrl = config.backendUrl;
@@ -18,134 +24,28 @@ logger.info(`Running in public version: ${isPublicVersion}. Backend URL: ${backe
 logger.info(`Public hostname: ${config.publicHostName}`);
 
 export default function Home() {
-  const [selectedGame, setSelectedGame] = useState('fs25');
-  const [coordinatesInput, setCoordinatesInput] = useState('');
-  const [selectedSize, setSelectedSize] = useState(2048);
-  const [customSize, setCustomSize] = useState(2048);
-  const [outputSize, setOutputSize] = useState(2048);
-  const [rotation, setRotation] = useState(0);
-  const [selectedDTMProvider, setSelectedDTMProvider] = useState('srtm30');
-  const [dtmOptions, setDtmOptions] = useState([
-    { value: 'srtm30', label: '🌎 Global [30.0 m/px] SRTM 30 m', description: '' }
-  ]);
-
-  // API hook for fetching DTM providers
-  const { loading: dtmLoading, error: dtmError, execute: fetchDTMProviders } = useApiCall(getDTMProviders);
+  const [selectedGame, setSelectedGame] = useState(defaultValues.game);
+  const [coordinatesInput, setCoordinatesInput] = useState(defaultValues.coordinates);
+  const [selectedSize, setSelectedSize] = useState(defaultValues.size);
+  const [customSize, setCustomSize] = useState(defaultValues.customSize);
+  const [outputSize, setOutputSize] = useState(defaultValues.outputSize);
+  const [rotation, setRotation] = useState(defaultValues.rotation);
   
+  // DTM provider state managed by custom hook
+  const { 
+    dtmOptions, 
+    selectedDTMProvider, 
+    setSelectedDTMProvider, 
+    dtmLoading, 
+    dtmError 
+  } = useDTMProviders(coordinatesInput);
+
   // Example Expander values
-  const [quality, setQuality] = useState(85);
-  const [compressionLevel, setCompressionLevel] = useState(6);
+  const [quality, setQuality] = useState(defaultValues.quality);
+  const [compressionLevel, setCompressionLevel] = useState(defaultValues.compressionLevel);
 
-  const gameOptions = [
-    { 
-      value: 'fs25', 
-      label: 'Farming Simulator 25', 
-      description: 'All features are supported.' 
-    },
-    { 
-      value: 'fs22', 
-      label: 'Farming Simulator 22', 
-      description: 'Support discontinued, some features may not work.' 
-    }
-  ];
-
-  const availableSizeOptions = [
-    { value: 2048, label: '2048 x 2048 meters', description: '' },
-    { value: 4096, label: '4096 x 4096 meters', description: '' },
-    { value: 8192, label: '8192 x 8192 meters', description: '' },
-    { value: 16384, label: '16384 x 16384 meters', description: '' },
-    { value: "custom", label: "Custom Size", description: '' }
-  ];
-  
-  const sizeOptions = isPublicVersion ? [
-    ...availableSizeOptions.slice(0, 2), // First two options enabled
-    ...availableSizeOptions.slice(2).map(option => ({ // Rest disabled with info
-      ...option,
-      disabled: true,
-      description: option.description || 'Available in local version only'
-    }))
-  ] : availableSizeOptions;
-
-  // Coordinate validation function
-  const validateCoordinates = (value) => {
-    // Remove extra whitespace and split by comma or whitespace
-    const trimmed = value.trim();
-    if (!trimmed) return false;
-    
-    // Split by comma or whitespace (or both)
-    const parts = trimmed.split(/[,\s]+/).filter(part => part.length > 0);
-    
-    // Must have exactly 2 parts
-    if (parts.length !== 2) return false;
-    
-    // Both parts must be valid floats
-    const lat = parseFloat(parts[0]);
-    const lng = parseFloat(parts[1]);
-    
-    // Check if parsing was successful (not NaN) and values are reasonable coordinates
-    return !isNaN(lat) && !isNaN(lng) && 
-           lat >= -90 && lat <= 90 &&    // Valid latitude range
-           lng >= -180 && lng <= 180;    // Valid longitude range
-  };
-
-  // Parse coordinates for DTM API
-  const parseCoordinates = (value) => {
-    if (!validateCoordinates(value)) return null;
-    
-    const trimmed = value.trim();
-    const parts = trimmed.split(/[,\s]+/).filter(part => part.length > 0);
-    const lat = parseFloat(parts[0]);
-    const lon = parseFloat(parts[1]);
-    
-    return { lat, lon };
-  };
-
-  // Effect to fetch DTM providers when coordinates change
-  useEffect(() => {
-    const coords = parseCoordinates(coordinatesInput);
-    const defaultOption = { value: 'srtm30', label: '🌎 Global [30.0 m/px] SRTM 30 m', description: '' };
-    
-    if (coords) {
-      logger.info('Coordinates changed, fetching DTM providers for:', coords);
-      
-      fetchDTMProviders(coords.lat, coords.lon)
-        .then((providers) => {
-          // Convert providers object to options array
-          const apiOptions = Object.entries(providers).map(([key, label]) => ({
-            value: key,
-            label: label,
-            description: ''
-          }));
-          
-          // Merge default option with API options, removing duplicates
-          const mergedOptions = [defaultOption];
-          apiOptions.forEach(option => {
-            if (option.value !== 'srtm30') {
-              mergedOptions.push(option);
-            }
-          });
-          
-          setDtmOptions(mergedOptions);
-          
-          // Keep srtm30 selected if it was already selected
-          if (!selectedDTMProvider || selectedDTMProvider === 'srtm30') {
-            setSelectedDTMProvider('srtm30');
-          }
-          
-          logger.info(`Set ${mergedOptions.length} DTM provider options`);
-        })
-        .catch((error) => {
-          logger.error('Failed to fetch DTM providers:', error.message);
-          // Keep default option even on error
-          setDtmOptions([defaultOption]);
-          setSelectedDTMProvider('srtm30');
-        });
-    } else {
-      // Keep default option even without coordinates
-      setDtmOptions([defaultOption]);
-      setSelectedDTMProvider('srtm30');
-    }
-  }, [coordinatesInput, fetchDTMProviders]);
+  // Create size options based on version
+  const sizeOptions = createSizeOptions(isPublicVersion);
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 flex">
