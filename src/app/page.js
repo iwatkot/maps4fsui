@@ -284,41 +284,6 @@ export default function Home() {
 
       {/* Right Panel */}
       <div className="w-1/2 p-8 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-gray-700 dark:text-gray-300">
-            <strong>Selected game:</strong> {selectedGame}
-          </p>
-          <p className="text-gray-700 dark:text-gray-300">
-            <strong>Text:</strong> {coordinatesInput || 'Empty'}
-          </p>
-          {selectedDTMProvider && (
-            <p className="text-gray-700 dark:text-gray-300">
-              <strong>DTM Provider:</strong> {dtmOptions.find(opt => opt.value === selectedDTMProvider)?.label || selectedDTMProvider}
-            </p>
-          )}
-          <p className="text-gray-700 dark:text-gray-300">
-            <strong>Map Size:</strong> {selectedSize}
-          </p>
-          <p className="text-gray-700 dark:text-gray-300">
-            <strong>Rotation:</strong> {rotation}
-          </p>
-          <p className="text-gray-700 dark:text-gray-300">
-            <strong>Quality:</strong> {quality}%
-          </p>
-          <p className="text-gray-700 dark:text-gray-300">
-            <strong>Compression:</strong> {compressionLevel}
-          </p>
-          {selectedSize === "custom" && (
-            <>
-              <p className="text-gray-700 dark:text-gray-300">
-                <strong>Custom Size:</strong> {customSize} meters
-              </p>
-              <p className="text-gray-700 dark:text-gray-300">
-                <strong>Output Size:</strong> {outputSize} pixels
-              </p>
-            </>
-          )}
-        </div>
       </div>
     </div>
   );
