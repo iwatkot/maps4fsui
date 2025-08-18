@@ -1,12 +1,14 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Selector from '../components/Selector';
 import TextInput from '../components/TextInput';
 import NumberInput from '../components/NumberInput';
 import Slider from '../components/Slider';
 import Expander from '../components/Expander';
 import TooltipSwitch from '../components/TooltipSwitch';
+import { useApiCall } from '../hooks/useApi';
+import { getDTMProviders } from '../api/dtm';
 import config from './config';
 import logger from '../utils/logger';
 
@@ -22,7 +24,12 @@ export default function Home() {
   const [customSize, setCustomSize] = useState(2048);
   const [outputSize, setOutputSize] = useState(2048);
   const [rotation, setRotation] = useState(0);
+  const [selectedDTMProvider, setSelectedDTMProvider] = useState('');
+  const [dtmOptions, setDtmOptions] = useState([]);
   const [noobMode, setNoobMode] = useState(true);
+
+  // API hook for fetching DTM providers
+  const { loading: dtmLoading, error: dtmError, execute: fetchDTMProviders } = useApiCall(getDTMProviders);
   
   // Example Expander values
   const [quality, setQuality] = useState(85);
@@ -80,6 +87,54 @@ export default function Home() {
            lng >= -180 && lng <= 180;    // Valid longitude range
   };
 
+  // Parse coordinates for DTM API
+  const parseCoordinates = (value) => {
+    if (!validateCoordinates(value)) return null;
+    
+    const trimmed = value.trim();
+    const parts = trimmed.split(/[,\s]+/).filter(part => part.length > 0);
+    const lat = parseFloat(parts[0]);
+    const lon = parseFloat(parts[1]);
+    
+    return { lat, lon };
+  };
+
+  // Effect to fetch DTM providers when coordinates change
+  useEffect(() => {
+    const coords = parseCoordinates(coordinatesInput);
+    if (coords) {
+      logger.info('Coordinates changed, fetching DTM providers for:', coords);
+      
+      fetchDTMProviders(coords.lat, coords.lon)
+        .then((providers) => {
+          // Convert providers object to options array
+          const options = Object.entries(providers).map(([key, label]) => ({
+            value: key,
+            label: label,
+            description: ''
+          }));
+          
+          setDtmOptions(options);
+          
+          // Auto-select first provider if none selected
+          if (options.length > 0 && !selectedDTMProvider) {
+            setSelectedDTMProvider(options[0].value);
+          }
+          
+          logger.info(`Set ${options.length} DTM provider options`);
+        })
+        .catch((error) => {
+          logger.error('Failed to fetch DTM providers:', error.message);
+          setDtmOptions([]);
+          setSelectedDTMProvider('');
+        });
+    } else {
+      // Clear DTM options if coordinates are invalid
+      setDtmOptions([]);
+      setSelectedDTMProvider('');
+    }
+  }, [coordinatesInput, fetchDTMProviders]);
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 flex">
       {/* Left Panel */}
@@ -123,6 +178,31 @@ export default function Home() {
           showTooltip={noobMode}
           size="sm"
         />
+
+        {/* DTM Provider Selector */}
+        {dtmOptions.length > 0 && (
+          <Selector
+            label="DTM Provider"
+            options={dtmOptions}
+            value={selectedDTMProvider}
+            onChange={setSelectedDTMProvider}
+            placeholder={dtmLoading ? "Loading providers..." : "Choose DTM provider..."}
+            labelWidth='w-40'
+            tooltip="Digital Terrain Model provider for elevation data. Different providers offer varying resolution and coverage."
+            showTooltip={noobMode}
+            size="sm"
+            disabled={dtmLoading}
+          />
+        )}
+
+        {/* DTM Error Display */}
+        {dtmError && (
+          <div className="mb-6 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+            <p className="text-sm text-red-600 dark:text-red-400">
+              Failed to load DTM providers: {dtmError.message}
+            </p>
+          </div>
+        )}
 
         {/* Map Size Selector */}
         <Selector
@@ -227,6 +307,11 @@ export default function Home() {
           <p className="text-gray-700 dark:text-gray-300">
             <strong>Text:</strong> {coordinatesInput || 'Empty'}
           </p>
+          {selectedDTMProvider && (
+            <p className="text-gray-700 dark:text-gray-300">
+              <strong>DTM Provider:</strong> {dtmOptions.find(opt => opt.value === selectedDTMProvider)?.label || selectedDTMProvider}
+            </p>
+          )}
           <p className="text-gray-700 dark:text-gray-300">
             <strong>Map Size:</strong> {selectedSize}
           </p>
