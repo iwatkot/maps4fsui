@@ -6,6 +6,7 @@ import TextInput from '../components/TextInput';
 import NumberInput from '../components/NumberInput';
 import Slider from '../components/Slider';
 import Expander from '../components/Expander';
+import ErrorDisplay from '../components/ErrorDisplay';
 import { useApiCall } from '../hooks/useApi';
 import { getDTMProviders } from '../api/dtm';
 import config from './config';
@@ -189,13 +190,10 @@ export default function Home() {
         />
 
         {/* DTM Error Display */}
-        {dtmError && (
-          <div className="mb-6 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-            <p className="text-sm text-red-600 dark:text-red-400">
-              Failed to load DTM providers: {dtmError.message}
-            </p>
-          </div>
-        )}
+        <ErrorDisplay 
+          error={dtmError}
+          title="Failed to load DTM providers"
+        />
 
         {/* Map Size Selector */}
         <Selector
