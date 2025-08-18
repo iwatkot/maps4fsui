@@ -6,6 +6,7 @@ import TextInput from '../components/TextInput';
 import NumberInput from '../components/NumberInput';
 import Slider from '../components/Slider';
 import Expander from '../components/Expander';
+import TooltipSwitch from '../components/TooltipSwitch';
 import config from './config';
 import logger from '../utils/logger';
 
@@ -87,27 +88,14 @@ export default function Home() {
           Maps4FS Controls
         </h2>
         
-        {/* Noob Mode Toggle */}
-        <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-          <div className="flex items-center justify-between">
-            <div>
-              <h3 className="text-sm font-semibold text-blue-800 dark:text-blue-200">Helper Mode</h3>
-              <p className="text-xs text-blue-600 dark:text-blue-300 mt-1">Show helpful tooltips for all controls</p>
-            </div>
-            <button
-              onClick={() => setNoobMode(!noobMode)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                noobMode ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-700'
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  noobMode ? 'translate-x-6' : 'translate-x-1'
-                }`}
-              />
-            </button>
-          </div>
-        </div>
+        {/* Helper Mode Toggle */}
+        <TooltipSwitch
+          label="Helper Mode"
+          description="Show helpful tooltips for all controls"
+          value={noobMode}
+          onChange={setNoobMode}
+          size="sm"
+        />
         
         {/* Game Selector */}
         <Selector
