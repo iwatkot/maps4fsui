@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import InfoIcon from './InfoIcon';
+import { getSizeClasses } from './componentSizes';
 
 export default function Expander({ 
   label, 
@@ -24,18 +25,8 @@ export default function Expander({
     }
   };
 
-  // Size variants
-  const sizeClasses = {
-    sm: "min-h-[48px]",
-    md: "min-h-[60px]", 
-    lg: "min-h-[72px]"
-  };
-
-  const labelSizeClasses = {
-    sm: "min-h-[48px] text-xs",
-    md: "min-h-[60px] text-sm",
-    lg: "min-h-[72px] text-base"
-  };
+  // Get size classes from shared configuration
+  const { container: sizeClass, label: labelSizeClass } = getSizeClasses(size);
 
   return (
     <div className="mb-6">
@@ -43,10 +34,10 @@ export default function Expander({
         {/* Expander Header Button */}
         <button
           onClick={handleToggle}
-          className={`gradient-surface interactive-shadow focus-ring w-full text-left flex items-center group ${sizeClasses[size]}`}
+          className={`gradient-surface interactive-shadow focus-ring w-full text-left flex items-center group ${sizeClass}`}
         >
           {/* Label Section */}
-          <div className={`px-4 border-r border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 flex items-center justify-between min-w-0 flex-shrink-0 rounded-l-xl ${labelSizeClasses[size]} ${labelWidth !== 'auto' ? labelWidth : ''}`}>
+          <div className={`px-4 border-r border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 flex items-center justify-between min-w-0 flex-shrink-0 rounded-l-xl ${labelSizeClass} ${labelWidth !== 'auto' ? labelWidth : ''}`}>
             <span className="font-medium text-gray-600 dark:text-gray-300 whitespace-nowrap">
               {label}
             </span>
