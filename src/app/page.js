@@ -6,7 +6,6 @@ import TextInput from '../components/TextInput';
 import NumberInput from '../components/NumberInput';
 import Slider from '../components/Slider';
 import Expander from '../components/Expander';
-import TooltipSwitch from '../components/TooltipSwitch';
 import { useApiCall } from '../hooks/useApi';
 import { getDTMProviders } from '../api/dtm';
 import config from './config';
@@ -28,7 +27,6 @@ export default function Home() {
   const [dtmOptions, setDtmOptions] = useState([
     { value: 'srtm30', label: '🌎 Global [30.0 m/px] SRTM 30 m', description: '' }
   ]);
-  const [noobMode, setNoobMode] = useState(true);
 
   // API hook for fetching DTM providers
   const { loading: dtmLoading, error: dtmError, execute: fetchDTMProviders } = useApiCall(getDTMProviders);
@@ -146,7 +144,7 @@ export default function Home() {
       setDtmOptions([defaultOption]);
       setSelectedDTMProvider('srtm30');
     }
-  }, [coordinatesInput, fetchDTMProviders, selectedDTMProvider]);
+  }, [coordinatesInput, fetchDTMProviders]);
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 flex">
@@ -155,15 +153,6 @@ export default function Home() {
         <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
           Maps4FS Controls
         </h2>
-        
-        {/* Helper Mode Toggle */}
-        <TooltipSwitch
-          label="Helper Mode"
-          description="Show helpful tooltips for all controls"
-          value={noobMode}
-          onChange={setNoobMode}
-          size="sm"
-        />
         
         {/* Game Selector */}
         <Selector
@@ -174,7 +163,6 @@ export default function Home() {
           placeholder="Choose your game version..."
           labelWidth='w-40'
           tooltip="Game for which map should be generated."
-          showTooltip={noobMode}
           size="sm"
         />
 
@@ -188,7 +176,6 @@ export default function Home() {
           validator={validateCoordinates}
           errorMessage="Enter valid coordinates (latitude, longitude) separated by comma or space. Example: 45.26, 19.79"
           tooltip="Coordinates of the center point of the map in decimal latitude and longitude."
-          showTooltip={noobMode}
           size="sm"
         />
 
@@ -201,7 +188,6 @@ export default function Home() {
           placeholder={dtmLoading ? "Loading providers..." : "Choose DTM provider..."}
           labelWidth='w-40'
           tooltip="Digital Terrain Model provider for elevation data. Different providers offer varying resolution and coverage."
-          showTooltip={noobMode}
           size="sm"
           disabled={dtmLoading}
         />
@@ -223,7 +209,6 @@ export default function Home() {
           onChange={setSelectedSize}
           placeholder="Choose your map size..."
           labelWidth='w-40'
-          showTooltip={noobMode}
           tooltip="Represents the real-world area your map will cover, measured in meters."
           size="sm"
         />
@@ -239,7 +224,6 @@ export default function Home() {
               step={1}
               labelWidth='w-40'
               tooltip="Size of the map in meters. Note, that Giants Editor requires map dimensions to be powers of 2."
-              showTooltip={noobMode}
               size="sm"
             />
 
@@ -252,7 +236,6 @@ export default function Home() {
               step={1}
               labelWidth='w-40'
               tooltip="Real-world map area will be scaled to match the selected in-game size."
-              showTooltip={noobMode}
               size="sm"
             />
           </>
@@ -268,7 +251,6 @@ export default function Home() {
           step={1}
           labelWidth='w-40'
           tooltip="Rotate the map clockwise in degrees. 0° = North up, positive values rotate clockwise, negative values rotate counterclockwise."
-          showTooltip={noobMode}
           size="sm"
         />
 
@@ -277,7 +259,6 @@ export default function Home() {
           label="Export Options"
           summary={`Quality: ${quality}%, Compression: ${compressionLevel}`}
           tooltip="Configure export quality and compression settings"
-          showTooltip={noobMode}
           labelWidth='w-40'
           size="sm"
         >
@@ -290,7 +271,6 @@ export default function Home() {
             step={1}
             labelWidth='w-40'
             tooltip="Export quality percentage. Higher values mean better quality but larger file size."
-            showTooltip={noobMode}
             size="sm"
           />
           
@@ -303,7 +283,6 @@ export default function Home() {
             step={1}
             labelWidth='w-40'
             tooltip="Compression level from 0 (no compression) to 9 (maximum compression)."
-            showTooltip={noobMode}
             size="sm"
           />
         </Expander>
