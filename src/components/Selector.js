@@ -11,7 +11,8 @@ export default function Selector({
   placeholder = "Select an option...",
   labelWidth = "auto",  // "auto" for content-based, or Tailwind class like "w-32"
   tooltip = null,  // Optional tooltip text
-  showTooltip = true  // Controls whether tooltip is shown even if tooltip text is provided
+  showTooltip = true,  // Controls whether tooltip is shown even if tooltip text is provided
+  size = "md"  // "sm", "md", "lg" - controls component height
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -23,17 +24,30 @@ export default function Selector({
 
   const selectedOption = options.find(opt => opt.value === value);
 
+  // Size variants
+  const sizeClasses = {
+    sm: "min-h-[48px]",
+    md: "min-h-[60px]", 
+    lg: "min-h-[72px]"
+  };
+
+  const labelSizeClasses = {
+    sm: "min-h-[48px] text-xs",
+    md: "min-h-[60px] text-sm",
+    lg: "min-h-[72px] text-base"
+  };
+
   return (
     <div className="mb-6">
       <div className="relative">
         {/* Dropdown Button with integrated label */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="gradient-surface interactive-shadow focus-ring w-full text-left flex items-center group min-h-[60px]"
+          className={`gradient-surface interactive-shadow focus-ring w-full text-left flex items-center group ${sizeClasses[size]}`}
         >
           {/* Label Section (not clickable area) */}
-          <div className={`px-4 border-r border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 flex items-center justify-between min-w-0 flex-shrink-0 rounded-l-xl min-h-[60px] ${labelWidth !== 'auto' ? labelWidth : ''}`}>
-            <span className="text-sm font-medium text-gray-600 dark:text-gray-300 whitespace-nowrap">
+          <div className={`px-4 border-r border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 flex items-center justify-between min-w-0 flex-shrink-0 rounded-l-xl ${labelSizeClasses[size]} ${labelWidth !== 'auto' ? labelWidth : ''}`}>
+            <span className="font-medium text-gray-600 dark:text-gray-300 whitespace-nowrap">
               {label}
             </span>
             <InfoIcon tooltip={tooltip} showTooltip={showTooltip} />

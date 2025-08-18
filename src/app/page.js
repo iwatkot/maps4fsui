@@ -119,6 +119,7 @@ export default function Home() {
           labelWidth='w-40'
           tooltip="Game for which map should be generated."
           showTooltip={noobMode}
+          size="sm"
         />
 
         {/* Coordinates Input */}
@@ -132,6 +133,7 @@ export default function Home() {
           errorMessage="Enter valid coordinates (latitude, longitude) separated by comma or space. Example: 45.26, 19.79"
           tooltip="Coordinates of the center point of the map in decimal latitude and longitude."
           showTooltip={noobMode}
+          size="sm"
         />
 
         {/* Map Size Selector */}
@@ -144,6 +146,7 @@ export default function Home() {
           labelWidth='w-40'
           showTooltip={noobMode}
           tooltip="Represents the real-world area your map will cover, measured in meters."
+          size="sm"
         />
 
         {selectedSize === "custom" && (
@@ -158,6 +161,7 @@ export default function Home() {
               labelWidth='w-40'
               tooltip="Size of the map in meters. Note, that Giants Editor requires map dimensions to be powers of 2."
               showTooltip={noobMode}
+              size="sm"
             />
 
             <NumberInput
@@ -170,6 +174,7 @@ export default function Home() {
               labelWidth='w-40'
               tooltip="Real-world map area will be scaled to match the selected in-game size."
               showTooltip={noobMode}
+              size="sm"
             />
           </>
         )}
@@ -185,6 +190,7 @@ export default function Home() {
           labelWidth='w-40'
           tooltip="Rotate the map clockwise in degrees. 0° = North up, positive values rotate clockwise, negative values rotate counterclockwise."
           showTooltip={noobMode}
+          size="sm"
         />
 
         {/* Example Expander with Number Inputs */}
@@ -194,6 +200,7 @@ export default function Home() {
           tooltip="Configure export quality and compression settings"
           showTooltip={noobMode}
           labelWidth='w-40'
+          size="sm"
         >
           <NumberInput
             label="Quality"
@@ -205,6 +212,7 @@ export default function Home() {
             labelWidth='w-40'
             tooltip="Export quality percentage. Higher values mean better quality but larger file size."
             showTooltip={noobMode}
+            size="sm"
           />
           
           <NumberInput
@@ -217,6 +225,7 @@ export default function Home() {
             labelWidth='w-40'
             tooltip="Compression level from 0 (no compression) to 9 (maximum compression)."
             showTooltip={noobMode}
+            size="sm"
           />
         </Expander>
       </div>
