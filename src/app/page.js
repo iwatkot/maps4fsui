@@ -24,8 +24,10 @@ export default function Home() {
   const [customSize, setCustomSize] = useState(2048);
   const [outputSize, setOutputSize] = useState(2048);
   const [rotation, setRotation] = useState(0);
-  const [selectedDTMProvider, setSelectedDTMProvider] = useState('');
-  const [dtmOptions, setDtmOptions] = useState([]);
+  const [selectedDTMProvider, setSelectedDTMProvider] = useState('srtm30');
+  const [dtmOptions, setDtmOptions] = useState([
+    { value: 'srtm30', label: '🌎 Global [30.0 m/px] SRTM 30 m', description: '' }
+  ]);
   const [noobMode, setNoobMode] = useState(true);
 
   // API hook for fetching DTM providers
@@ -102,38 +104,49 @@ export default function Home() {
   // Effect to fetch DTM providers when coordinates change
   useEffect(() => {
     const coords = parseCoordinates(coordinatesInput);
+    const defaultOption = { value: 'srtm30', label: '🌎 Global [30.0 m/px] SRTM 30 m', description: '' };
+    
     if (coords) {
       logger.info('Coordinates changed, fetching DTM providers for:', coords);
       
       fetchDTMProviders(coords.lat, coords.lon)
         .then((providers) => {
           // Convert providers object to options array
-          const options = Object.entries(providers).map(([key, label]) => ({
+          const apiOptions = Object.entries(providers).map(([key, label]) => ({
             value: key,
             label: label,
             description: ''
           }));
           
-          setDtmOptions(options);
+          // Merge default option with API options, removing duplicates
+          const mergedOptions = [defaultOption];
+          apiOptions.forEach(option => {
+            if (option.value !== 'srtm30') {
+              mergedOptions.push(option);
+            }
+          });
           
-          // Auto-select first provider if none selected
-          if (options.length > 0 && !selectedDTMProvider) {
-            setSelectedDTMProvider(options[0].value);
+          setDtmOptions(mergedOptions);
+          
+          // Keep srtm30 selected if it was already selected
+          if (!selectedDTMProvider || selectedDTMProvider === 'srtm30') {
+            setSelectedDTMProvider('srtm30');
           }
           
-          logger.info(`Set ${options.length} DTM provider options`);
+          logger.info(`Set ${mergedOptions.length} DTM provider options`);
         })
         .catch((error) => {
           logger.error('Failed to fetch DTM providers:', error.message);
-          setDtmOptions([]);
-          setSelectedDTMProvider('');
+          // Keep default option even on error
+          setDtmOptions([defaultOption]);
+          setSelectedDTMProvider('srtm30');
         });
     } else {
-      // Clear DTM options if coordinates are invalid
-      setDtmOptions([]);
-      setSelectedDTMProvider('');
+      // Keep default option even without coordinates
+      setDtmOptions([defaultOption]);
+      setSelectedDTMProvider('srtm30');
     }
-  }, [coordinatesInput, fetchDTMProviders]);
+  }, [coordinatesInput, fetchDTMProviders, selectedDTMProvider]);
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 flex">
@@ -180,20 +193,18 @@ export default function Home() {
         />
 
         {/* DTM Provider Selector */}
-        {dtmOptions.length > 0 && (
-          <Selector
-            label="DTM Provider"
-            options={dtmOptions}
-            value={selectedDTMProvider}
-            onChange={setSelectedDTMProvider}
-            placeholder={dtmLoading ? "Loading providers..." : "Choose DTM provider..."}
-            labelWidth='w-40'
-            tooltip="Digital Terrain Model provider for elevation data. Different providers offer varying resolution and coverage."
-            showTooltip={noobMode}
-            size="sm"
-            disabled={dtmLoading}
-          />
-        )}
+        <Selector
+          label="DTM Provider"
+          options={dtmOptions}
+          value={selectedDTMProvider}
+          onChange={setSelectedDTMProvider}
+          placeholder={dtmLoading ? "Loading providers..." : "Choose DTM provider..."}
+          labelWidth='w-40'
+          tooltip="Digital Terrain Model provider for elevation data. Different providers offer varying resolution and coverage."
+          showTooltip={noobMode}
+          size="sm"
+          disabled={dtmLoading}
+        />
 
         {/* DTM Error Display */}
         {dtmError && (
