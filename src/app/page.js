@@ -150,10 +150,6 @@ export default function Home() {
     <div className="min-h-screen bg-white dark:bg-gray-900 flex">
       {/* Left Panel */}
       <div className="w-1/2 p-8 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
-        <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white">
-          Maps4FS Controls
-        </h2>
-        
         {/* Game Selector */}
         <Selector
           label="Game Version"
