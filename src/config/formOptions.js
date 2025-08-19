@@ -39,6 +39,7 @@ export const defaultValues = {
   dtmProvider: 'srtm30',
   option1: 20,
   option2: 10,
+  exampleSwitch: false,
 };
 
 // Validation constraints

@@ -5,6 +5,7 @@ import Selector from '../components/Selector';
 import TextInput from '../components/TextInput';
 import NumberInput from '../components/NumberInput';
 import Slider from '../components/Slider';
+import Switch from '../components/Switch';
 import Expander from '../components/Expander';
 import ErrorDisplay from '../components/ErrorDisplay';
 import { validateCoordinates } from '../api/dtm';
@@ -43,6 +44,7 @@ export default function Home() {
   // Example Expander values
   const [option1, setOption1] = useState(defaultValues.option1);
   const [option2, setOption2] = useState(defaultValues.option2);
+  const [exampleSwitch, setExampleSwitch] = useState(defaultValues.exampleSwitch);
 
   // Create size options based on version
   const sizeOptions = createSizeOptions(isPublicVersion);
@@ -151,7 +153,7 @@ export default function Home() {
         {/* Example Expander with Number Inputs */}
         <Expander 
           label="EXAMPLE OPTIONS"
-          summary={`OPTION 1: ${option1}, OPTION 2: ${option2}`}
+          summary={`OPTION 1: ${option1}, OPTION 2: ${option2}, SWITCH: ${exampleSwitch ? 'ON' : 'OFF'}`}
           tooltip="Example options for demonstration purposes."
           labelWidth='w-40'
           size="sm"
@@ -173,6 +175,15 @@ export default function Home() {
             step={1}
             labelWidth='w-40'
             tooltip="Example option 2."
+            size="sm"
+          />
+
+          <Switch
+            label="Example Switch"
+            checked={exampleSwitch}
+            onChange={setExampleSwitch}
+            labelWidth='w-40'
+            tooltip="This is an example switch component that demonstrates toggle functionality."
             size="sm"
           />
         </Expander>
