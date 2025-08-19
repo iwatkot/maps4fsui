@@ -140,7 +140,8 @@ const ActualMapWidget = dynamic(() => {
             const center = { lat: displayLat, lng: displayLon };
             const currentAngle = calculateAngle(center, e.latlng);
             const deltaAngle = currentAngle - rotationStart.startAngle;
-            const newRotation = rotationStart.startRotation + deltaAngle;
+            // Invert the delta angle to match the inverted rotation display
+            const newRotation = rotationStart.startRotation - deltaAngle;
             
             handleRotationChange(newRotation);
           }
