@@ -8,8 +8,11 @@ const getRotatedRectangleCorners = (centerLat, centerLon, sizeMeters, rotationDe
   const corners = [];
   const half_diagonal = sizeMeters * Math.sqrt(2) / 2; // Half the diagonal length of the square
   
+  // Invert the rotation (45 -> -45, -45 -> 45)
+  const invertedRotation = -rotationDegrees;
+  
   for (let i = 0; i < 4; i++) {
-    const theta = (rotationDegrees + i * 90 + 45) * Math.PI / 180; // Rotate by 45 degrees to get the corners
+    const theta = (invertedRotation + i * 90 + 45) * Math.PI / 180; // Rotate by 45 degrees to get the corners
     const dx = half_diagonal * Math.cos(theta);
     const dy = half_diagonal * Math.sin(theta);
     
