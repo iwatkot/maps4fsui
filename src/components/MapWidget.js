@@ -294,11 +294,11 @@ const ActualMapWidget = dynamic(() => {
           {/* Rotation handle */}
           <CircleMarker
             center={rotationHandlePosition}
-            radius={10}
+            radius={8}
             pathOptions={{
-              color: isRotating ? '#1d4ed8' : '#3b82f6',
-              fillColor: isRotating ? '#60a5fa' : '#3b82f6',
-              fillOpacity: isRotating ? 0.9 : 0.7,
+              color: '#ffffff',
+              fillColor: isDragging || isRotating ? '#60a5fa' : '#3b82f6',
+              fillOpacity: 1,
               weight: 2,
               interactive: true
             }}
@@ -317,20 +317,16 @@ const ActualMapWidget = dynamic(() => {
               mouseover: (e) => {
                 if (!isRotating) {
                   e.target.setStyle({
-                    color: '#1d4ed8',
-                    fillColor: '#60a5fa',
-                    fillOpacity: 0.9,
-                    radius: 12
+                    fillColor: '#2563eb',
+                    radius: 10
                   });
                 }
               },
               mouseout: (e) => {
                 if (!isRotating) {
                   e.target.setStyle({
-                    color: '#3b82f6',
-                    fillColor: '#3b82f6',
-                    fillOpacity: 0.7,
-                    radius: 10
+                    fillColor: isDragging || isRotating ? '#60a5fa' : '#3b82f6',
+                    radius: 8
                   });
                 }
               }
