@@ -5,8 +5,6 @@ import Selector from '../components/Selector';
 import TextInput from '../components/TextInput';
 import NumberInput from '../components/NumberInput';
 import Slider from '../components/Slider';
-import Switch from '../components/Switch';
-import Expander from '../components/Expander';
 import ErrorDisplay from '../components/ErrorDisplay';
 import MapWidget from '../components/MapWidget';
 import { validateCoordinates } from '../api/dtm';
@@ -17,8 +15,8 @@ import {
   gameOptions, 
   createSizeOptions, 
   defaultValues, 
-  constraints 
 } from '../config/formOptions';
+import demSettingsContent from './settings/demSettings';
 
 const isPublicVersion = config.isPublicVersion;
 const backendUrl = config.backendUrl;
@@ -42,13 +40,11 @@ export default function Home() {
     dtmError 
   } = useDTMProviders(coordinatesInput);
 
-  // Example Expander values
-  const [option1, setOption1] = useState(defaultValues.option1);
-  const [option2, setOption2] = useState(defaultValues.option2);
-  const [exampleSwitch, setExampleSwitch] = useState(defaultValues.exampleSwitch);
-
   // Create size options based on version
   const sizeOptions = createSizeOptions(isPublicVersion);
+  
+  // Get DEM settings content and values
+  const { content: demContent, values: demValues } = demSettingsContent();
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 flex">
@@ -150,44 +146,7 @@ export default function Home() {
           tooltip="Rotate the map clockwise in degrees. 0° = North up, positive values rotate clockwise, negative values rotate counterclockwise."
           size="sm"
         />
-
-        {/* Example Expander with Number Inputs */}
-        <Expander 
-          label="EXAMPLE OPTIONS"
-          summary={`OPTION 1: ${option1}, OPTION 2: ${option2}, SWITCH: ${exampleSwitch ? 'ON' : 'OFF'}`}
-          tooltip="Example options for demonstration purposes."
-          labelWidth='w-40'
-          size="sm"
-        >
-          <NumberInput
-            label="Option 1"
-            value={option1}
-            onChange={setOption1}
-            step={1}
-            labelWidth='w-40'
-            tooltip="Example option 1."
-            size="sm"
-          />
-          
-          <NumberInput
-            label="Option 2"
-            value={option2}
-            onChange={setOption2}
-            step={1}
-            labelWidth='w-40'
-            tooltip="Example option 2."
-            size="sm"
-          />
-
-          <Switch
-            label="Example Switch"
-            checked={exampleSwitch}
-            onChange={setExampleSwitch}
-            labelWidth='w-40'
-            tooltip="This is an example switch component that demonstrates toggle functionality."
-            size="sm"
-          />
-        </Expander>
+        {demContent}
       </div>
 
       {/* Right Panel */}

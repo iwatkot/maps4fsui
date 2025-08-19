@@ -37,9 +37,12 @@ export const defaultValues = {
   outputSize: 2048,
   rotation: 0,
   dtmProvider: 'srtm30',
-  option1: 20,
-  option2: 10,
-  exampleSwitch: false,
+  // DEM Settings.
+  blurRadius: 3,
+  waterDepth: 0,
+  addFoundations: false,
+  plateau: 0,
+  ceiling: 0
 };
 
 // Validation constraints
