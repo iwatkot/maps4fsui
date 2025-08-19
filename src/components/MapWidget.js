@@ -461,7 +461,7 @@ const ActualMapWidget = dynamic(() => {
                   text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
                   pointer-events: none;
                   font-family: 'Material-Design-Iconic-Font', Arial, sans-serif;
-                "><i class="zmdi zmdi-crop-din"></i></div>`;
+                "><i class="zmdi zmdi-crop-free"></i></div>`;
                 
                 const resizeIconMarker = L.divIcon({
                   html: resizeIconHtml,
