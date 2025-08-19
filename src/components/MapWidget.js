@@ -31,6 +31,136 @@ const ActualMapWidget = dynamic(() => {
   return import('react-leaflet').then((mod) => {
     const { MapContainer, TileLayer, Polygon, LayersControl, useMap, useMapEvents, CircleMarker, Marker } = mod;
     
+    // Rotation Handle Component
+    function RotationHandle({ 
+      position, 
+      isActive, 
+      isDragging, 
+      isRotating, 
+      onMouseDown, 
+      onMouseOver, 
+      onMouseOut 
+    }) {
+      return (
+        <>
+          <CircleMarker
+            center={position}
+            radius={12}
+            pathOptions={{
+              color: '#ffffff',
+              fillColor: isDragging || isActive ? '#60a5fa' : '#3b82f6',
+              fillOpacity: 1,
+              weight: 2,
+              interactive: true
+            }}
+            eventHandlers={{
+              mousedown: onMouseDown,
+              mouseover: onMouseOver,
+              mouseout: onMouseOut
+            }}
+          />
+          
+          {/* Rotation icon overlay */}
+          {typeof window !== 'undefined' && (() => {
+            const L = require('leaflet');
+            
+            const iconHtml = `<div style="
+              display: flex; 
+              align-items: center; 
+              justify-content: center;
+              width: 24px; 
+              height: 24px; 
+              color: white;
+              font-size: 14px;
+              text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+              pointer-events: none;
+              font-family: 'Material-Design-Iconic-Font', Arial, sans-serif;
+            "><i class="zmdi zmdi-refresh"></i></div>`;
+            
+            const iconMarker = L.divIcon({
+              html: iconHtml,
+              className: 'rotation-icon-overlay',
+              iconSize: [24, 24],
+              iconAnchor: [12, 12]
+            });
+            
+            return (
+              <Marker
+                position={position}
+                icon={iconMarker}
+                eventHandlers={{}}
+                interactive={false}
+              />
+            );
+          })()}
+        </>
+      );
+    }
+    
+    // Resize Handle Component
+    function ResizeHandle({ 
+      position, 
+      isActive, 
+      onMouseDown, 
+      onMouseOver, 
+      onMouseOut 
+    }) {
+      return (
+        <>
+          <CircleMarker
+            center={position}
+            radius={12}
+            pathOptions={{
+              color: '#ffffff',
+              fillColor: isActive ? '#60a5fa' : '#3b82f6',
+              fillOpacity: 1,
+              weight: 2,
+              interactive: true
+            }}
+            eventHandlers={{
+              mousedown: onMouseDown,
+              mouseover: onMouseOver,
+              mouseout: onMouseOut
+            }}
+          />
+          
+          {/* Resize icon overlay */}
+          {typeof window !== 'undefined' && (() => {
+            const L = require('leaflet');
+            
+            const resizeIconHtml = `<div style="
+              display: flex; 
+              align-items: center; 
+              justify-content: center;
+              width: 24px; 
+              height: 24px; 
+              color: white;
+              font-size: 14px;
+              text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+              pointer-events: none;
+              font-family: 'Material-Design-Iconic-Font', Arial, sans-serif;
+            "><i class="zmdi zmdi-crop-free"></i></div>`;
+            
+            const resizeIconMarker = L.divIcon({
+              html: resizeIconHtml,
+              className: 'resize-icon-overlay',
+              iconSize: [24, 24],
+              iconAnchor: [12, 12]
+            });
+            
+            return (
+              <Marker
+                position={position}
+                icon={resizeIconMarker}
+                eventHandlers={{}}
+                interactive={false}
+              />
+            );
+          })()}
+        </>
+      );
+    }
+    
     // Internal component that uses Leaflet hooks
     function MapContent({ coordinates, onCoordinatesChange, size, rotation, onRotationChange, onSizeChange, showResizeHandle }) {
       const [isDragging, setIsDragging] = useState(false);
@@ -329,157 +459,71 @@ const ActualMapWidget = dynamic(() => {
             }}
           />
           
-          {/* Rotation handle with clean icon */}
-          <CircleMarker
-            center={rotationHandlePosition}
-            radius={12}
-            pathOptions={{
-              color: '#ffffff',
-              fillColor: isDragging || isRotating ? '#60a5fa' : '#3b82f6',
-              fillOpacity: 1,
-              weight: 2,
-              interactive: true
+          {/* Rotation Handle */}
+          <RotationHandle
+            position={rotationHandlePosition}
+            isActive={isRotating}
+            isDragging={isDragging}
+            isRotating={isRotating}
+            onMouseDown={(e) => {
+              e.originalEvent.preventDefault();
+              setIsRotating(true);
+              const center = { lat: displayLat, lng: displayLon };
+              const startAngle = calculateAngle(center, e.latlng);
+              setRotationStart({
+                startAngle: startAngle,
+                startRotation: rotation
+              });
+              map.dragging.disable();
             }}
-            eventHandlers={{
-              mousedown: (e) => {
+            onMouseOver={(e) => {
+              if (!isRotating) {
+                e.target.setStyle({
+                  fillColor: '#2563eb',
+                  radius: 14
+                });
+              }
+            }}
+            onMouseOut={(e) => {
+              if (!isRotating) {
+                e.target.setStyle({
+                  fillColor: isDragging || isRotating ? '#60a5fa' : '#3b82f6',
+                  radius: 12
+                });
+              }
+            }}
+          />
+          
+          {/* Resize Handle - only show when resize is enabled */}
+          {showResizeHandle && (
+            <ResizeHandle
+              position={resizeHandlePosition}
+              isActive={isResizing}
+              onMouseDown={(e) => {
                 e.originalEvent.preventDefault();
-                setIsRotating(true);
-                const center = { lat: displayLat, lng: displayLon };
-                const startAngle = calculateAngle(center, e.latlng);
-                setRotationStart({
-                  startAngle: startAngle,
-                  startRotation: rotation
+                setIsResizing(true);
+                setResizeStart({
+                  initialSize: size
                 });
                 map.dragging.disable();
-              },
-              mouseover: (e) => {
-                if (!isRotating) {
+              }}
+              onMouseOver={(e) => {
+                if (!isResizing) {
                   e.target.setStyle({
                     fillColor: '#2563eb',
                     radius: 14
                   });
                 }
-              },
-              mouseout: (e) => {
-                if (!isRotating) {
+              }}
+              onMouseOut={(e) => {
+                if (!isResizing) {
                   e.target.setStyle({
-                    fillColor: isDragging || isRotating ? '#60a5fa' : '#3b82f6',
+                    fillColor: '#3b82f6',
                     radius: 12
                   });
                 }
-              }
-            }}
-          />
-          
-          {/* Simple rotation icon overlay */}
-          {typeof window !== 'undefined' && (() => {
-            const L = require('leaflet');
-            
-            const iconHtml = `<div style="
-              display: flex; 
-              align-items: center; 
-              justify-content: center;
-              width: 24px; 
-              height: 24px; 
-              color: white;
-              font-size: 14px;
-              text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-              pointer-events: none;
-              font-family: 'Material-Design-Iconic-Font', Arial, sans-serif;
-            "><i class="zmdi zmdi-refresh"></i></div>`;
-            
-            const iconMarker = L.divIcon({
-              html: iconHtml,
-              className: 'rotation-icon-overlay',
-              iconSize: [24, 24],
-              iconAnchor: [12, 12]
-            });
-            
-            return (
-              <Marker
-                position={rotationHandlePosition}
-                icon={iconMarker}
-                eventHandlers={{}}
-                interactive={false}
-              />
-            );
-          })()}
-          
-          {/* Resize handle - only show when resize is enabled */}
-          {showResizeHandle && (
-            <>
-              <CircleMarker
-                center={resizeHandlePosition}
-                radius={12}
-                pathOptions={{
-                  color: '#ffffff',
-                  fillColor: isResizing ? '#60a5fa' : '#3b82f6',
-                  fillOpacity: 1,
-                  weight: 2,
-                  interactive: true
-                }}
-                eventHandlers={{
-                  mousedown: (e) => {
-                    e.originalEvent.preventDefault();
-                    setIsResizing(true);
-                    setResizeStart({
-                      initialSize: size
-                    });
-                    map.dragging.disable();
-                  },
-                  mouseover: (e) => {
-                    if (!isResizing) {
-                      e.target.setStyle({
-                        fillColor: '#2563eb',
-                        radius: 14
-                      });
-                    }
-                  },
-                  mouseout: (e) => {
-                    if (!isResizing) {
-                      e.target.setStyle({
-                        fillColor: '#3b82f6',
-                        radius: 12
-                      });
-                    }
-                  }
-                }}
-              />
-              
-              {/* Resize icon overlay */}
-              {typeof window !== 'undefined' && (() => {
-                const L = require('leaflet');
-                
-                const resizeIconHtml = `<div style="
-                  display: flex; 
-                  align-items: center; 
-                  justify-content: center;
-                  width: 24px; 
-                  height: 24px; 
-                  color: white;
-                  font-size: 14px;
-                  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
-                  pointer-events: none;
-                  font-family: 'Material-Design-Iconic-Font', Arial, sans-serif;
-                "><i class="zmdi zmdi-crop-free"></i></div>`;
-                
-                const resizeIconMarker = L.divIcon({
-                  html: resizeIconHtml,
-                  className: 'resize-icon-overlay',
-                  iconSize: [24, 24],
-                  iconAnchor: [12, 12]
-                });
-                
-                return (
-                  <Marker
-                    position={resizeHandlePosition}
-                    icon={resizeIconMarker}
-                    eventHandlers={{}}
-                    interactive={false}
-                  />
-                );
-              })()}
-            </>
+              }}
+            />
           )}
         </>
       );
