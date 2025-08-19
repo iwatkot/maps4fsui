@@ -192,15 +192,27 @@ export default function Home() {
 
       {/* Right Panel */}
       <div className="w-1/2 p-8">
-        <MapWidget 
-          coordinates={coordinatesInput}
-          onCoordinatesChange={setCoordinatesInput}
-          size={selectedSize === "custom" ? customSize : selectedSize}
-          rotation={rotation}
-          onRotationChange={setRotation}
-          onSizeChange={setCustomSize}
-          showResizeHandle={selectedSize === "custom"}
-        />
+        {validateCoordinates(coordinatesInput) ? (
+          <MapWidget 
+            coordinates={coordinatesInput}
+            onCoordinatesChange={setCoordinatesInput}
+            size={selectedSize === "custom" ? customSize : selectedSize}
+            rotation={rotation}
+            onRotationChange={setRotation}
+            onSizeChange={setCustomSize}
+            showResizeHandle={selectedSize === "custom"}
+          />
+        ) : (
+          <div className="w-full h-full rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 flex flex-col items-center justify-center">
+            <div className="text-center text-gray-500 dark:text-gray-400 space-y-2">
+              <div className="text-2xl">🗺️</div>
+              <div className="text-lg font-medium">Map Preview</div>
+              <div className="text-sm max-w-sm">
+                Enter valid coordinates in the left panel to see your map preview here
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
