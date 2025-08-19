@@ -5,31 +5,22 @@ import dynamic from 'next/dynamic';
 
 // Helper function to calculate rotated rectangle corners
 const getRotatedRectangleCorners = (centerLat, centerLon, sizeMeters, rotationDegrees) => {
-  // Convert size from meters to approximate degrees
-  // 1 degree lat ≈ 111,111 meters
-  // 1 degree lon ≈ 111,111 * cos(lat) meters
-  const halfSizeLat = (sizeMeters / 2) / 111111;
-  const halfSizeLon = (sizeMeters / 2) / (111111 * Math.cos(centerLat * Math.PI / 180));
+  const corners = [];
+  const half_diagonal = sizeMeters * Math.sqrt(2) / 2; // Half the diagonal length of the square
   
-  // Convert rotation to radians
-  const rotationRad = (rotationDegrees * Math.PI) / 180;
+  for (let i = 0; i < 4; i++) {
+    const theta = (rotationDegrees + i * 90 + 45) * Math.PI / 180; // Rotate by 45 degrees to get the corners
+    const dx = half_diagonal * Math.cos(theta);
+    const dy = half_diagonal * Math.sin(theta);
+    
+    // Approximate conversion from meters to degrees
+    const corner_lat = centerLat + (dy / 111320); // meters to degrees latitude
+    const corner_lon = centerLon + (dx / (111320 * Math.cos(centerLat * Math.PI / 180))); // meters to degrees longitude
+    
+    corners.push([corner_lat, corner_lon]);
+  }
   
-  // Define rectangle corners (before rotation)
-  const corners = [
-    [-halfSizeLat, -halfSizeLon], // bottom-left
-    [-halfSizeLat, halfSizeLon],  // bottom-right
-    [halfSizeLat, halfSizeLon],   // top-right
-    [halfSizeLat, -halfSizeLon]   // top-left
-  ];
-  
-  // Apply rotation and translate to center
-  const rotatedCorners = corners.map(([lat, lon]) => {
-    const rotatedLat = lat * Math.cos(rotationRad) - lon * Math.sin(rotationRad);
-    const rotatedLon = lat * Math.sin(rotationRad) + lon * Math.cos(rotationRad);
-    return [centerLat + rotatedLat, centerLon + rotatedLon];
-  });
-  
-  return rotatedCorners;
+  return corners;
 };
 
 // Create the actual map component
