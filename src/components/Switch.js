@@ -41,33 +41,39 @@ export default function Switch({
               onClick={handleToggle}
               disabled={disabled}
               className={`
-                relative inline-flex items-center
-                ${checked ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'}
+                relative inline-flex items-center justify-center
+                ${checked ? 'bg-blue-600' : 'bg-gray-200 dark:bg-gray-600'}
                 ${disabled 
                   ? 'cursor-not-allowed' 
-                  : 'cursor-pointer hover:shadow-sm focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+                  : checked 
+                    ? 'cursor-pointer hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
+                    : 'cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-500 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2'
                 }
-                rounded-full border-2 border-transparent
+                border border-gray-300 dark:border-gray-600
+                rounded-full
                 transition-all duration-200 ease-in-out
                 focus:outline-none
-                ${size === 'sm' ? 'h-5 w-9' : size === 'lg' ? 'h-7 w-12' : 'h-6 w-11'}
+                ${size === 'sm' ? 'h-7' : size === 'lg' ? 'h-9' : 'h-8'}
               `}
+              style={{
+                width: size === 'sm' ? '64px' : size === 'lg' ? '80px' : '68px'
+              }}
               role="switch"
               aria-checked={checked}
               aria-labelledby={`${label}-label`}
             >
-              {/* Switch toggle */}
+              {/* Classic round toggle */}
               <span
                 className={`
                   ${checked 
-                    ? (size === 'sm' ? 'translate-x-4' : size === 'lg' ? 'translate-x-5' : 'translate-x-5')
-                    : 'translate-x-0'
+                    ? (size === 'sm' ? 'translate-x-4' : size === 'lg' ? 'translate-x-5' : 'translate-x-4')
+                    : (size === 'sm' ? '-translate-x-4' : size === 'lg' ? '-translate-x-5' : '-translate-x-4')
                   }
                   inline-block 
-                  ${size === 'sm' ? 'h-4 w-4' : size === 'lg' ? 'h-6 w-6' : 'h-5 w-5'}
+                  ${size === 'sm' ? 'h-5 w-5' : size === 'lg' ? 'h-7 w-7' : 'h-6 w-6'}
                   transform rounded-full bg-white 
                   shadow-lg ring-0 transition-transform duration-200 ease-in-out
-                  ${size === 'sm' ? 'm-0.5' : 'm-0.5'}
+                  border border-gray-200
                 `}
               />
             </button>
