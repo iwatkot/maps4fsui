@@ -65,8 +65,12 @@ const ActualMapWidget = dynamic(() => {
       const displayLon = isDragging && currentDragCoords ? currentDragCoords.lng : centerLon;
       const rectangleCorners = getRotatedRectangleCorners(displayLat, displayLon, size, rotation);
       
-      // Calculate rotation handle position (at the top-right corner of the rectangle)
-      const rotationHandlePosition = rectangleCorners[1]; // Top-right corner
+      // Calculate rotation handle position (always at a fixed offset from center, regardless of rectangle corners)
+      const handleDistance = size * Math.sqrt(2) / 2; // Half diagonal of the square
+      const handleAngle = (-rotation + 135) * Math.PI / 180; // Use inverted rotation + 135° offset for top-left
+      const handleLat = displayLat + (handleDistance * Math.sin(handleAngle) / 111320);
+      const handleLon = displayLon + (handleDistance * Math.cos(handleAngle) / (111320 * Math.cos(displayLat * Math.PI / 180)));
+      const rotationHandlePosition = [handleLat, handleLon];
       
       // Helper function to calculate angle between two points
       const calculateAngle = (center, point) => {
@@ -78,11 +82,9 @@ const ActualMapWidget = dynamic(() => {
       // Handle rotation updates
       const handleRotationChange = (newRotation) => {
         if (onRotationChange) {
-          // Ensure rotation is between -180 and 180
-          let normalizedRotation = newRotation % 360;
-          if (normalizedRotation > 180) normalizedRotation -= 360;
-          if (normalizedRotation < -180) normalizedRotation += 360;
-          onRotationChange(Math.round(normalizedRotation));
+          // Ensure rotation is between -90 and 90 degrees
+          let constrainedRotation = Math.max(-90, Math.min(90, newRotation));
+          onRotationChange(Math.round(constrainedRotation));
         }
       };
       
@@ -139,11 +141,29 @@ const ActualMapWidget = dynamic(() => {
             e.originalEvent.preventDefault();
             const center = { lat: displayLat, lng: displayLon };
             const currentAngle = calculateAngle(center, e.latlng);
-            const deltaAngle = currentAngle - rotationStart.startAngle;
-            // Invert the delta angle to match the inverted rotation display
-            const newRotation = rotationStart.startRotation - deltaAngle;
+            let deltaAngle = currentAngle - rotationStart.startAngle;
             
-            handleRotationChange(newRotation);
+            // Handle angle wraparound more carefully
+            while (deltaAngle > 180) deltaAngle -= 360;
+            while (deltaAngle < -180) deltaAngle += 360;
+            
+            // Invert the delta angle to match the inverted rotation display
+            let newRotation = rotationStart.startRotation - deltaAngle;
+            
+            // Apply limits with stricter bounds to prevent jumping
+            const currentRotation = rotation; // Get current rotation value
+            
+            // Only update if the change is reasonable (prevent sudden jumps)
+            const maxChange = 180; // Maximum allowed change per frame
+            const rotationDiff = Math.abs(newRotation - currentRotation);
+            
+            if (rotationDiff <= maxChange) {
+              newRotation = Math.max(-90, Math.min(90, newRotation));
+              
+              if (onRotationChange) {
+                onRotationChange(Math.round(newRotation));
+              }
+            }
           }
         },
         mouseup: () => {
@@ -274,11 +294,11 @@ const ActualMapWidget = dynamic(() => {
           {/* Rotation handle */}
           <CircleMarker
             center={rotationHandlePosition}
-            radius={8}
+            radius={10}
             pathOptions={{
-              color: isRotating ? '#ef4444' : '#f59e0b',
-              fillColor: isRotating ? '#ef4444' : '#f59e0b',
-              fillOpacity: 0.8,
+              color: isRotating ? '#1d4ed8' : '#3b82f6',
+              fillColor: isRotating ? '#60a5fa' : '#3b82f6',
+              fillOpacity: isRotating ? 0.9 : 0.7,
               weight: 2,
               interactive: true
             }}
@@ -297,21 +317,21 @@ const ActualMapWidget = dynamic(() => {
               mouseover: (e) => {
                 if (!isRotating) {
                   e.target.setStyle({
-                    color: '#dc2626',
-                    fillColor: '#dc2626',
-                    radius: 10
+                    color: '#1d4ed8',
+                    fillColor: '#60a5fa',
+                    fillOpacity: 0.9,
+                    radius: 12
                   });
-                  map.getContainer().style.cursor = 'crosshair';
                 }
               },
               mouseout: (e) => {
                 if (!isRotating) {
                   e.target.setStyle({
-                    color: '#f59e0b',
-                    fillColor: '#f59e0b',
-                    radius: 8
+                    color: '#3b82f6',
+                    fillColor: '#3b82f6',
+                    fillOpacity: 0.7,
+                    radius: 10
                   });
-                  map.getContainer().style.cursor = '';
                 }
               }
             }}
