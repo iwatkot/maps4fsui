@@ -197,6 +197,7 @@ export default function Home() {
           onCoordinatesChange={setCoordinatesInput}
           size={selectedSize === "custom" ? customSize : selectedSize}
           rotation={rotation}
+          onRotationChange={setRotation}
         />
       </div>
     </div>
