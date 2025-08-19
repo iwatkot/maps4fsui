@@ -29,7 +29,7 @@ const getRotatedRectangleCorners = (centerLat, centerLon, sizeMeters, rotationDe
 // Create the actual map component
 const ActualMapWidget = dynamic(() => {
   return import('react-leaflet').then((mod) => {
-    const { MapContainer, TileLayer, Polygon, LayersControl, useMap, useMapEvents, CircleMarker } = mod;
+    const { MapContainer, TileLayer, Polygon, LayersControl, useMap, useMapEvents, CircleMarker, Marker } = mod;
     
     // Internal component that uses Leaflet hooks
     function MapContent({ coordinates, onCoordinatesChange, size, rotation, onRotationChange }) {
@@ -291,10 +291,10 @@ const ActualMapWidget = dynamic(() => {
             }}
           />
           
-          {/* Rotation handle */}
+          {/* Rotation handle with clean icon */}
           <CircleMarker
             center={rotationHandlePosition}
-            radius={8}
+            radius={12}
             pathOptions={{
               color: '#ffffff',
               fillColor: isDragging || isRotating ? '#60a5fa' : '#3b82f6',
@@ -318,7 +318,7 @@ const ActualMapWidget = dynamic(() => {
                 if (!isRotating) {
                   e.target.setStyle({
                     fillColor: '#2563eb',
-                    radius: 10
+                    radius: 14
                   });
                 }
               },
@@ -326,12 +326,46 @@ const ActualMapWidget = dynamic(() => {
                 if (!isRotating) {
                   e.target.setStyle({
                     fillColor: isDragging || isRotating ? '#60a5fa' : '#3b82f6',
-                    radius: 8
+                    radius: 12
                   });
                 }
               }
             }}
           />
+          
+          {/* Simple rotation icon overlay */}
+          {typeof window !== 'undefined' && (() => {
+            const L = require('leaflet');
+            
+            const iconHtml = `<div style="
+              display: flex; 
+              align-items: center; 
+              justify-content: center;
+              width: 24px; 
+              height: 24px; 
+              color: white;
+              font-size: 14px;
+              text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+              pointer-events: none;
+              font-family: 'Material-Design-Iconic-Font', Arial, sans-serif;
+            "><i class="zmdi zmdi-refresh"></i></div>`;
+            
+            const iconMarker = L.divIcon({
+              html: iconHtml,
+              className: 'rotation-icon-overlay',
+              iconSize: [24, 24],
+              iconAnchor: [12, 12]
+            });
+            
+            return (
+              <Marker
+                position={rotationHandlePosition}
+                icon={iconMarker}
+                eventHandlers={{}}
+                interactive={false}
+              />
+            );
+          })()}
         </>
       );
     }
