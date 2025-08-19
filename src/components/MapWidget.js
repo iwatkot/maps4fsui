@@ -33,6 +33,8 @@ const ActualMapWidget = dynamic(() => {
       const [isDragging, setIsDragging] = useState(false);
       const [dragStart, setDragStart] = useState(null);
       const [currentDragCoords, setCurrentDragCoords] = useState(null);
+      const [lastActionWasDrag, setLastActionWasDrag] = useState(false);
+      const lastCoordinatesRef = useRef(coordinates);
       const polygonRef = useRef();
       const updateTimeout = useRef(null);
       
@@ -59,9 +61,16 @@ const ActualMapWidget = dynamic(() => {
       const rectangleCorners = getRotatedRectangleCorners(displayLat, displayLon, size, rotation);
       
       // Throttled coordinate update function
+      // Handle coordinate updates
       const handleCenterChange = (newLat, newLon) => {
         const formattedCoords = `${newLat.toFixed(6)}, ${newLon.toFixed(6)}`;
         onCoordinatesChange(formattedCoords);
+      };
+      
+      // Handle coordinate updates from dragging (mark as drag action)
+      const handleDragCenterChange = (newLat, newLon) => {
+        setLastActionWasDrag(true);
+        handleCenterChange(newLat, newLon);
       };
       
       // Throttled update during drag
@@ -84,13 +93,6 @@ const ActualMapWidget = dynamic(() => {
       const map = useMap();
       
       const mapEvents = useMapEvents({
-        click: (e) => {
-          // Only handle map clicks if not dragging and not clicking on polygon
-          if (!isDragging) {
-            const { lat, lng } = e.latlng;
-            handleCenterChange(lat, lng);
-          }
-        },
         mousemove: (e) => {
           // Handle drag movement
           if (isDragging && dragStart) {
@@ -122,18 +124,31 @@ const ActualMapWidget = dynamic(() => {
             
             // Do a final update with current position
             if (currentDragCoords) {
-              handleCenterChange(currentDragCoords.lat, currentDragCoords.lng);
+              handleDragCenterChange(currentDragCoords.lat, currentDragCoords.lng);
             }
           }
         }
       });
       
-      // Update map view when coordinates change from form (but not during drag)
+      // Update map view based on last action type
       useEffect(() => {
         if (!isDragging && centerLat && centerLon && !isNaN(centerLat) && !isNaN(centerLon)) {
-          map.setView([centerLat, centerLon], map.getZoom());
+          // Check if coordinates changed from external input (not from our drag)
+          const coordinatesChanged = coordinates !== lastCoordinatesRef.current;
+          
+          if (coordinatesChanged && !lastActionWasDrag) {
+            // Coordinates changed from external form input, center the map
+            map.setView([centerLat, centerLon], map.getZoom());
+            setLastActionWasDrag(false); // Reset for next external input
+          } else if (coordinatesChanged && lastActionWasDrag) {
+            // Coordinates changed from our drag, don't center but reset flag for future
+            setLastActionWasDrag(false);
+          }
+          
+          // Update the reference
+          lastCoordinatesRef.current = coordinates;
         }
-      }, [centerLat, centerLon, map, isDragging]);
+      }, [centerLat, centerLon, coordinates, map, isDragging, lastActionWasDrag]);
       
       // Cleanup timeout on unmount
       useEffect(() => {
