@@ -198,6 +198,8 @@ export default function Home() {
           size={selectedSize === "custom" ? customSize : selectedSize}
           rotation={rotation}
           onRotationChange={setRotation}
+          onSizeChange={setCustomSize}
+          showResizeHandle={selectedSize === "custom"}
         />
       </div>
     </div>

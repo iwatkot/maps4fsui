@@ -32,11 +32,13 @@ const ActualMapWidget = dynamic(() => {
     const { MapContainer, TileLayer, Polygon, LayersControl, useMap, useMapEvents, CircleMarker, Marker } = mod;
     
     // Internal component that uses Leaflet hooks
-    function MapContent({ coordinates, onCoordinatesChange, size, rotation, onRotationChange }) {
+    function MapContent({ coordinates, onCoordinatesChange, size, rotation, onRotationChange, onSizeChange, showResizeHandle }) {
       const [isDragging, setIsDragging] = useState(false);
       const [isRotating, setIsRotating] = useState(false);
+      const [isResizing, setIsResizing] = useState(false);
       const [dragStart, setDragStart] = useState(null);
       const [rotationStart, setRotationStart] = useState(null);
+      const [resizeStart, setResizeStart] = useState(null);
       const [currentDragCoords, setCurrentDragCoords] = useState(null);
       const [lastActionWasDrag, setLastActionWasDrag] = useState(false);
       const lastCoordinatesRef = useRef(coordinates);
@@ -72,6 +74,12 @@ const ActualMapWidget = dynamic(() => {
       const handleLon = displayLon + (handleDistance * Math.cos(handleAngle) / (111320 * Math.cos(displayLat * Math.PI / 180)));
       const rotationHandlePosition = [handleLat, handleLon];
       
+      // Calculate resize handle position (bottom-right corner)
+      const resizeAngle = (-rotation + 315) * Math.PI / 180; // Use inverted rotation + 315° offset for bottom-right
+      const resizeLat = displayLat + (handleDistance * Math.sin(resizeAngle) / 111320);
+      const resizeLon = displayLon + (handleDistance * Math.cos(resizeAngle) / (111320 * Math.cos(displayLat * Math.PI / 180)));
+      const resizeHandlePosition = [resizeLat, resizeLon];
+      
       // Helper function to calculate angle between two points
       const calculateAngle = (center, point) => {
         const dx = point.lng - center.lng;
@@ -85,6 +93,15 @@ const ActualMapWidget = dynamic(() => {
           // Ensure rotation is between -90 and 90 degrees
           let constrainedRotation = Math.max(-90, Math.min(90, newRotation));
           onRotationChange(Math.round(constrainedRotation));
+        }
+      };
+      
+      // Handle size updates
+      const handleSizeChange = (newSize) => {
+        if (onSizeChange) {
+          // Ensure size is at least 100m and at most 50000m, and is an integer
+          let constrainedSize = Math.max(100, Math.min(50000, Math.round(newSize)));
+          onSizeChange(constrainedSize);
         }
       };
       
@@ -123,7 +140,7 @@ const ActualMapWidget = dynamic(() => {
       const mapEvents = useMapEvents({
         mousemove: (e) => {
           // Handle drag movement
-          if (isDragging && dragStart && !isRotating) {
+          if (isDragging && dragStart && !isRotating && !isResizing) {
             e.originalEvent.preventDefault();
             const { lat, lng } = e.latlng;
             const deltaLat = lat - dragStart.lat;
@@ -165,6 +182,20 @@ const ActualMapWidget = dynamic(() => {
               }
             }
           }
+          
+          // Handle resize
+          if (isResizing && resizeStart) {
+            e.originalEvent.preventDefault();
+            const center = { lat: displayLat, lng: displayLon };
+            const currentDistance = Math.sqrt(
+              Math.pow((e.latlng.lat - center.lat) * 111320, 2) + 
+              Math.pow((e.latlng.lng - center.lng) * 111320 * Math.cos(center.lat * Math.PI / 180), 2)
+            );
+            
+            // Convert distance to size (since handle is at corner, distance is half diagonal)
+            const newSize = currentDistance * Math.sqrt(2);
+            handleSizeChange(newSize);
+          }
         },
         mouseup: () => {
           // End drag
@@ -190,6 +221,13 @@ const ActualMapWidget = dynamic(() => {
           if (isRotating) {
             setIsRotating(false);
             setRotationStart(null);
+            map.dragging.enable();
+          }
+          
+          // End resize
+          if (isResizing) {
+            setIsResizing(false);
+            setResizeStart(null);
             map.dragging.enable();
           }
         }
@@ -254,7 +292,7 @@ const ActualMapWidget = dynamic(() => {
             }}
             eventHandlers={{
               mousedown: (e) => {
-                if (!isRotating) {
+                if (!isRotating && !isResizing) {
                   e.originalEvent.preventDefault();
                   setIsDragging(true);
                   setDragStart({
@@ -267,7 +305,7 @@ const ActualMapWidget = dynamic(() => {
                 }
               },
               mouseover: (e) => {
-                if (!isDragging && !isRotating) {
+                if (!isDragging && !isRotating && !isResizing) {
                   e.target.setStyle({
                     color: '#2563eb',
                     fillOpacity: 0.4,
@@ -278,7 +316,7 @@ const ActualMapWidget = dynamic(() => {
                 }
               },
               mouseout: (e) => {
-                if (!isDragging && !isRotating) {
+                if (!isDragging && !isRotating && !isResizing) {
                   e.target.setStyle({
                     color: '#3b82f6',
                     fillOpacity: 0.3,
@@ -366,12 +404,89 @@ const ActualMapWidget = dynamic(() => {
               />
             );
           })()}
+          
+          {/* Resize handle - only show when resize is enabled */}
+          {showResizeHandle && (
+            <>
+              <CircleMarker
+                center={resizeHandlePosition}
+                radius={12}
+                pathOptions={{
+                  color: '#ffffff',
+                  fillColor: isResizing ? '#60a5fa' : '#3b82f6',
+                  fillOpacity: 1,
+                  weight: 2,
+                  interactive: true
+                }}
+                eventHandlers={{
+                  mousedown: (e) => {
+                    e.originalEvent.preventDefault();
+                    setIsResizing(true);
+                    setResizeStart({
+                      initialSize: size
+                    });
+                    map.dragging.disable();
+                  },
+                  mouseover: (e) => {
+                    if (!isResizing) {
+                      e.target.setStyle({
+                        fillColor: '#2563eb',
+                        radius: 14
+                      });
+                    }
+                  },
+                  mouseout: (e) => {
+                    if (!isResizing) {
+                      e.target.setStyle({
+                        fillColor: '#3b82f6',
+                        radius: 12
+                      });
+                    }
+                  }
+                }}
+              />
+              
+              {/* Resize icon overlay */}
+              {typeof window !== 'undefined' && (() => {
+                const L = require('leaflet');
+                
+                const resizeIconHtml = `<div style="
+                  display: flex; 
+                  align-items: center; 
+                  justify-content: center;
+                  width: 24px; 
+                  height: 24px; 
+                  color: white;
+                  font-size: 14px;
+                  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+                  pointer-events: none;
+                  font-family: 'Material-Design-Iconic-Font', Arial, sans-serif;
+                "><i class="zmdi zmdi-crop-din"></i></div>`;
+                
+                const resizeIconMarker = L.divIcon({
+                  html: resizeIconHtml,
+                  className: 'resize-icon-overlay',
+                  iconSize: [24, 24],
+                  iconAnchor: [12, 12]
+                });
+                
+                return (
+                  <Marker
+                    position={resizeHandlePosition}
+                    icon={resizeIconMarker}
+                    eventHandlers={{}}
+                    interactive={false}
+                  />
+                );
+              })()}
+            </>
+          )}
         </>
       );
     }
     
     // Return the component that will be dynamically loaded
-    function DynamicMapComponent({ coordinates, onCoordinatesChange, size, rotation, onRotationChange }) {
+    function DynamicMapComponent({ coordinates, onCoordinatesChange, size, rotation, onRotationChange, onSizeChange, showResizeHandle }) {
       // Parse coordinates for initial center
       const parseCoordinates = (coordString) => {
         if (!coordString) return { lat: 51.505, lon: -0.09 };
@@ -415,6 +530,8 @@ const ActualMapWidget = dynamic(() => {
             size={size}
             rotation={rotation}
             onRotationChange={onRotationChange}
+            onSizeChange={onSizeChange}
+            showResizeHandle={showResizeHandle}
           />
         </MapContainer>
       );
@@ -429,7 +546,9 @@ export default function MapWidget({
   onCoordinatesChange, 
   size = 2048, 
   rotation = 0,
-  onRotationChange 
+  onRotationChange,
+  onSizeChange,
+  showResizeHandle = false
 }) {
   const [mounted, setMounted] = useState(false);
   
@@ -454,6 +573,8 @@ export default function MapWidget({
         size={size}
         rotation={rotation}
         onRotationChange={onRotationChange}
+        onSizeChange={onSizeChange}
+        showResizeHandle={showResizeHandle}
       />
     </div>
   );
