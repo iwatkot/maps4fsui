@@ -6,11 +6,11 @@
 import { useState, useEffect } from 'react';
 import { useApiCall } from './useApi';
 import { getDTMProviders, parseCoordinates } from '../api/dtm';
-import { defaultDTMOptions, defaultDTMOption } from '../config/formOptions';
+import { defaultDTMOption } from '../config/formOptions';
 import logger from '../utils/logger';
 
 export const useDTMProviders = (coordinatesInput) => {
-  const [dtmOptions, setDtmOptions] = useState(defaultDTMOptions);
+  const [dtmOptions, setDtmOptions] = useState([defaultDTMOption]);
   const [selectedDTMProvider, setSelectedDTMProvider] = useState(defaultDTMOption.value);
   
   // API hook for fetching DTM providers

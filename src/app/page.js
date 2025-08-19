@@ -41,8 +41,8 @@ export default function Home() {
   } = useDTMProviders(coordinatesInput);
 
   // Example Expander values
-  const [quality, setQuality] = useState(defaultValues.quality);
-  const [compressionLevel, setCompressionLevel] = useState(defaultValues.compressionLevel);
+  const [option1, setOption1] = useState(defaultValues.option1);
+  const [option2, setOption2] = useState(defaultValues.option2);
 
   // Create size options based on version
   const sizeOptions = createSizeOptions(isPublicVersion);
@@ -59,7 +59,7 @@ export default function Home() {
           onChange={setSelectedGame}
           placeholder="Choose your game version..."
           labelWidth='w-40'
-          tooltip="Game for which map should be generated."
+          tooltip="Game for which map should be generated. Note, that some features may not be available in all versions."
           size="sm"
         />
 
@@ -150,33 +150,29 @@ export default function Home() {
 
         {/* Example Expander with Number Inputs */}
         <Expander 
-          label="Export Options"
-          summary={`Quality: ${quality}%, Compression: ${compressionLevel}`}
-          tooltip="Configure export quality and compression settings"
+          label="EXAMPLE OPTIONS"
+          summary={`OPTION 1: ${option1}, OPTION 2: ${option2}`}
+          tooltip="Example options for demonstration purposes."
           labelWidth='w-40'
           size="sm"
         >
           <NumberInput
-            label="Quality"
-            value={quality}
-            onChange={setQuality}
-            min={1}
-            max={100}
+            label="Option 1"
+            value={option1}
+            onChange={setOption1}
             step={1}
             labelWidth='w-40'
-            tooltip="Export quality percentage. Higher values mean better quality but larger file size."
+            tooltip="Example option 1."
             size="sm"
           />
           
           <NumberInput
-            label="Compression"
-            value={compressionLevel}
-            onChange={setCompressionLevel}
-            min={0}
-            max={9}
+            label="Option 2"
+            value={option2}
+            onChange={setOption2}
             step={1}
             labelWidth='w-40'
-            tooltip="Compression level from 0 (no compression) to 9 (maximum compression)."
+            tooltip="Example option 2."
             size="sm"
           />
         </Expander>

@@ -9,7 +9,7 @@ export const gameOptions = [
   { 
     value: 'fs22', 
     label: 'Farming Simulator 22', 
-    description: 'Support discontinued, some features may not work.' 
+    description: 'Support discontinued, new features will not be added. Fields, trees and grass are not supported.'
   }
 ];
 
@@ -22,10 +22,6 @@ export const availableSizeOptions = [
 ];
 
 // DTM provider options
-export const defaultDTMOptions = [
-  { value: 'srtm30', label: '🌎 Global [30.0 m/px] SRTM 30 m', description: '' }
-];
-
 export const defaultDTMOption = { 
   value: 'srtm30', 
   label: '🌎 Global [30.0 m/px] SRTM 30 m', 
@@ -41,8 +37,8 @@ export const defaultValues = {
   outputSize: 2048,
   rotation: 0,
   dtmProvider: 'srtm30',
-  quality: 85,
-  compressionLevel: 6
+  option1: 20,
+  option2: 10,
 };
 
 // Validation constraints
@@ -68,16 +64,6 @@ export const constraints = {
     max: 359,
     step: 1
   },
-  quality: {
-    min: 1,
-    max: 100,
-    step: 1
-  },
-  compressionLevel: {
-    min: 0,
-    max: 9,
-    step: 1
-  }
 };
 
 // Helper function to create size options based on version
