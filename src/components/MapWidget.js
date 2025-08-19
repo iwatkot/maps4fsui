@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import dynamic from 'next/dynamic';
 
 // Helper function to calculate rotated rectangle corners
@@ -31,6 +31,10 @@ const ActualMapWidget = dynamic(() => {
     // Internal component that uses Leaflet hooks
     function MapContent({ coordinates, onCoordinatesChange, size, rotation }) {
       const [isDragging, setIsDragging] = useState(false);
+      const [dragStart, setDragStart] = useState(null);
+      const [currentDragCoords, setCurrentDragCoords] = useState(null);
+      const polygonRef = useRef();
+      const updateTimeout = useRef(null);
       
       // Parse coordinates
       const parseCoordinates = (coordString) => {
@@ -48,30 +52,97 @@ const ActualMapWidget = dynamic(() => {
       };
       
       const { lat: centerLat, lon: centerLon } = parseCoordinates(coordinates);
-      const rectangleCorners = getRotatedRectangleCorners(centerLat, centerLon, size, rotation);
       
-      // Handle coordinate updates
+      // Use drag coordinates if dragging, otherwise use form coordinates
+      const displayLat = isDragging && currentDragCoords ? currentDragCoords.lat : centerLat;
+      const displayLon = isDragging && currentDragCoords ? currentDragCoords.lng : centerLon;
+      const rectangleCorners = getRotatedRectangleCorners(displayLat, displayLon, size, rotation);
+      
+      // Throttled coordinate update function
       const handleCenterChange = (newLat, newLon) => {
         const formattedCoords = `${newLat.toFixed(6)}, ${newLon.toFixed(6)}`;
         onCoordinatesChange(formattedCoords);
       };
       
-      // Map event handler
+      // Throttled update during drag
+      const throttledUpdate = (newLat, newLon) => {
+        // Clear existing timeout
+        if (updateTimeout.current) {
+          clearTimeout(updateTimeout.current);
+        }
+        
+        // Update visual position immediately for smooth dragging
+        setCurrentDragCoords({ lat: newLat, lng: newLon });
+        
+        // Throttle the actual coordinate updates to form (every 150ms)
+        updateTimeout.current = setTimeout(() => {
+          handleCenterChange(newLat, newLon);
+        }, 150);
+      };
+      
+      // Map event handler for click-to-move (as fallback)
       const map = useMap();
       
-      useMapEvents({
+      const mapEvents = useMapEvents({
         click: (e) => {
-          const { lat, lng } = e.latlng;
-          handleCenterChange(lat, lng);
+          // Only handle map clicks if not dragging and not clicking on polygon
+          if (!isDragging) {
+            const { lat, lng } = e.latlng;
+            handleCenterChange(lat, lng);
+          }
+        },
+        mousemove: (e) => {
+          // Handle drag movement
+          if (isDragging && dragStart) {
+            e.originalEvent.preventDefault();
+            const { lat, lng } = e.latlng;
+            const deltaLat = lat - dragStart.lat;
+            const deltaLng = lng - dragStart.lng;
+            
+            const newCenterLat = dragStart.centerLat + deltaLat;
+            const newCenterLng = dragStart.centerLng + deltaLng;
+            
+            // Use throttled update during drag
+            throttledUpdate(newCenterLat, newCenterLng);
+          }
+        },
+        mouseup: () => {
+          // End drag
+          if (isDragging) {
+            setIsDragging(false);
+            setDragStart(null);
+            setCurrentDragCoords(null);
+            map.dragging.enable();
+            
+            // Clear any pending throttled update
+            if (updateTimeout.current) {
+              clearTimeout(updateTimeout.current);
+              updateTimeout.current = null;
+            }
+            
+            // Do a final update with current position
+            if (currentDragCoords) {
+              handleCenterChange(currentDragCoords.lat, currentDragCoords.lng);
+            }
+          }
         }
       });
       
-      // Update map view when coordinates change from form
+      // Update map view when coordinates change from form (but not during drag)
       useEffect(() => {
-        if (centerLat && centerLon && !isNaN(centerLat) && !isNaN(centerLon)) {
+        if (!isDragging && centerLat && centerLon && !isNaN(centerLat) && !isNaN(centerLon)) {
           map.setView([centerLat, centerLon], map.getZoom());
         }
-      }, [centerLat, centerLon, map]);
+      }, [centerLat, centerLon, map, isDragging]);
+      
+      // Cleanup timeout on unmount
+      useEffect(() => {
+        return () => {
+          if (updateTimeout.current) {
+            clearTimeout(updateTimeout.current);
+          }
+        };
+      }, []);
       
       return (
         <>
@@ -92,12 +163,49 @@ const ActualMapWidget = dynamic(() => {
           </LayersControl>
           
           <Polygon
+            ref={polygonRef}
             positions={rectangleCorners}
             pathOptions={{
-              color: '#3b82f6',
-              fillColor: '#3b82f6',
-              fillOpacity: 0.3,
-              weight: 2
+              color: isDragging ? '#60a5fa' : '#3b82f6',
+              fillColor: isDragging ? '#60a5fa' : '#3b82f6',
+              fillOpacity: isDragging ? 0.4 : 0.3,
+              weight: isDragging ? 3 : 2,
+              interactive: true
+            }}
+            eventHandlers={{
+              mousedown: (e) => {
+                e.originalEvent.preventDefault();
+                setIsDragging(true);
+                setDragStart({
+                  lat: e.latlng.lat,
+                  lng: e.latlng.lng,
+                  centerLat: centerLat,
+                  centerLng: centerLon
+                });
+                map.dragging.disable(); // Disable map dragging
+              },
+              mouseover: (e) => {
+                if (!isDragging) {
+                  e.target.setStyle({
+                    color: '#2563eb',
+                    fillOpacity: 0.4,
+                    weight: 3
+                  });
+                  // Change cursor to indicate it's draggable
+                  map.getContainer().style.cursor = 'move';
+                }
+              },
+              mouseout: (e) => {
+                if (!isDragging) {
+                  e.target.setStyle({
+                    color: '#3b82f6',
+                    fillOpacity: 0.3,
+                    weight: 2
+                  });
+                  // Reset cursor
+                  map.getContainer().style.cursor = '';
+                }
+              }
             }}
           />
         </>
