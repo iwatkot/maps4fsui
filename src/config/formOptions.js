@@ -31,7 +31,7 @@ export const defaultDTMOption = {
 // Default values for form inputs
 export const defaultValues = {
   game: 'fs25',
-  coordinates: '',
+  coordinates: '45.28571409289627, 20.237433441210115',
   size: 2048,
   customSize: 2048,
   outputSize: 2048,

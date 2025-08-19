@@ -8,6 +8,7 @@ import Slider from '../components/Slider';
 import Switch from '../components/Switch';
 import Expander from '../components/Expander';
 import ErrorDisplay from '../components/ErrorDisplay';
+import MapWidget from '../components/MapWidget';
 import { validateCoordinates } from '../api/dtm';
 import { useDTMProviders } from '../hooks/useDTMProviders';
 import config from './config';
@@ -190,7 +191,13 @@ export default function Home() {
       </div>
 
       {/* Right Panel */}
-      <div className="w-1/2 p-8 flex items-center justify-center">
+      <div className="w-1/2 p-8">
+        <MapWidget 
+          coordinates={coordinatesInput}
+          onCoordinatesChange={setCoordinatesInput}
+          size={selectedSize === "custom" ? customSize : selectedSize}
+          rotation={rotation}
+        />
       </div>
     </div>
   );
