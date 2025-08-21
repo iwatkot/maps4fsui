@@ -149,9 +149,9 @@ export async function downloadGeneratedMap(taskId) {
     
     logger.info('File received from API, starting download');
     
-    // Get the filename from Content-Disposition header or use a default
+    // Get the filename from Content-Disposition header or use a simple default
     const contentDisposition = response.headers.get('Content-Disposition');
-    let filename = `generated-map-${taskId}.zip`; // Default filename
+    let filename = `${taskId}.zip`; // Simple default filename without prefix
     
     if (contentDisposition) {
       const filenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
