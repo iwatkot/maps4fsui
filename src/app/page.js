@@ -7,7 +7,7 @@ import NumberInput from '@/components/NumberInput';
 import Slider from '@/components/Slider';
 import ErrorDisplay from '@/components/ErrorDisplay';
 import MapWidget from '@/components/MapWidget';
-import { validateCoordinates } from '@/api/dtm';
+import { validateCoordinates } from '@/api/preprocess';
 import { useDTMProviders } from '@/hooks/useDTMProviders';
 import config from '@/app/config';
 import logger from '@/utils/logger';
@@ -15,7 +15,7 @@ import {
   gameOptions, 
   createSizeOptions, 
   defaultValues, 
-} from '@/config/formOptions';
+} from '@/config/validation';
 import demSettingsContent from '@/app/settings/demSettings';
 
 const isPublicVersion = config.isPublicVersion;

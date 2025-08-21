@@ -5,49 +5,6 @@
 
 import apiService from '../utils/apiService';
 import logger from '../utils/logger';
-import { constraints } from '../config/formOptions';
-
-/**
- * Validate coordinate string input
- * @param {string} value - Coordinate string (e.g., "lat, lon")
- * @returns {boolean} - Whether the coordinates are valid
- */
-export const validateCoordinates = (value) => {
-  // Remove extra whitespace and split by comma or whitespace
-  const trimmed = value.trim();
-  if (!trimmed) return false;
-  
-  // Split by comma or whitespace (or both)
-  const parts = trimmed.split(/[,\s]+/).filter(part => part.length > 0);
-  
-  // Must have exactly 2 parts
-  if (parts.length !== 2) return false;
-  
-  // Both parts must be valid floats
-  const lat = parseFloat(parts[0]);
-  const lng = parseFloat(parts[1]);
-  
-  // Check if parsing was successful (not NaN) and values are reasonable coordinates
-  return !isNaN(lat) && !isNaN(lng) && 
-         lat >= constraints.coordinates.minLat && lat <= constraints.coordinates.maxLat &&
-         lng >= constraints.coordinates.minLng && lng <= constraints.coordinates.maxLng;
-};
-
-/**
- * Parse coordinate string into lat/lon object
- * @param {string} value - Coordinate string (e.g., "lat, lon")
- * @returns {object|null} - {lat, lon} object or null if invalid
- */
-export const parseCoordinates = (value) => {
-  if (!validateCoordinates(value)) return null;
-  
-  const trimmed = value.trim();
-  const parts = trimmed.split(/[,\s]+/).filter(part => part.length > 0);
-  const lat = parseFloat(parts[0]);
-  const lon = parseFloat(parts[1]);
-  
-  return { lat, lon };
-};
 
 /**
  * Get available DTM providers for given coordinates
@@ -80,4 +37,24 @@ export async function getDTMProviders(lat, lon) {
     logger.error('Failed to get DTM providers:', error.message);
     throw error;
   }
+}
+
+export async function isDTMCodeValid(dtmCode) {
+  try {
+    logger.info(`Validating DTM code: ${dtmCode}`);
+    
+    const response = await apiService.post('/dtm/validate', { dtmCode });
+
+    if (response.valid) {
+      logger.info(`DTM code ${dtmCode} is valid`);
+      return true;
+    } else {
+      logger.warn(`DTM code ${dtmCode} is invalid`);
+      return false;
+    }
+  } catch (error) {
+    logger.error('Failed to validate DTM code:', error.message);
+    throw error;
+  }
+  
 }

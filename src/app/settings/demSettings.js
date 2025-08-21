@@ -4,7 +4,7 @@ import Switch from '../../components/Switch';
 import { useState } from 'react';
 import { 
   defaultValues, 
-} from '../../config/formOptions';
+} from '../../config/validation';
 
 export default function demSettings(showAll = true){
     const [blurRadius, setBlurRadius] = useState(defaultValues.blurRadius);

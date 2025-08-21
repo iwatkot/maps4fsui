@@ -5,8 +5,9 @@
 
 import { useState, useEffect } from 'react';
 import { useApiCall } from './useApi';
-import { getDTMProviders, parseCoordinates } from '../api/dtm';
-import { defaultDTMOption } from '../config/formOptions';
+import { getDTMProviders } from '@/api/dtm';
+import { parseCoordinates } from '@/api/preprocess';
+import { defaultDTMOption } from '../config/validation';
 import logger from '../utils/logger';
 
 export const useDTMProviders = (coordinatesInput) => {

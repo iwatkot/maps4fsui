@@ -53,20 +53,9 @@ export const constraints = {
     minLng: -180,
     maxLng: 180
   },
-  customSize: {
-    min: 512,
-    max: 32768,
-    step: 512
-  },
-  outputSize: {
-    min: 512,
-    max: 8192,
-    step: 256
-  },
   rotation: {
-    min: 0,
-    max: 359,
-    step: 1
+    min: -90,
+    max: 90,
   },
 };
 
