@@ -17,7 +17,7 @@ export function useMapGeneration() {
     if (isGenerating) return;
     
     setIsGenerating(true);
-    setStatus("Starting");
+    setStatus("Map generation started...");
     setProgress(5);
     setIsDownloadMode(false);
     setError(null);
@@ -34,7 +34,7 @@ export function useMapGeneration() {
 
       const generationTaskId = startResult.taskId;
       setTaskId(generationTaskId);
-      setStatus("Processing");
+      setStatus("Generating the map...");
       setProgress(10);
 
       // Step 2: Poll task status every 10 seconds
@@ -64,7 +64,7 @@ export function useMapGeneration() {
           } else if (statusResult.status === 'processing') {
             // Task is being processed - allow progress up to 90%
             hasStartedProcessing = true;
-            setStatus("Processing");
+            setStatus("Generating the map...");
             if (currentProgress < 90) {
               currentProgress = Math.min(currentProgress + Math.random() * 10 + 5, 90);
               setProgress(currentProgress);
@@ -72,16 +72,10 @@ export function useMapGeneration() {
           } else if (statusResult.status === 'completed') {
             // Task completed successfully
             clearInterval(intervalRef.current);
-            setProgress(90); // Keep at 90% until download is ready
-            setStatus("Preparing download");
+            setProgress(100); // Show 100% immediately
+            setStatus("Map generation completed");
             setIsGenerating(false);
-            
-            // Switch to download mode after a brief delay
-            timeoutRef.current = setTimeout(() => {
-              setProgress(100); // Now show 100% when download is ready
-              setStatus("Map generation completed");
-              setIsDownloadMode(true);
-            }, 1500);
+            setIsDownloadMode(true); // Enable download immediately
           }
         } catch (error) {
           logger.error('Error checking task status:', error.message);

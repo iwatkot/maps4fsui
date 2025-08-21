@@ -64,6 +64,13 @@ export default function Home() {
   // Check if generate button should be enabled
   const isGenerateEnabled = validateCoordinates(coordinatesInput) && !isGenerating;
 
+  // Compute display status based on form state
+  const displayStatus = !isGenerateEnabled && status === "Ready" 
+    ? "Enter valid coordinates, check the settings and click Generate map."
+    : status === "Ready" && isGenerateEnabled 
+    ? "Click Generate map to start the generation process."
+    : status;
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 flex">
       {/* Left Panel */}
@@ -168,8 +175,8 @@ export default function Home() {
 
         {/* Generate/Download Button */}
         <ButtonProgress
-          label="Generate"
-          downloadLabel="Download"
+          label="Generate map"
+          downloadLabel="Download map"
           onClick={() => {
             // Collect all form data
             const settings = {
@@ -185,7 +192,7 @@ export default function Home() {
           }}
           onDownload={downloadMap}
           disabled={!isGenerateEnabled}
-          status={status}
+          status={displayStatus}
           progress={progress}
           isDownloadMode={isDownloadMode}
           error={error}

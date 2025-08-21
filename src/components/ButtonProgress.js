@@ -20,10 +20,12 @@ export default function ButtonProgress({
 
   const getProgressColor = () => {
     switch (status) {
-      case "Processing":
+      case "Generating the map...":
+      case "Map generation started...":
         return "bg-blue-500";
       case "Completed":
       case "Preparing download":
+      case "Preparing download...":
       case "Map generation completed":
         return "bg-green-500";
       case "Failed":
@@ -35,10 +37,12 @@ export default function ButtonProgress({
 
   const getProgressColorHex = () => {
     switch (status) {
-      case "Processing":
+      case "Generating the map...":
+      case "Map generation started...":
         return "rgb(59 130 246)"; // blue-500
       case "Completed":
       case "Preparing download":
+      case "Preparing download...":
       case "Map generation completed":
         return "rgb(34 197 94)"; // green-500
       case "Failed":
@@ -99,7 +103,7 @@ export default function ButtonProgress({
             <div className="relative w-full h-full px-4 flex items-center">
               <div className="flex items-center space-x-3">
                 {/* Status Text */}
-                <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">
+                <span className="text-sm text-gray-600 dark:text-gray-300 font-medium leading-tight">
                   {status}
                 </span>
                 
