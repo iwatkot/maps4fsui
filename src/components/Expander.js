@@ -78,7 +78,7 @@ export default function Expander({
               animation: 'dropdownOpen 200ms ease-out forwards'
             }}
           >
-            <div className="p-4">
+            <div className="p-4 space-y-6 [&>*:last-child]:mb-0">
               {children}
             </div>
           </div>
