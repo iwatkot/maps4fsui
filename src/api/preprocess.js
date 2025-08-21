@@ -158,7 +158,7 @@ const validateRotation = (rotation) => {
  * @param {object} data - Main settings data
  * @returns {object} - Preprocessed main settings
  */
-export const preprocessMainSettings = (data) => {
+export const preprocessMainSettings = async (data) => {
   const preprocessedMainSettings = {}
 
   if (!validateGameCode(data.gameCode)) {
@@ -190,7 +190,7 @@ export const preprocessMainSettings = (data) => {
   }
   preprocessedMainSettings.rotation = data.rotation;
 
-  if (!isDTMCodeValid(data.dtmCode)) {
+  if (!(await isDTMCodeValid(data.dtmCode))) {
     throw new Error(`Invalid DTM code: ${data.dtmCode}`);
   }
   preprocessedMainSettings.dtmCode = data.dtmCode;

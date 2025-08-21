@@ -43,18 +43,14 @@ export async function isDTMCodeValid(dtmCode) {
   try {
     logger.info(`Validating DTM code: ${dtmCode}`);
     
-    const response = await apiService.post('/dtm/validate', { dtmCode });
+    const response = await apiService.post('/dtm/info', { code: dtmCode });
 
-    if (response.valid) {
-      logger.info(`DTM code ${dtmCode} is valid`);
-      return true;
-    } else {
-      logger.warn(`DTM code ${dtmCode} is invalid`);
-      return false;
-    }
+    // If we get a response without error, the DTM code is valid
+    logger.info(`DTM code ${dtmCode} is valid`);
+    return true;
   } catch (error) {
     logger.error('Failed to validate DTM code:', error.message);
-    throw error;
+    // If the API returns an error (like 404), the DTM code is invalid
+    return false;
   }
-  
 }

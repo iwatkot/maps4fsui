@@ -13,7 +13,8 @@ export default function ButtonProgress({
   isDownloadMode = false,
   onDownload,
   labelWidth = "auto",
-  size = "md"
+  size = "md",
+  error = null // Error message to display
 }) {
   const { container: sizeClass, label: labelSizeClass } = getSizeClasses(size);
 
@@ -99,9 +100,16 @@ export default function ButtonProgress({
                 </span>
                 
                 {/* Progress Text */}
-                {progress > 0 && (
+                {progress > 0 && !error && (
                   <span className="text-xs text-gray-500 dark:text-gray-400">
                     {Math.round(progress)}%
+                  </span>
+                )}
+                
+                {/* Error Text */}
+                {error && (
+                  <span className="text-xs text-red-600 dark:text-red-400 font-medium">
+                    {error}
                   </span>
                 )}
               </div>
@@ -109,6 +117,18 @@ export default function ButtonProgress({
           </div>
         </div>
       </div>
+      
+      {/* Error Message */}
+      {error && status === "Failed" && (
+        <div className="mt-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+          <div className="flex items-start space-x-2">
+            <div className="text-red-600 dark:text-red-400 text-sm">⚠️</div>
+            <div className="text-red-700 dark:text-red-300 text-sm font-medium">
+              {error}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

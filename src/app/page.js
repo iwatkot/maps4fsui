@@ -48,12 +48,13 @@ export default function Home() {
   // Get DEM settings content and values
   const { content: demContent, values: demValues } = demSettingsContent();
 
-  // Map generation state
+    // Map generation state
   const {
     status,
     progress,
     isDownloadMode,
     isGenerating,
+    error,
     startGeneration,
     downloadMap,
     resetGeneration,
@@ -169,12 +170,26 @@ export default function Home() {
         <ButtonProgress
           label="Generate"
           downloadLabel="Download"
-          onClick={startGeneration}
+          onClick={() => {
+            // Collect all form data
+            const settings = {
+              gameCode: selectedGame,
+              coordinates: coordinatesInput,
+              dtmCode: selectedDTMProvider,
+              size: selectedSize === "custom" ? customSize : selectedSize,
+              rotation: rotation,
+              outputSize: null, // Will be set later if needed
+              ...demValues // Include DEM settings
+            };
+            console.log('Starting generation with settings:', settings);
+            startGeneration(settings);
+          }}
           onDownload={downloadMap}
           disabled={!isGenerateEnabled}
           status={status}
           progress={progress}
           isDownloadMode={isDownloadMode}
+          error={error}
           labelWidth='w-40'
           size="sm"
         />
