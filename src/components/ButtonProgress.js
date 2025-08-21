@@ -1,14 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { getSizeClasses } from './componentSizes';
+import { getStatusConfig, STATUS_TYPES } from '@/config/statusConfig';
 
 export default function ButtonProgress({ 
   label = "Generate",
   downloadLabel = "Download",
   onClick,
   disabled = false,
-  status = "Ready", // "Ready", "Starting", "Processing", "Completed", "Failed"
+  statusType = STATUS_TYPES.IDLE, // Status type for color/behavior
+  statusText = "Ready", // Display text
   progress = 0, // 0-100
   isDownloadMode = false,
   onDownload,
@@ -17,40 +18,7 @@ export default function ButtonProgress({
   error = null // Error message to display
 }) {
   const { container: sizeClass, label: labelSizeClass } = getSizeClasses(size);
-
-  const getProgressColor = () => {
-    switch (status) {
-      case "Generating the map...":
-      case "Map generation started...":
-        return "bg-blue-500";
-      case "Completed":
-      case "Preparing download":
-      case "Preparing download...":
-      case "Map generation completed":
-        return "bg-green-500";
-      case "Failed":
-        return "bg-red-500";
-      default:
-        return "bg-gray-300";
-    }
-  };
-
-  const getProgressColorHex = () => {
-    switch (status) {
-      case "Generating the map...":
-      case "Map generation started...":
-        return "rgb(59 130 246)"; // blue-500
-      case "Completed":
-      case "Preparing download":
-      case "Preparing download...":
-      case "Map generation completed":
-        return "rgb(34 197 94)"; // green-500
-      case "Failed":
-        return "rgb(239 68 68)"; // red-500
-      default:
-        return "rgb(209 213 219)"; // gray-300
-    }
-  };
+  const statusConfig = getStatusConfig(statusType);
 
   const getButtonColor = () => {
     if (disabled) return "bg-gray-400 dark:bg-gray-600";
@@ -96,7 +64,7 @@ export default function ButtonProgress({
           {/* Status and Progress Section */}
           <div className="flex-1 relative rounded-r-xl overflow-hidden" style={{
             background: progress > 0 
-              ? `linear-gradient(to right, ${getProgressColorHex()} 0%, ${getProgressColorHex()} ${Math.max(0, Math.min(100, progress))}%, transparent ${Math.max(0, Math.min(100, progress))}%, transparent 100%)`
+              ? `linear-gradient(to right, ${statusConfig.bgColorHex} 0%, ${statusConfig.bgColorHex} ${Math.max(0, Math.min(100, progress))}%, transparent ${Math.max(0, Math.min(100, progress))}%, transparent 100%)`
               : 'transparent'
           }}>
             {/* Content over progress */}
@@ -104,7 +72,7 @@ export default function ButtonProgress({
               <div className="flex items-center space-x-3">
                 {/* Status Text */}
                 <span className="text-sm text-gray-600 dark:text-gray-300 font-medium leading-tight">
-                  {status}
+                  {statusText}
                 </span>
                 
                 {/* Error Text */}

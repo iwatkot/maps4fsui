@@ -1,9 +1,11 @@
 import { useState, useCallback, useRef } from 'react';
 import { startMapGeneration, checkTaskStatus, downloadGeneratedMap } from '@/api/generation';
+import { STATUS_TYPES } from '@/config/statusConfig';
 import logger from '@/utils/logger';
 
 export function useMapGeneration() {
-  const [status, setStatus] = useState("Ready");
+  const [statusType, setStatusType] = useState(STATUS_TYPES.IDLE);
+  const [statusText, setStatusText] = useState("Ready");
   const [progress, setProgress] = useState(0);
   const [isDownloadMode, setIsDownloadMode] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -17,7 +19,8 @@ export function useMapGeneration() {
     if (isGenerating) return;
     
     setIsGenerating(true);
-    setStatus("Map generation started...");
+    setStatusType(STATUS_TYPES.PROCESSING);
+    setStatusText("Map generation started...");
     setProgress(5);
     setIsDownloadMode(false);
     setError(null);
@@ -25,7 +28,7 @@ export function useMapGeneration() {
 
     try {
       // Step 1: Start generation with real API
-      setStatus("Initializing");
+      setStatusText("Initializing");
       const startResult = await startMapGeneration(settings);
       
       if (!startResult.success) {
@@ -34,7 +37,7 @@ export function useMapGeneration() {
 
       const generationTaskId = startResult.taskId;
       setTaskId(generationTaskId);
-      setStatus("Generating the map...");
+      setStatusText("Generating the map...");
       setProgress(10);
 
       // Step 2: Poll task status every 10 seconds
@@ -47,7 +50,8 @@ export function useMapGeneration() {
           
           if (statusResult.status === 'failed') {
             clearInterval(intervalRef.current);
-            setStatus("Failed");
+            setStatusType(STATUS_TYPES.ERROR);
+            setStatusText("Failed");
             setError(statusResult.error);
             setProgress(0);
             setIsGenerating(false);
@@ -59,12 +63,12 @@ export function useMapGeneration() {
             if (currentProgress < 50) {
               currentProgress = Math.min(currentProgress + Math.random() * 8 + 2, 50);
               setProgress(currentProgress);
-              setStatus("In queue");
+              setStatusText("In queue");
             }
           } else if (statusResult.status === 'processing') {
             // Task is being processed - allow progress up to 90%
             hasStartedProcessing = true;
-            setStatus("Generating the map...");
+            setStatusText("Generating the map...");
             if (currentProgress < 90) {
               currentProgress = Math.min(currentProgress + Math.random() * 10 + 5, 90);
               setProgress(currentProgress);
@@ -73,7 +77,8 @@ export function useMapGeneration() {
             // Task completed successfully
             clearInterval(intervalRef.current);
             setProgress(100); // Show 100% immediately
-            setStatus("Map generation completed");
+            setStatusType(STATUS_TYPES.SUCCESS);
+            setStatusText("Map generation completed");
             setIsGenerating(false);
             setIsDownloadMode(true); // Enable download immediately
           }
@@ -85,7 +90,8 @@ export function useMapGeneration() {
 
     } catch (error) {
       logger.error('Generation start failed:', error.message);
-      setStatus("Failed");
+      setStatusType(STATUS_TYPES.ERROR);
+      setStatusText("Failed");
       setError(error.message);
       setProgress(0);
       setIsGenerating(false);
@@ -104,7 +110,8 @@ export function useMapGeneration() {
       
       // Reset to ready state after download
       setTimeout(() => {
-        setStatus("Ready");
+        setStatusType(STATUS_TYPES.IDLE);
+        setStatusText("Ready");
         setProgress(0);
         setIsDownloadMode(false);
         setIsGenerating(false);
@@ -126,7 +133,8 @@ export function useMapGeneration() {
       clearTimeout(timeoutRef.current);
     }
     
-    setStatus("Ready");
+    setStatusType(STATUS_TYPES.IDLE);
+    setStatusText("Ready");
     setProgress(0);
     setIsDownloadMode(false);
     setIsGenerating(false);
@@ -145,7 +153,8 @@ export function useMapGeneration() {
   }, []);
 
   return {
-    status,
+    statusType,
+    statusText,
     progress,
     isDownloadMode,
     isGenerating,

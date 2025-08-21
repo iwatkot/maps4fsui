@@ -48,9 +48,10 @@ export default function Home() {
   // Get DEM settings content and values
   const { content: demContent, values: demValues } = demSettingsContent();
 
-    // Map generation state
+      // Map generation state
   const {
-    status,
+    statusType,
+    statusText,
     progress,
     isDownloadMode,
     isGenerating,
@@ -65,11 +66,11 @@ export default function Home() {
   const isGenerateEnabled = validateCoordinates(coordinatesInput) && !isGenerating;
 
   // Compute display status based on form state
-  const displayStatus = !isGenerateEnabled && status === "Ready" 
+  const displayStatusText = !isGenerateEnabled && statusText === "Ready" 
     ? "Enter valid coordinates, check the settings and click Generate map."
-    : status === "Ready" && isGenerateEnabled 
+    : statusText === "Ready" && isGenerateEnabled 
     ? "Click Generate map to start the generation process."
-    : status;
+    : statusText;
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 flex">
@@ -192,7 +193,8 @@ export default function Home() {
           }}
           onDownload={downloadMap}
           disabled={!isGenerateEnabled}
-          status={displayStatus}
+          statusType={statusType}
+          statusText={displayStatusText}
           progress={progress}
           isDownloadMode={isDownloadMode}
           error={error}
