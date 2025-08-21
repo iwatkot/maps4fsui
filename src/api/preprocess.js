@@ -30,7 +30,7 @@ const toSnakeCase = (str) => {
  *   const output = objectToSnakeCase(input);
  *   console.log(output); // { add_foundations: true } // Falsy values are skipped.
  */
-const objectToSnakeCase = (obj, skipFalsy = true) => {
+export const objectToSnakeCase = (obj, skipFalsy = true) => {
   const newObj = {};
   for (const key in obj) {
     const snakeKey = toSnakeCase(key);

@@ -181,7 +181,6 @@ export default function Home() {
               outputSize: null, // Will be set later if needed
               ...demValues // Include DEM settings
             };
-            console.log('Starting generation with settings:', settings);
             startGeneration(settings);
           }}
           onDownload={downloadMap}

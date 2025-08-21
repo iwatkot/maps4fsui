@@ -84,7 +84,7 @@ export function useMapGeneration() {
           console.error('Error checking task status:', error);
           // Continue polling unless it's a critical error
         }
-      }, 10000); // Poll every 10 seconds
+      }, 3000); // Poll every 3 seconds
 
     } catch (error) {
       console.error('Generation start failed:', error);

@@ -147,35 +147,6 @@ class ApiService {
 }
 
 /**
- * Convert object keys from camelCase to snake_case
- * @param {object} obj - Object to convert
- * @returns {object} - Object with snake_case keys
- */
-export function objectToSnakeCase(obj) {
-  if (obj === null || obj === undefined) {
-    return obj;
-  }
-  
-  if (Array.isArray(obj)) {
-    return obj.map(objectToSnakeCase);
-  }
-  
-  if (typeof obj !== 'object') {
-    return obj;
-  }
-  
-  const converted = {};
-  for (const [key, value] of Object.entries(obj)) {
-    // Convert camelCase to snake_case
-    const snakeKey = key.replace(/([A-Z])/g, '_$1').toLowerCase();
-    converted[snakeKey] = typeof value === 'object' && value !== null ? 
-      objectToSnakeCase(value) : value;
-  }
-  
-  return converted;
-}
-
-/**
  * Custom error class for API errors
  */
 class ApiError extends Error {
