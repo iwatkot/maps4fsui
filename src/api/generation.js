@@ -126,30 +126,67 @@ export async function checkTaskStatus(taskId) {
 }
 
 /**
- * Download generated map file (placeholder for next step)
+ * Download generated map file from completed task
  * @param {string} taskId - Task ID
  * @returns {Promise<Object>} - Download response
  */
 export async function downloadGeneratedMap(taskId) {
-  logger.info(`Starting download for task: ${taskId}`);
+  logger.info(`Downloading generated map for task: ${taskId}`);
   
-  // TODO: Implement actual download logic
-  logger.warn('Using placeholder download - will be implemented in next step');
-  
-  // For now, download the placeholder file
-  const link = document.createElement('a');
-  link.href = '/next.svg';
-  link.download = `generated-map-${taskId}.svg`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  
-  logger.info('Placeholder file downloaded successfully');
-  
-  return {
-    success: true,
-    message: 'File downloaded successfully'
-  };
+  try {
+    const response = await fetch(`${API_BASE_URL}/task/get`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ task_id: taskId }),
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.detail || `Download failed with status ${response.status}`);
+    }
+    
+    logger.info('File received from API, starting download');
+    
+    // Get the filename from Content-Disposition header or use a default
+    const contentDisposition = response.headers.get('Content-Disposition');
+    let filename = `generated-map-${taskId}.zip`; // Default filename
+    
+    if (contentDisposition) {
+      const filenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+      if (filenameMatch) {
+        filename = filenameMatch[1];
+      }
+    }
+    
+    // Get the file as a blob
+    const blob = await response.blob();
+    
+    // Create download link and trigger download
+    const link = document.createElement('a');
+    const url = window.URL.createObjectURL(blob);
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    
+    // Cleanup
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+    
+    logger.info(`File downloaded successfully: ${filename}`);
+    
+    return {
+      success: true,
+      message: `File downloaded successfully: ${filename}`,
+      filename: filename
+    };
+    
+  } catch (error) {
+    logger.error('Download failed:', error.message);
+    throw error; // Re-throw so the hook can handle it
+  }
 }
 
 export async function generateMap(data) {}

@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { startMapGeneration, checkTaskStatus, downloadGeneratedMap } from '@/api/generation';
+import logger from '@/utils/logger';
 
 export function useMapGeneration() {
   const [status, setStatus] = useState("Ready");
@@ -81,13 +82,13 @@ export function useMapGeneration() {
             }, 1500);
           }
         } catch (error) {
-          console.error('Error checking task status:', error);
+          logger.error('Error checking task status:', error.message);
           // Continue polling unless it's a critical error
         }
       }, 3000); // Poll every 3 seconds
 
     } catch (error) {
-      console.error('Generation start failed:', error);
+      logger.error('Generation start failed:', error.message);
       setStatus("Failed");
       setError(error.message);
       setProgress(0);
@@ -98,7 +99,7 @@ export function useMapGeneration() {
   // Download the generated file
   const downloadMap = useCallback(async () => {
     if (!taskId) {
-      console.error('No task ID available for download');
+      logger.error('No task ID available for download');
       return;
     }
 
@@ -115,7 +116,7 @@ export function useMapGeneration() {
         setTaskId(null);
       }, 1000);
     } catch (error) {
-      console.error('Download failed:', error);
+      logger.error('Download failed:', error.message);
       setError(`Download failed: ${error.message}`);
     }
   }, [taskId]);
