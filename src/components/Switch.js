@@ -53,10 +53,10 @@ export default function Switch({
                 rounded-full
                 transition-all duration-200 ease-in-out
                 focus:outline-none
-                ${size === 'sm' ? 'h-7' : size === 'lg' ? 'h-9' : 'h-8'}
+                ${size === 'sm' ? 'h-8' : size === 'lg' ? 'h-9' : 'h-8'}
               `}
               style={{
-                width: size === 'sm' ? '64px' : size === 'lg' ? '80px' : '68px'
+                width: size === 'sm' ? '68px' : size === 'lg' ? '80px' : '68px'
               }}
               role="switch"
               aria-checked={checked}
