@@ -3,7 +3,7 @@
  * These functions use the centralized ApiService
  */
 
-import apiService, { ApiError } from '../utils/apiService';
+import apiService from '../utils/apiService';
 import logger from '../utils/logger';
 import { constraints } from '../config/formOptions';
 
@@ -81,6 +81,3 @@ export async function getDTMProviders(lat, lon) {
     throw error;
   }
 }
-
-// Export the ApiError for use in components
-export { ApiError };

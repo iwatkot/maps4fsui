@@ -1,22 +1,22 @@
 'use client';
 
 import { useState } from 'react';
-import Selector from '../components/Selector';
-import TextInput from '../components/TextInput';
-import NumberInput from '../components/NumberInput';
-import Slider from '../components/Slider';
-import ErrorDisplay from '../components/ErrorDisplay';
-import MapWidget from '../components/MapWidget';
-import { validateCoordinates } from '../api/dtm';
-import { useDTMProviders } from '../hooks/useDTMProviders';
-import config from './config';
-import logger from '../utils/logger';
+import Selector from '@/components/Selector';
+import TextInput from '@/components/TextInput';
+import NumberInput from '@/components/NumberInput';
+import Slider from '@/components/Slider';
+import ErrorDisplay from '@/components/ErrorDisplay';
+import MapWidget from '@/components/MapWidget';
+import { validateCoordinates } from '@/api/dtm';
+import { useDTMProviders } from '@/hooks/useDTMProviders';
+import config from '@/app/config';
+import logger from '@/utils/logger';
 import { 
   gameOptions, 
   createSizeOptions, 
   defaultValues, 
-} from '../config/formOptions';
-import demSettingsContent from './settings/demSettings';
+} from '@/config/formOptions';
+import demSettingsContent from '@/app/settings/demSettings';
 
 const isPublicVersion = config.isPublicVersion;
 const backendUrl = config.backendUrl;
