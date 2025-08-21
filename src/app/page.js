@@ -176,10 +176,6 @@ export default function Home() {
           progress={progress}
           isDownloadMode={isDownloadMode}
           labelWidth='w-40'
-          tooltip={isGenerateEnabled 
-            ? "Generate map with current settings" 
-            : "Enter valid coordinates to enable map generation"
-          }
           size="sm"
         />
       </div>

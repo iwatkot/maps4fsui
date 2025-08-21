@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import InfoIcon from './InfoIcon';
 import { getSizeClasses } from './componentSizes';
 
 export default function ButtonProgress({ 
@@ -14,8 +13,6 @@ export default function ButtonProgress({
   isDownloadMode = false,
   onDownload,
   labelWidth = "auto",
-  tooltip = null,
-  showTooltip = true,
   size = "md"
 }) {
   const { container: sizeClass, label: labelSizeClass } = getSizeClasses(size);
@@ -29,7 +26,20 @@ export default function ButtonProgress({
       case "Failed":
         return "bg-red-500";
       default:
-        return "bg-gray-300 dark:bg-gray-600";
+        return "bg-gray-300";
+    }
+  };
+
+  const getProgressColorHex = () => {
+    switch (status) {
+      case "Processing":
+        return "rgb(59 130 246)"; // blue-500
+      case "Completed":
+        return "rgb(34 197 94)"; // green-500
+      case "Failed":
+        return "rgb(239 68 68)"; // red-500
+      default:
+        return "rgb(209 213 219)"; // gray-300
     }
   };
 
@@ -75,18 +85,13 @@ export default function ButtonProgress({
           </button>
           
           {/* Status and Progress Section */}
-          <div className="flex-1 relative flex items-center overflow-hidden rounded-r-xl">
-            {/* Progress Background Fill - Full Height */}
-            <div 
-              className={`absolute top-0 left-0 bottom-0 ${getProgressColor()} transition-all duration-500 ease-out`}
-              style={{ 
-                width: `${Math.max(0, Math.min(100, progress))}%`,
-                opacity: progress > 0 ? 0.3 : 0
-              }}
-            />
-            
-            {/* Content over progress - Full Height */}
-            <div className="relative w-full h-full px-4 flex items-center justify-between">
+          <div className="flex-1 relative rounded-r-xl overflow-hidden" style={{
+            background: progress > 0 
+              ? `linear-gradient(to right, ${getProgressColorHex()} 0%, ${getProgressColorHex()} ${Math.max(0, Math.min(100, progress))}%, transparent ${Math.max(0, Math.min(100, progress))}%, transparent 100%)`
+              : 'transparent'
+          }}>
+            {/* Content over progress */}
+            <div className="relative w-full h-full px-4 flex items-center">
               <div className="flex items-center space-x-3">
                 {/* Status Text */}
                 <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">
@@ -100,9 +105,6 @@ export default function ButtonProgress({
                   </span>
                 )}
               </div>
-              
-              {/* Tooltip Icon */}
-              <InfoIcon tooltip={tooltip} showTooltip={showTooltip} />
             </div>
           </div>
         </div>
