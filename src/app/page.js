@@ -16,6 +16,8 @@ import {
   createSizeOptions, 
   defaultValues, 
 } from '@/config/validation';
+import ButtonProgress from '@/components/ButtonProgress';
+import { useMapGeneration } from '@/hooks/useMapGeneration';
 import demSettingsContent from '@/app/settings/demSettings';
 
 const isPublicVersion = config.isPublicVersion;
@@ -45,6 +47,21 @@ export default function Home() {
   
   // Get DEM settings content and values
   const { content: demContent, values: demValues } = demSettingsContent();
+
+  // Map generation state
+  const {
+    status,
+    progress,
+    isDownloadMode,
+    isGenerating,
+    startGeneration,
+    downloadMap,
+    resetGeneration,
+    cleanup
+  } = useMapGeneration();
+
+  // Check if generate button should be enabled
+  const isGenerateEnabled = validateCoordinates(coordinatesInput) && !isGenerating;
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900 flex">
@@ -147,6 +164,24 @@ export default function Home() {
           size="sm"
         />
         {demContent}
+
+        {/* Generate/Download Button */}
+        <ButtonProgress
+          label="Generate"
+          downloadLabel="Download"
+          onClick={startGeneration}
+          onDownload={downloadMap}
+          disabled={!isGenerateEnabled}
+          status={status}
+          progress={progress}
+          isDownloadMode={isDownloadMode}
+          labelWidth='w-40'
+          tooltip={isGenerateEnabled 
+            ? "Generate map with current settings" 
+            : "Enter valid coordinates to enable map generation"
+          }
+          size="sm"
+        />
       </div>
 
       {/* Right Panel */}
