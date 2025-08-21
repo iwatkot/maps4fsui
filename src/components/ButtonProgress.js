@@ -52,7 +52,7 @@ export default function ButtonProgress({
   return (
     <div className="mb-6">
       <div className="relative">
-        <div className={`gradient-surface interactive-shadow focus-ring w-full text-left flex items-center group ${sizeClass}`}>
+        <div className={`gradient-surface interactive-shadow focus-ring w-full text-left flex items-stretch group ${sizeClass}`}>
           {/* Button Section */}
           <button
             onClick={handleClick}
@@ -75,32 +75,35 @@ export default function ButtonProgress({
           </button>
           
           {/* Status and Progress Section */}
-          <div className="flex-1 relative flex items-center px-4">
-            <div className="flex-1 flex items-center space-x-3">
-              {/* Status Text */}
-              <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">
-                {status}
-              </span>
-              
-              {/* Progress Bar */}
-              <div className="flex-1 relative">
-                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2 overflow-hidden">
-                  <div 
-                    className={`h-full ${getProgressColor()} transition-all duration-300 ease-out`}
-                    style={{ width: `${Math.max(0, Math.min(100, progress))}%` }}
-                  />
-                </div>
+          <div className="flex-1 relative flex items-center overflow-hidden rounded-r-xl">
+            {/* Progress Background Fill - Full Height */}
+            <div 
+              className={`absolute top-0 left-0 bottom-0 ${getProgressColor()} transition-all duration-500 ease-out`}
+              style={{ 
+                width: `${Math.max(0, Math.min(100, progress))}%`,
+                opacity: progress > 0 ? 0.3 : 0
+              }}
+            />
+            
+            {/* Content over progress - Full Height */}
+            <div className="relative w-full h-full px-4 flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                {/* Status Text */}
+                <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">
+                  {status}
+                </span>
+                
                 {/* Progress Text */}
                 {progress > 0 && (
-                  <span className="absolute right-0 top-3 text-xs text-gray-500 dark:text-gray-400">
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
                     {Math.round(progress)}%
                   </span>
                 )}
               </div>
+              
+              {/* Tooltip Icon */}
+              <InfoIcon tooltip={tooltip} showTooltip={showTooltip} />
             </div>
-            
-            {/* Tooltip Icon */}
-            <InfoIcon tooltip={tooltip} showTooltip={showTooltip} />
           </div>
         </div>
       </div>
