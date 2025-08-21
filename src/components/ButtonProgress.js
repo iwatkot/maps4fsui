@@ -23,6 +23,8 @@ export default function ButtonProgress({
       case "Processing":
         return "bg-blue-500";
       case "Completed":
+      case "Preparing download":
+      case "Map generation completed":
         return "bg-green-500";
       case "Failed":
         return "bg-red-500";
@@ -36,6 +38,8 @@ export default function ButtonProgress({
       case "Processing":
         return "rgb(59 130 246)"; // blue-500
       case "Completed":
+      case "Preparing download":
+      case "Map generation completed":
         return "rgb(34 197 94)"; // green-500
       case "Failed":
         return "rgb(239 68 68)"; // red-500
@@ -98,13 +102,6 @@ export default function ButtonProgress({
                 <span className="text-sm text-gray-600 dark:text-gray-300 font-medium">
                   {status}
                 </span>
-                
-                {/* Progress Text */}
-                {progress > 0 && !error && (
-                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                    {Math.round(progress)}%
-                  </span>
-                )}
                 
                 {/* Error Text */}
                 {error && (

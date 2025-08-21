@@ -72,12 +72,14 @@ export function useMapGeneration() {
           } else if (statusResult.status === 'completed') {
             // Task completed successfully
             clearInterval(intervalRef.current);
-            setProgress(100);
-            setStatus("Completed");
+            setProgress(90); // Keep at 90% until download is ready
+            setStatus("Preparing download");
             setIsGenerating(false);
             
             // Switch to download mode after a brief delay
             timeoutRef.current = setTimeout(() => {
+              setProgress(100); // Now show 100% when download is ready
+              setStatus("Map generation completed");
               setIsDownloadMode(true);
             }, 1500);
           }
