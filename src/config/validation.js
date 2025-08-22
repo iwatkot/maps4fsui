@@ -63,6 +63,12 @@ export const defaultValues = {
   treeLimit: 0,
   treesRelativeShift: 20,
   splineDensity: 2,
+  // Texture Settings.
+  fieldsPadding: 0,
+  dissolve: false,
+  skipDrains: false,
+  useCache: true,
+  usePreciseTags: false,
 };
 
 // Validation constraints
@@ -116,7 +122,12 @@ export const constraints = {
   treeLimit: {
     min: 0,
     max: 100000,
-  }
+  },
+  // Texture settings.
+  fieldsPadding: {
+    min: 0,
+    max: 30,
+  },
 };
 
 // Helper function to create size options based on version

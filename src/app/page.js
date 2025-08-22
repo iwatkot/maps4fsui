@@ -23,6 +23,7 @@ import demSettingsContent from '@/app/settings/demSettings';
 import backgroundSettingsContent from '@/app/settings/backgroundSettings';
 import grleSettingsContent from '@/app/settings/grleSettings';
 import i3dSettingsContent from '@/app/settings/i3dSettings';
+import textureSettingsContent from '@/app/settings/textureSettings';
 
 const isPublicVersion = config.isPublicVersion;
 const backendUrl = config.backendUrl;
@@ -56,6 +57,7 @@ export default function Home() {
   const { content: backgroundContent, values: backgroundValues } = backgroundSettingsContent(!onlyPopularSettings, config.isPublicVersion);
   const { content: grleContent, values: grleValues } = grleSettingsContent(!onlyPopularSettings);
   const { content: i3dContent, values: i3dValues } = i3dSettingsContent(!onlyPopularSettings);
+  const { content: textureContent, values: textureValues } = textureSettingsContent(!onlyPopularSettings, config.isPublicVersion);
 
       // Map generation state
   const {
@@ -193,6 +195,7 @@ export default function Home() {
         {backgroundContent}
         {grleContent}
         {i3dContent}
+        {textureContent}
 
         {/* Generate/Download Button */}
         <ButtonProgress
@@ -214,6 +217,7 @@ export default function Home() {
                 background_settings: backgroundValues,
                 i3d_settings: i3dValues,
                 grle_settings: grleValues,
+                texture_settings: textureValues,
               },
             };
             startGeneration(settings);
