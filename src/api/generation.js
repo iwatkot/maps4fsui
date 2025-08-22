@@ -2,8 +2,6 @@ import apiService from '@/utils/apiService';
 import { preprocessMainSettings, objectToSnakeCase } from '@/api/preprocess';
 import logger from '@/utils/logger';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000';
-
 /**
  * Start map generation process
  * @param {Object} settings - Main settings from the UI
@@ -23,21 +21,8 @@ export async function startMapGeneration(settings) {
     
     logger.info('Sending generation request to /map/generate');
     
-    // Step 3: Send to /map/generate endpoint
-    const response = await fetch(`${API_BASE_URL}/map/generate`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-    });
-    
-    const data = await response.json();
-    
-    if (!response.ok) {
-      logger.error(`Generation request failed: ${data.detail || response.statusText}`);
-      throw new Error(data.detail || `HTTP error! status: ${response.status}`);
-    }
+    // Step 3: Send to /map/generate endpoint using apiService
+    const data = await apiService.post('/map/generate', payload);
     
     logger.info(`Generation started successfully with task ID: ${data.task_id}`);
     
@@ -65,13 +50,8 @@ export async function checkTaskStatus(taskId) {
   try {
     logger.debug(`Checking task status for: ${taskId}`);
     
-    const response = await fetch(`${API_BASE_URL}/task/status`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ task_id: taskId }),
-    });
+    // Use apiService raw response to handle special status codes
+    const response = await apiService.postRaw('/task/status', { task_id: taskId });
     
     logger.debug(`Task status response: ${response.status} ${response.statusText}`);
     
@@ -134,54 +114,8 @@ export async function downloadGeneratedMap(taskId) {
   logger.info(`Downloading generated map for task: ${taskId}`);
   
   try {
-    const response = await fetch(`${API_BASE_URL}/task/get`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ task_id: taskId }),
-    });
-    
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.detail || `Download failed with status ${response.status}`);
-    }
-    
-    logger.info('File received from API, starting download');
-    
-    // Get the filename from Content-Disposition header or use a simple default
-    const contentDisposition = response.headers.get('Content-Disposition');
-    let filename = `${taskId}.zip`; // Simple default filename without prefix
-    
-    if (contentDisposition) {
-      const filenameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
-      if (filenameMatch) {
-        filename = filenameMatch[1];
-      }
-    }
-    
-    // Get the file as a blob
-    const blob = await response.blob();
-    
-    // Create download link and trigger download
-    const link = document.createElement('a');
-    const url = window.URL.createObjectURL(blob);
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    
-    // Cleanup
-    document.body.removeChild(link);
-    window.URL.revokeObjectURL(url);
-    
-    logger.info(`File downloaded successfully: ${filename}`);
-    
-    return {
-      success: true,
-      message: `File downloaded successfully: ${filename}`,
-      filename: filename
-    };
+    // Use apiService's new downloadFile method
+    return await apiService.downloadFile('/task/get', { task_id: taskId }, `${taskId}.zip`);
     
   } catch (error) {
     logger.error('Download failed:', error.message);
