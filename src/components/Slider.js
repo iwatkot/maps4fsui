@@ -16,7 +16,8 @@ export default function Slider({
   labelWidth = "auto",
   tooltip = null,
   showTooltip = true,
-  size = "md"  // "sm", "md", "lg" - controls component height
+  size = "md",  // "sm", "md", "lg" - controls component height
+  defaultValue = 0  // Default value for reset functionality
 }) {
   const [isInputMode, setIsInputMode] = useState(false);
   const [inputValue, setInputValue] = useState(value.toString());
@@ -42,6 +43,10 @@ export default function Slider({
       setInputValue(value.toString());
     }
     setIsInputMode(!isInputMode);
+  };
+
+  const handleReset = () => {
+    onChange(defaultValue);
   };
 
   const handleInputChange = (e) => {
@@ -88,6 +93,13 @@ export default function Slider({
           <div className="flex-1 relative flex items-center px-4">
             {!isInputMode ? (
               <>
+                {/* Value Display - Moved to left */}
+                <div className="flex items-center space-x-2 mr-4">
+                  <span className="text-sm font-medium text-gray-900 dark:text-white min-w-0">
+                    {value}{unit}
+                  </span>
+                </div>
+
                 {/* Slider */}
                 <div className="flex-1 relative mr-4">
                   <input
@@ -105,12 +117,20 @@ export default function Slider({
                   />
                 </div>
                 
-                {/* Value Display */}
-                <div className="flex items-center space-x-2">
-                                    {/* Value Display */}
-                  <span className="text-sm font-medium text-gray-900 dark:text-white min-w-0">
-                    {value}
-                  </span>
+                {/* Action Buttons */}
+                <div className="flex items-center space-x-1">
+                  {/* Reset Button */}
+                  <button
+                    type="button"
+                    onClick={handleReset}
+                    className="w-8 h-8 flex items-center justify-center rounded border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    title={`Reset to ${defaultValue}`}
+                    disabled={value === defaultValue}
+                  >
+                    <svg className="w-4 h-4 text-gray-600 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                  </button>
                   
                   {/* Edit Button */}
                   <button
