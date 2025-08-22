@@ -56,7 +56,13 @@ export const defaultValues = {
   randomPlants: true,
   baseGrass: "smallDenseMix",
   addFarmyards: false,
-  basePrice: 60000
+  basePrice: 60000,
+  // I3D Settings.
+  addTrees: true,
+  forestDensity: 10,
+  treeLimit: 0,
+  treesRelativeShift: 20,
+  splineDensity: 2,
 };
 
 // Validation constraints
@@ -101,6 +107,15 @@ export const constraints = {
   basePrice: {
     min: 0,
     max: 1000000,
+  },
+  // I3D settings.
+  forestDensity: {
+    min: 0,
+    max: 100,
+  },
+  treeLimit: {
+    min: 0,
+    max: 100000,
   }
 };
 

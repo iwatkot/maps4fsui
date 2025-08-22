@@ -12,13 +12,19 @@ export async function startMapGeneration(settings) {
     logger.info('Starting map generation process');
     
     // Step 1: Preprocess main settings (camelCase)
-    logger.debug('Preprocessing settings');
-    const processedSettings = await preprocessMainSettings(settings);
+    const mainSettings = settings.mainSettings;
+    const generationSettings = settings.generationSettings;
+    const processedMainSettings = await preprocessMainSettings(mainSettings);
     
     // Step 2: Convert to snake_case for API
     logger.debug('Converting to snake_case for API');
-    const payload = objectToSnakeCase(processedSettings);
-    
+    const payload = objectToSnakeCase(processedMainSettings);
+    for (const [key, value] of Object.entries(generationSettings)) {
+      const sectionSettings = value;
+      const processedSectionSettings = objectToSnakeCase(sectionSettings);
+      payload[key] = processedSectionSettings;
+    }
+
     logger.info('Sending generation request to /map/generate');
     
     // Step 3: Send to /map/generate endpoint using apiService

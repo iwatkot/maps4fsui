@@ -22,6 +22,7 @@ import { useMapGeneration } from '@/hooks/useMapGeneration';
 import demSettingsContent from '@/app/settings/demSettings';
 import backgroundSettingsContent from '@/app/settings/backgroundSettings';
 import grleSettingsContent from '@/app/settings/grleSettings';
+import i3dSettingsContent from '@/app/settings/i3dSettings';
 
 const isPublicVersion = config.isPublicVersion;
 const backendUrl = config.backendUrl;
@@ -54,6 +55,7 @@ export default function Home() {
   const { content: demContent, values: demValues } = demSettingsContent(!onlyPopularSettings);
   const { content: backgroundContent, values: backgroundValues } = backgroundSettingsContent(!onlyPopularSettings);
   const { content: grleContent, values: grleValues } = grleSettingsContent(!onlyPopularSettings);
+  const { content: i3dContent, values: i3dValues } = i3dSettingsContent(!onlyPopularSettings);
 
       // Map generation state
   const {
@@ -190,6 +192,7 @@ export default function Home() {
         {demContent}
         {backgroundContent}
         {grleContent}
+        {i3dContent}
 
         {/* Generate/Download Button */}
         <ButtonProgress
@@ -198,13 +201,20 @@ export default function Home() {
           onClick={() => {
             // Collect all form data
             const settings = {
-              gameCode: selectedGame,
-              coordinates: coordinatesInput,
-              dtmCode: selectedDTMProvider,
-              size: selectedSize === "custom" ? customSize : selectedSize,
-              rotation: rotation,
-              outputSize: null, // Will be set later if needed
-              ...demValues // Include DEM settings
+              mainSettings: {
+                gameCode: selectedGame,
+                coordinates: coordinatesInput,
+                dtmCode: selectedDTMProvider,
+                size: selectedSize === "custom" ? customSize : selectedSize,
+                rotation: rotation,
+                outputSize: null, // Will be set later if needed
+              },
+              generationSettings: {
+                dem_settings: demValues,
+                background_settings: backgroundValues,
+                i3d_settings: i3dValues,
+                grle_settings: grleValues,
+              },
             };
             startGeneration(settings);
           }}

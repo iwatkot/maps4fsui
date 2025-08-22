@@ -82,6 +82,7 @@ export default function backgroundSettingsContent(showAll = false, onPublic = fa
                         labelWidth='w-40'
                         tooltip="Enable this option to flatten the terrain under the roads, making them more drivable."
                         size="sm"
+                        disabled={onPublic}
                     />
                     <Switch
                         label="Flatten Water"
