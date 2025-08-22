@@ -7,7 +7,7 @@ import {
     constraints
 } from '@/config/validation';
 
-export default function i3dSettingsContent(showAll = false, onPublic = false){
+export default function I3dSettingsContent(showAll = false, onPublic = false){
     const [addTrees, setAddTrees] = useState(defaultValues.addTrees);
     const addTreesSummary = addTrees ? " │ Add trees" : "";
     const [forestDensity, setForestDensity] = useState(defaultValues.forestDensity);

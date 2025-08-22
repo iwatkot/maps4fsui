@@ -7,7 +7,7 @@ import {
     constraints
 } from '@/config/validation';
 
-export default function textureSettingsContent(showAll = false, onPublic = false){
+export default function TextureSettingsContent(showAll = false, onPublic = false){
     const [fieldsPadding, setFieldsPadding] = useState(defaultValues.fieldsPadding);
     const [dissolve, setDissolve] = useState(defaultValues.dissolve);
     const dissolveSummary = dissolve ? " │ Dissolve" : "";

@@ -61,7 +61,7 @@ export const useDTMProviders = (coordinatesInput) => {
       setDtmOptions([defaultDTMOption]);
       setSelectedDTMProvider(defaultDTMOption.value);
     }
-  }, [coordinatesInput, fetchDTMProviders]);
+  }, [coordinatesInput, fetchDTMProviders, selectedDTMProvider]);
 
   return {
     dtmOptions,

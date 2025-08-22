@@ -19,12 +19,12 @@ import {
 } from '@/config/validation';
 import ButtonProgress from '@/components/ButtonProgress';
 import { useMapGeneration } from '@/hooks/useMapGeneration';
-import demSettingsContent from '@/app/settings/demSettings';
-import backgroundSettingsContent from '@/app/settings/backgroundSettings';
-import grleSettingsContent from '@/app/settings/grleSettings';
-import i3dSettingsContent from '@/app/settings/i3dSettings';
-import textureSettingsContent from '@/app/settings/textureSettings';
-import satelliteSettingsContent from '@/app/settings/satelliteSettings';
+import DemSettingsContent from '@/app/settings/demSettings';
+import BackgroundSettingsContent from '@/app/settings/backgroundSettings';
+import GrleSettingsContent from '@/app/settings/grleSettings';
+import I3dSettingsContent from '@/app/settings/i3dSettings';
+import TextureSettingsContent from '@/app/settings/textureSettings';
+import SatelliteSettingsContent from '@/app/settings/satelliteSettings';
 
 const isPublicVersion = config.isPublicVersion;
 const backendUrl = config.backendUrl;
@@ -54,12 +54,12 @@ export default function Home() {
   const sizeOptions = createSizeOptions(isPublicVersion);
   
   // Get settings content and values.
-  const { content: demContent, values: demValues } = demSettingsContent(!onlyPopularSettings);
-  const { content: backgroundContent, values: backgroundValues } = backgroundSettingsContent(!onlyPopularSettings, config.isPublicVersion);
-  const { content: grleContent, values: grleValues } = grleSettingsContent(!onlyPopularSettings);
-  const { content: i3dContent, values: i3dValues } = i3dSettingsContent(!onlyPopularSettings);
-  const { content: textureContent, values: textureValues } = textureSettingsContent(!onlyPopularSettings, config.isPublicVersion);
-  const { content: satelliteContent, values: satelliteValues } = satelliteSettingsContent(!onlyPopularSettings, config.isPublicVersion);
+  const { content: demContent, values: demValues } = DemSettingsContent(!onlyPopularSettings);
+  const { content: backgroundContent, values: backgroundValues } = BackgroundSettingsContent(!onlyPopularSettings, config.isPublicVersion);
+  const { content: grleContent, values: grleValues } = GrleSettingsContent(!onlyPopularSettings);
+  const { content: i3dContent, values: i3dValues } = I3dSettingsContent(!onlyPopularSettings);
+  const { content: textureContent, values: textureValues } = TextureSettingsContent(!onlyPopularSettings, config.isPublicVersion);
+  const { content: satelliteContent, values: satelliteValues } = SatelliteSettingsContent(!onlyPopularSettings, config.isPublicVersion);
 
       // Map generation state
   const {

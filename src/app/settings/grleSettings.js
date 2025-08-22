@@ -8,7 +8,7 @@ import {
     constraints
 } from '@/config/validation';
 
-export default function grleSettingsContent(showAll = false, onPublic = false){
+export default function GrleSettingsContent(showAll = false, onPublic = false){
     const [farmlandMargin, setFarmlandMargin] = useState(defaultValues.farmlandMargin);
     const [addGrass, setAddGrass] = useState(defaultValues.addGrass);
     const addGrassSummary = addGrass ? " │ Add grass" : "";

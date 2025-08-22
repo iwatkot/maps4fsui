@@ -7,7 +7,7 @@ import {
     constraints
 } from '@/config/validation';
 
-export default function satelliteSettingsContent(showAll = false, onPublic = false){
+export default function SatelliteSettingsContent(showAll = false, onPublic = false){
     const [downloadImages, setDownloadImages] = useState(defaultValues.downloadImages);
     const downloadImagesSummary = downloadImages ? "Download images     " : "";
     const [zoomLevel, setZoomLevel] = useState(defaultValues.zoomLevel);
