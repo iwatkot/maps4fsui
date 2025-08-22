@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { startMapGeneration, checkTaskStatus, downloadGeneratedMap } from '@/api/generation';
 import { STATUS_TYPES } from '@/config/statusConfig';
 import logger from '@/utils/logger';
@@ -7,12 +7,43 @@ export function useMapGeneration() {
   const [statusType, setStatusType] = useState(STATUS_TYPES.IDLE);
   const [statusText, setStatusText] = useState("Ready");
   const [progress, setProgress] = useState(0);
+  const [targetProgress, setTargetProgress] = useState(0); // Target for smooth animation
   const [isDownloadMode, setIsDownloadMode] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [error, setError] = useState(null);
   const [taskId, setTaskId] = useState(null);
   const intervalRef = useRef(null);
   const timeoutRef = useRef(null);
+  const animationRef = useRef(null);
+
+  // Smooth progress animation
+  useEffect(() => {
+    if (Math.abs(progress - targetProgress) < 0.2) return;
+
+    const animateProgress = () => {
+      setProgress(current => {
+        const diff = targetProgress - current;
+        if (Math.abs(diff) < 0.2) {
+          return targetProgress; // Close enough, snap to target
+        }
+        // Simple smooth movement - 8% closer each frame
+        return current + diff * 0.08;
+      });
+    };
+
+    const animate = () => {
+      animateProgress();
+      animationRef.current = requestAnimationFrame(animate);
+    };
+
+    animationRef.current = requestAnimationFrame(animate);
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, [targetProgress, progress]);
 
   // Start the generation process with real API
   const startGeneration = useCallback(async (settings) => {
@@ -21,7 +52,7 @@ export function useMapGeneration() {
     setIsGenerating(true);
     setStatusType(STATUS_TYPES.PROCESSING);
     setStatusText("Map generation started...");
-    setProgress(5);
+    setTargetProgress(5);
     setIsDownloadMode(false);
     setError(null);
     setTaskId(null);
@@ -38,11 +69,13 @@ export function useMapGeneration() {
       const generationTaskId = startResult.taskId;
       setTaskId(generationTaskId);
       setStatusText("Generating the map...");
-      setProgress(10);
+      setTargetProgress(10);
 
-      // Step 2: Poll task status every 10 seconds
-      let currentProgress = 10;
+      // Step 2: Poll task status every 3 seconds
+      let currentTargetProgress = 10;
       let hasStartedProcessing = false;
+      let queueTime = 0;
+      let processingTime = 0;
       
       intervalRef.current = setInterval(async () => {
         try {
@@ -53,34 +86,38 @@ export function useMapGeneration() {
             setStatusType(STATUS_TYPES.ERROR);
             setStatusText("Failed");
             setError(statusResult.error);
-            setProgress(0);
+            setTargetProgress(0);
             setIsGenerating(false);
             return;
           }
           
           if (statusResult.status === 'queued') {
-            // Task is still in queue - fake progress up to 50%
-            if (currentProgress < 50) {
-              currentProgress = Math.min(currentProgress + Math.random() * 8 + 2, 50);
-              setProgress(currentProgress);
-              setStatusText("In queue");
-            }
+            // Task is still in queue - smooth progress up to 45%
+            queueTime += 3; // 3 seconds per poll
+            const queueProgress = Math.min(10 + (queueTime / 2), 45); // Slower progress in queue
+            currentTargetProgress = queueProgress;
+            setTargetProgress(currentTargetProgress);
+            setStatusText("In queue");
           } else if (statusResult.status === 'processing') {
-            // Task is being processed - allow progress up to 90%
-            hasStartedProcessing = true;
-            setStatusText("Generating the map...");
-            if (currentProgress < 90) {
-              currentProgress = Math.min(currentProgress + Math.random() * 10 + 5, 90);
-              setProgress(currentProgress);
+            // Task is being processed - smooth progress up to 85%
+            if (!hasStartedProcessing) {
+              hasStartedProcessing = true;
+              currentTargetProgress = 50; // Jump to 50% when processing starts
             }
+            
+            processingTime += 3; // 3 seconds per poll
+            const processingProgress = Math.min(50 + (processingTime / 1.5), 85); // Faster progress when processing
+            currentTargetProgress = processingProgress;
+            setTargetProgress(currentTargetProgress);
+            setStatusText("Generating the map...");
           } else if (statusResult.status === 'completed') {
             // Task completed successfully
             clearInterval(intervalRef.current);
-            setProgress(100); // Show 100% immediately
+            setTargetProgress(100); // Animate to 100%
             setStatusType(STATUS_TYPES.SUCCESS);
             setStatusText("Map generation completed");
             setIsGenerating(false);
-            setIsDownloadMode(true); // Enable download immediately
+            setIsDownloadMode(true);
           }
         } catch (error) {
           logger.error('Error checking task status:', error.message);
@@ -93,7 +130,7 @@ export function useMapGeneration() {
       setStatusType(STATUS_TYPES.ERROR);
       setStatusText("Failed");
       setError(error.message);
-      setProgress(0);
+      setTargetProgress(0);
       setIsGenerating(false);
     }
   }, [isGenerating]);
@@ -113,6 +150,7 @@ export function useMapGeneration() {
         setStatusType(STATUS_TYPES.IDLE);
         setStatusText("Ready");
         setProgress(0);
+        setTargetProgress(0);
         setIsDownloadMode(false);
         setIsGenerating(false);
         setError(null);
@@ -136,6 +174,7 @@ export function useMapGeneration() {
     setStatusType(STATUS_TYPES.IDLE);
     setStatusText("Ready");
     setProgress(0);
+    setTargetProgress(0);
     setIsDownloadMode(false);
     setIsGenerating(false);
     setError(null);
