@@ -2,6 +2,7 @@
 
 import InfoIcon from './InfoIcon';
 import { getSizeClasses } from './componentSizes';
+import { useState } from 'react';
 
 export default function Switch({ 
   label, 
@@ -15,6 +16,7 @@ export default function Switch({
   disabledTooltip = null  // Simple tooltip when disabled
 }) {
   const { container: sizeClass, label: labelSizeClass } = getSizeClasses(size);
+  const [showDisabledTooltip, setShowDisabledTooltip] = useState(false);
 
   const handleToggle = () => {
     if (!disabled) {
@@ -26,7 +28,15 @@ export default function Switch({
     <div className="mb-6">
       <div className="relative">
         {/* Switch with integrated label - following exact pattern of other components */}
-        <div className={`gradient-surface interactive-shadow focus-ring w-full text-left flex items-center group ${sizeClass} ${disabled ? 'opacity-50' : ''}`}>
+        <div 
+          className={`gradient-surface interactive-shadow focus-ring w-full text-left flex items-center group ${sizeClass} ${disabled ? 'opacity-50' : ''}`}
+          onMouseEnter={() => disabled && disabledTooltip && setShowDisabledTooltip(true)}
+          onMouseLeave={() => setShowDisabledTooltip(false)}
+          style={{
+            // Force visible cursor to help debug
+            cursor: disabled && disabledTooltip ? 'not-allowed' : 'default'
+          }}
+        >
           {/* Label Section */}
           <div className={`px-4 border-r border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 flex items-center justify-between min-w-0 flex-shrink-0 rounded-l-xl ${labelSizeClass} ${labelWidth !== 'auto' ? labelWidth : ''}`}>
             <span className="font-medium text-gray-600 dark:text-gray-300 whitespace-nowrap">
@@ -80,6 +90,14 @@ export default function Switch({
             </button>
           </div>
         </div>
+
+        {/* Custom disabled tooltip */}
+        {showDisabledTooltip && disabled && disabledTooltip && (
+          <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 px-3 py-2 text-sm text-white bg-gray-900 rounded-lg shadow-lg z-50 whitespace-nowrap">
+            {disabledTooltip}
+            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-b-gray-900"></div>
+          </div>
+        )}
       </div>
     </div>
   );
