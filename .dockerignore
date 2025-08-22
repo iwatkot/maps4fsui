@@ -1,0 +1,23 @@
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+.next
+.env*.local
+
+# Build outputs
+out
+
+# Testing
+coverage
+
+# Misc
+.DS_Store
+*.tgz
+*.tar.gz
+
+# Development files
+README.md
+.git
+.gitignore
