@@ -39,15 +39,15 @@ export default function ButtonProgress({
   return (
     <div className="mb-6">
       <div className="relative">
-        <div className={`gradient-surface interactive-shadow focus-ring w-full text-left flex items-stretch group ${sizeClass}`}>
+        <div className={`gradient-surface interactive-shadow focus-ring w-full text-left flex items-stretch group rounded-xl overflow-hidden ${sizeClass}`}>
           {/* Button Section */}
           <button
             onClick={handleClick}
             disabled={disabled}
             className={`
-              px-4 border-r border-gray-200 dark:border-gray-600 
+              px-4 border-r-0
               ${getButtonColor()}
-              flex items-center justify-between min-w-0 flex-shrink-0 rounded-l-xl 
+              flex items-center justify-between min-w-0 flex-shrink-0
               ${labelSizeClass} 
               ${labelWidth !== 'auto' ? labelWidth : 'w-40'}
               text-white font-medium transition-colors
@@ -62,13 +62,20 @@ export default function ButtonProgress({
           </button>
           
           {/* Status and Progress Section */}
-          <div className="flex-1 relative rounded-r-xl overflow-hidden" style={{
-            background: progress > 0 
-              ? `linear-gradient(to right, ${statusConfig.bgColorHex} 0%, ${statusConfig.bgColorHex} ${Math.max(0, Math.min(100, progress))}%, transparent ${Math.max(0, Math.min(100, progress))}%, transparent 100%)`
-              : 'transparent'
-          }}>
-            {/* Content over progress */}
-            <div className="relative w-full h-full px-4 flex items-center">
+          <div className="flex-1 relative overflow-hidden">
+            {/* Progress Background - Full Width */}
+            <div 
+              className="absolute top-0 left-0 w-full h-full"
+              style={{
+                background: progress >= 100
+                  ? statusConfig.bgColorHex
+                  : progress > 0
+                    ? `linear-gradient(to right, ${statusConfig.bgColorHex} 0%, ${statusConfig.bgColorHex} ${progress + 0.5}%, transparent ${progress + 0.5}%)`
+                    : 'transparent'
+              }}
+            />
+            {/* Content Layer */}
+            <div className="relative z-10 w-full h-full px-4 flex items-center">
               <div className="flex items-center space-x-3">
                 {/* Status Text */}
                 <span className="text-sm text-gray-600 dark:text-gray-300 font-medium leading-tight">
@@ -88,7 +95,7 @@ export default function ButtonProgress({
       </div>
       
       {/* Error Message */}
-      {error && status === "Failed" && (
+      {error && statusType === STATUS_TYPES.ERROR && (
         <div className="mt-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
           <div className="flex items-start space-x-2">
             <div className="text-red-600 dark:text-red-400 text-sm">⚠️</div>
