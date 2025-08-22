@@ -11,7 +11,8 @@ export default function Switch({
   tooltip = null,
   showTooltip = true,
   size = "md",  // "sm", "md", "lg" - controls component height
-  disabled = false
+  disabled = false,
+  disabledTooltip = null  // Simple tooltip when disabled
 }) {
   const { container: sizeClass, label: labelSizeClass } = getSizeClasses(size);
 

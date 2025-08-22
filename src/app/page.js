@@ -53,7 +53,7 @@ export default function Home() {
   
   // Get settings content and values.
   const { content: demContent, values: demValues } = demSettingsContent(!onlyPopularSettings);
-  const { content: backgroundContent, values: backgroundValues } = backgroundSettingsContent(!onlyPopularSettings);
+  const { content: backgroundContent, values: backgroundValues } = backgroundSettingsContent(!onlyPopularSettings, config.isPublicVersion);
   const { content: grleContent, values: grleValues } = grleSettingsContent(!onlyPopularSettings);
   const { content: i3dContent, values: i3dValues } = i3dSettingsContent(!onlyPopularSettings);
 
