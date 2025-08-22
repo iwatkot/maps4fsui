@@ -7,7 +7,7 @@ import {
     constraints
 } from '@/config/validation';
 
-export default function demSettings(showAll = false, onPublic = false){
+export default function backgroundSettingsContent(showAll = false, onPublic = false){
     const [generateBackground, setGenerateBackground] = useState(defaultValues.generateBackground);
     const [generateWater, setGenerateWater] = useState(defaultValues.generateWater);
     const generateBackgroundSummary = generateBackground ? " │ Generate background" : "";

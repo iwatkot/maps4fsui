@@ -7,7 +7,7 @@ import {
   constraints 
 } from '../../config/validation';
 
-export default function demSettings(showAll = true){
+export default function demSettingsContent(showAll = true){
     const [blurRadius, setBlurRadius] = useState(defaultValues.blurRadius);
     const [waterDepth, setWaterDepth] = useState(defaultValues.waterDepth);
     const [addFoundations, setAddFoundations] = useState(defaultValues.addFoundations);
@@ -15,6 +15,7 @@ export default function demSettings(showAll = true){
     const [plateau, setPlateau] = useState(defaultValues.plateau);
     const [ceiling, setCeiling] = useState(defaultValues.ceiling);
 
+    const expanderSummary = `Blur radius: ${blurRadius} │ Water depth: ${waterDepth}${addFoundationsSummary}`;
 
     const values = {
         blurRadius: blurRadius,
@@ -27,7 +28,7 @@ export default function demSettings(showAll = true){
     return { 
         content: <Expander
             label="DEM Settings"
-            summary={`Blur radius: ${blurRadius} │ Water depth: ${waterDepth}${addFoundationsSummary}`}
+            summary={expanderSummary}
             tooltip="Settings related to the Digital Elevation Model (DEM) generation."
             labelWidth='w-40'
             size="sm"

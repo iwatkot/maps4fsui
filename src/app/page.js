@@ -21,6 +21,7 @@ import ButtonProgress from '@/components/ButtonProgress';
 import { useMapGeneration } from '@/hooks/useMapGeneration';
 import demSettingsContent from '@/app/settings/demSettings';
 import backgroundSettingsContent from '@/app/settings/backgroundSettings';
+import grleSettingsContent from '@/app/settings/grleSettings';
 
 const isPublicVersion = config.isPublicVersion;
 const backendUrl = config.backendUrl;
@@ -52,6 +53,7 @@ export default function Home() {
   // Get settings content and values.
   const { content: demContent, values: demValues } = demSettingsContent(!onlyPopularSettings);
   const { content: backgroundContent, values: backgroundValues } = backgroundSettingsContent(!onlyPopularSettings);
+  const { content: grleContent, values: grleValues } = grleSettingsContent(!onlyPopularSettings);
 
       // Map generation state
   const {
@@ -187,6 +189,7 @@ export default function Home() {
 
         {demContent}
         {backgroundContent}
+        {grleContent}
 
         {/* Generate/Download Button */}
         <ButtonProgress

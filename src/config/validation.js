@@ -49,7 +49,14 @@ export const defaultValues = {
   waterBlurriness: 0,
   removeCenter: true,
   flattenRoads: false,
-  flattenWater: false
+  flattenWater: false,
+  // GRLE Settings.
+  farmlandMargin: 5,
+  addGrass: true,
+  randomPlants: true,
+  baseGrass: "smallDenseMix",
+  addFarmyards: false,
+  basePrice: 60000
 };
 
 // Validation constraints
@@ -86,6 +93,15 @@ export const constraints = {
     min: 0,
     max: 100,
   },
+  // GRLE settings.
+  farmlandMargin: {
+    min: 0,
+    max: 100,
+  },
+  basePrice: {
+    min: 0,
+    max: 1000000,
+  }
 };
 
 // Helper function to create size options based on version
