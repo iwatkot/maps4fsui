@@ -69,6 +69,9 @@ export const defaultValues = {
   skipDrains: false,
   useCache: true,
   usePreciseTags: false,
+  // Satellite Settings.
+  downloadImages: false,
+  zoomLevel: 16,
 };
 
 // Validation constraints
@@ -127,6 +130,11 @@ export const constraints = {
   fieldsPadding: {
     min: 0,
     max: 30,
+  },
+  // Satellite settings.
+  zoomLevel: {
+    min: 14,
+    max: 18,
   },
 };
 

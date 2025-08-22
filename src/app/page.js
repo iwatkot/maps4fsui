@@ -24,6 +24,7 @@ import backgroundSettingsContent from '@/app/settings/backgroundSettings';
 import grleSettingsContent from '@/app/settings/grleSettings';
 import i3dSettingsContent from '@/app/settings/i3dSettings';
 import textureSettingsContent from '@/app/settings/textureSettings';
+import satelliteSettingsContent from '@/app/settings/satelliteSettings';
 
 const isPublicVersion = config.isPublicVersion;
 const backendUrl = config.backendUrl;
@@ -58,6 +59,7 @@ export default function Home() {
   const { content: grleContent, values: grleValues } = grleSettingsContent(!onlyPopularSettings);
   const { content: i3dContent, values: i3dValues } = i3dSettingsContent(!onlyPopularSettings);
   const { content: textureContent, values: textureValues } = textureSettingsContent(!onlyPopularSettings, config.isPublicVersion);
+  const { content: satelliteContent, values: satelliteValues } = satelliteSettingsContent(!onlyPopularSettings, config.isPublicVersion);
 
       // Map generation state
   const {
@@ -196,6 +198,7 @@ export default function Home() {
         {grleContent}
         {i3dContent}
         {textureContent}
+        {satelliteContent}
 
         {/* Generate/Download Button */}
         <ButtonProgress
@@ -218,6 +221,7 @@ export default function Home() {
                 i3d_settings: i3dValues,
                 grle_settings: grleValues,
                 texture_settings: textureValues,
+                satellite_settings: satelliteValues,
               },
             };
             startGeneration(settings);
