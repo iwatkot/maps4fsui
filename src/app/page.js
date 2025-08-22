@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Selector from '@/components/Selector';
 import TextInput from '@/components/TextInput';
 import NumberInput from '@/components/NumberInput';
+import TooltipSwitch  from '@/components/TooltipSwitch';
 import Slider from '@/components/Slider';
 import ErrorDisplay from '@/components/ErrorDisplay';
 import MapWidget from '@/components/MapWidget';
@@ -19,6 +20,7 @@ import {
 import ButtonProgress from '@/components/ButtonProgress';
 import { useMapGeneration } from '@/hooks/useMapGeneration';
 import demSettingsContent from '@/app/settings/demSettings';
+import backgroundSettingsContent from '@/app/settings/backgroundSettings';
 
 const isPublicVersion = config.isPublicVersion;
 const backendUrl = config.backendUrl;
@@ -32,7 +34,9 @@ export default function Home() {
   const [customSize, setCustomSize] = useState(defaultValues.customSize);
   const [outputSize, setOutputSize] = useState(defaultValues.outputSize);
   const [rotation, setRotation] = useState(defaultValues.rotation);
-  
+
+  const [onlyPopularSettings, setOnlyPopularSettings] = useState(true);
+
   // DTM provider state managed by custom hook
   const { 
     dtmOptions, 
@@ -45,8 +49,9 @@ export default function Home() {
   // Create size options based on version
   const sizeOptions = createSizeOptions(isPublicVersion);
   
-  // Get DEM settings content and values
-  const { content: demContent, values: demValues } = demSettingsContent();
+  // Get settings content and values.
+  const { content: demContent, values: demValues } = demSettingsContent(!onlyPopularSettings);
+  const { content: backgroundContent, values: backgroundValues } = backgroundSettingsContent(!onlyPopularSettings);
 
       // Map generation state
   const {
@@ -172,7 +177,16 @@ export default function Home() {
           tooltip="Rotate the map clockwise in degrees. 0° = North up, positive values rotate clockwise, negative values rotate counterclockwise."
           size="sm"
         />
+        <TooltipSwitch
+          label="Show only popular settings"
+          description='Disable to show all generation settings, leave enabled to show only popular settings.'
+          value={onlyPopularSettings}
+          onChange={setOnlyPopularSettings}
+          size="sm"
+        />
+
         {demContent}
+        {backgroundContent}
 
         {/* Generate/Download Button */}
         <ButtonProgress

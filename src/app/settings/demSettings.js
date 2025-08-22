@@ -3,7 +3,8 @@ import NumberInput from '../../components/NumberInput';
 import Switch from '../../components/Switch';
 import { useState } from 'react';
 import { 
-  defaultValues, 
+  defaultValues,
+  constraints 
 } from '../../config/validation';
 
 export default function demSettings(showAll = true){
@@ -27,7 +28,7 @@ export default function demSettings(showAll = true){
         content: <Expander
             label="DEM Settings"
             summary={`Blur radius: ${blurRadius} │ Water depth: ${waterDepth}${addFoundationsSummary}`}
-            tooltip="Example options for demonstration purposes."
+            tooltip="Settings related to the Digital Elevation Model (DEM) generation."
             labelWidth='w-40'
             size="sm"
         >
@@ -39,8 +40,8 @@ export default function demSettings(showAll = true){
                 labelWidth='w-40'
                 tooltip="Use to blur the elevation map. Without blurring the terrain may look too sharp and unrealistic. You can increase this value to make the terrain more smooth. Or make it smaller to make the terrain more sharp."
                 size="sm"
-                min={0}
-                max={100}
+                min={constraints.blurRadius.min}
+                max={constraints.blurRadius.max}
             />
             <NumberInput
                 label="Water Depth"
@@ -50,8 +51,8 @@ export default function demSettings(showAll = true){
                 labelWidth='w-40'
                 tooltip="Water depth value will be subtracted from the DEM image, making the water deeper. The pixel value used for this is calculated based on the heightScale value for your map."
                 size="sm"
-                min={0}
-                max={50}
+                min={constraints.waterDepth.min}
+                max={constraints.waterDepth.max}
             />
             <Switch
                 label="Add Foundations"
@@ -72,8 +73,8 @@ export default function demSettings(showAll = true){
                         labelWidth='w-40'
                         tooltip="Custom plateau value."
                         size="sm"
-                        min={0}
-                        max={100}
+                        min={constraints.plateau.min}
+                        max={constraints.plateau.max}
                     />
                     <NumberInput
                         label="Ceiling"
@@ -83,8 +84,8 @@ export default function demSettings(showAll = true){
                         labelWidth='w-40'
                         tooltip="Custom ceiling value."
                         size="sm"
-                        min={0}
-                        max={100}
+                        min={constraints.ceiling.min}
+                        max={constraints.ceiling.max}
                     />
                 </>
             )}

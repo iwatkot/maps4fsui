@@ -42,7 +42,14 @@ export const defaultValues = {
   waterDepth: 0,
   addFoundations: false,
   plateau: 0,
-  ceiling: 0
+  ceiling: 0,
+  // Background Settings.
+  generateBackground: false,
+  generateWater: false,
+  waterBlurriness: 0,
+  removeCenter: true,
+  flattenRoads: false,
+  flattenWater: false
 };
 
 // Validation constraints
@@ -56,6 +63,28 @@ export const constraints = {
   rotation: {
     min: -90,
     max: 90,
+  },
+  // DEM settings.
+  blurRadius: {
+    min: 0,
+    max: 100,
+  },
+  waterDepth: {
+    min: 0,
+    max: 50,
+  },
+  plateau: {
+    min: 0,
+    max: 100,
+  },
+  ceiling: {
+    min: 0,
+    max: 100,
+  },
+  // Background settings.
+  waterBlurriness: {
+    min: 0,
+    max: 100,
   },
 };
 
