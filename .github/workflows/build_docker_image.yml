@@ -27,8 +27,8 @@ jobs:
         context: .
         push: true
         tags: |
-          iwatkot/maps4fsuib:latest
-          iwatkot/maps4fsuib:${{ github.ref_name }}
+          iwatkot/maps4fsui:latest
+          iwatkot/maps4fsui:${{ github.ref_name }}
         file: ./Dockerfile
         cache-from: type=gha
         cache-to: type=gha,mode=max
