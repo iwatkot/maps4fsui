@@ -280,7 +280,7 @@ export default function Home() {
                 </div>
                 {backendError && (
                   <div className="text-sm bg-gray-200 dark:bg-gray-700 p-3 rounded-lg border border-gray-300 dark:border-gray-600">
-                    <strong>Technical Details:</strong> <span className="font-mono text-xs break-all">{backendError}</span>
+                    <strong>Technical Details:</strong> <span className="font-mono text-xs break-words">{backendError}</span>
                   </div>
                 )}
                 <div className="text-sm text-gray-500 dark:text-gray-400">
