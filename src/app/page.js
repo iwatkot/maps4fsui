@@ -261,18 +261,31 @@ export default function Home() {
       <div className="w-1/2 p-8">
         {isBackendAvailable === false ? (
           /* Backend Unavailable Message */
-          <div className="w-full h-full rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 flex flex-col items-center justify-center p-8">
-            <div className="text-center text-red-600 dark:text-red-400 space-y-4 max-w-md">
-              <div className="text-6xl">🚫</div>
-              <div className="text-2xl font-bold">Backend Service Unavailable</div>
-              <div className="text-lg">
-                Unable to connect to the backend server. Make sure the server is running and accessible.
-              </div>
-              <div className="text-sm bg-red-100 dark:bg-red-900/40 p-3 rounded-lg border border-red-200 dark:border-red-700">
-                <strong>Technical Details:</strong> {backendError}
-              </div>
-              <div className="text-sm text-red-500 dark:text-red-300">
-                Please check if the backend service is running or try again later.
+          <div className="w-full h-full rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 relative overflow-hidden">
+            {/* Background Image */}
+            <div className="absolute inset-0 opacity-20">
+              <img 
+                src="https://github.com/iwatkot/maps4fs/releases/download/2.1.2/502.jpg"
+                alt="Maps4FS Preview"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            
+            {/* Content Overlay */}
+            <div className="relative z-10 w-full h-full flex flex-col items-center justify-center p-8">
+              <div className="text-center space-y-6 max-w-md bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+                <div className="text-2xl font-bold text-gray-700 dark:text-gray-300">Backend Service Unavailable</div>
+                <div className="text-lg text-gray-600 dark:text-gray-400">
+                  Unable to connect to the backend server. Make sure the server is running and accessible.
+                </div>
+                {backendError && (
+                  <div className="text-sm bg-gray-200 dark:bg-gray-700 p-3 rounded-lg border border-gray-300 dark:border-gray-600">
+                    <strong>Technical Details:</strong> <span className="font-mono text-xs break-all">{backendError}</span>
+                  </div>
+                )}
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  Please check if the backend service is running or try again later.
+                </div>
               </div>
             </div>
           </div>

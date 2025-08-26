@@ -3,8 +3,8 @@
  */
 
 import { useState, useEffect } from 'react';
-import { getBackendVersion } from '@/api/dtm';
-import logger from '../utils/logger';
+import { getBackendVersion } from '@/api/service';
+import logger from '@/utils/logger';
 
 export const useBackendVersion = () => {
   const [backendVersion, setBackendVersion] = useState(null);
