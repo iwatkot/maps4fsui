@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Selector from '@/components/Selector';
 import TextInput from '@/components/TextInput';
 import NumberInput from '@/components/NumberInput';
@@ -10,6 +10,7 @@ import ErrorDisplay from '@/components/ErrorDisplay';
 import MapWidget from '@/components/MapWidget';
 import { validateCoordinates } from '@/api/preprocess';
 import { useDTMProviders } from '@/hooks/useDTMProviders';
+import { useBackendVersion } from '@/hooks/useBackendVersion';
 import config from '@/app/config';
 import logger from '@/utils/logger';
 import { 
@@ -31,6 +32,9 @@ const backendUrl = config.backendUrl;
 logger.info(`Running in public version: ${isPublicVersion}. Backend URL: ${backendUrl}`);
 logger.info(`Public hostname: ${config.publicHostName}`);
 
+// Backend version constant - will be set after backend connectivity is confirmed
+let backendVersion = null;
+
 export default function Home() {
   const [selectedGame, setSelectedGame] = useState(defaultValues.game);
   const [coordinatesInput, setCoordinatesInput] = useState(defaultValues.coordinates);
@@ -49,6 +53,21 @@ export default function Home() {
     dtmLoading, 
     dtmError 
   } = useDTMProviders(coordinatesInput);
+
+  // Backend version and connectivity check
+  const { 
+    backendVersion: currentBackendVersion, 
+    isBackendAvailable, 
+    backendError 
+  } = useBackendVersion();
+
+  // Update the global backend version constant
+  useEffect(() => {
+    if (currentBackendVersion) {
+      config.backendVersion = currentBackendVersion;
+      logger.info(`Backend version set to: ${config.backendVersion}`);
+    }
+  }, [currentBackendVersion]);
 
   // Create size options based on version
   const sizeOptions = createSizeOptions(isPublicVersion);
@@ -240,7 +259,33 @@ export default function Home() {
 
       {/* Right Panel */}
       <div className="w-1/2 p-8">
-        {validateCoordinates(coordinatesInput) ? (
+        {isBackendAvailable === false ? (
+          /* Backend Unavailable Message */
+          <div className="w-full h-full rounded-xl border border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20 flex flex-col items-center justify-center p-8">
+            <div className="text-center text-red-600 dark:text-red-400 space-y-4 max-w-md">
+              <div className="text-6xl">🚫</div>
+              <div className="text-2xl font-bold">Backend Service Unavailable</div>
+              <div className="text-lg">
+                Unable to connect to the backend server. Make sure the server is running and accessible.
+              </div>
+              <div className="text-sm bg-red-100 dark:bg-red-900/40 p-3 rounded-lg border border-red-200 dark:border-red-700">
+                <strong>Technical Details:</strong> {backendError}
+              </div>
+              <div className="text-sm text-red-500 dark:text-red-300">
+                Please check if the backend service is running or try again later.
+              </div>
+            </div>
+          </div>
+        ) : isBackendAvailable === null ? (
+          /* Loading Backend Status */
+          <div className="w-full h-full rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 flex flex-col items-center justify-center">
+            <div className="text-center text-gray-500 dark:text-gray-400 space-y-2">
+              <div className="text-2xl animate-spin">⏳</div>
+              <div className="text-lg font-medium">Checking Backend Connection</div>
+              <div className="text-sm">Connecting to backend service...</div>
+            </div>
+          </div>
+        ) : validateCoordinates(coordinatesInput) ? (
           <MapWidget 
             coordinates={coordinatesInput}
             onCoordinatesChange={setCoordinatesInput}

@@ -31,6 +31,51 @@ class ApiService {
   }
 
   /**
+   * Make a GET request to the API
+   * @param {string} endpoint - API endpoint (e.g., '/info/version')
+   * @param {object} options - Additional options (headers, etc.)
+   * @returns {Promise} - Response data or throws error
+   */
+  async get(endpoint, options = {}) {
+    const url = `${this.baseUrl}${endpoint}`;
+    
+    try {
+      logger.info(`Making GET request to: ${url}`);
+
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: this.getHeaders(options.headers),
+        ...options
+      });
+
+      logger.info(`Response status: ${response.status} ${response.statusText}`);
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        logger.error(`API Error: ${response.status} - ${errorData}`);
+        throw new ApiError(`HTTP ${response.status}: ${response.statusText}`, response.status, errorData);
+      }
+
+      const responseData = await response.json();
+      logger.debug('Response data:', responseData);
+      
+      return responseData;
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error;
+      }
+      
+      // Provide better error message for common network issues
+      let errorMessage = `Network error: ${error.message}`;
+      if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+        errorMessage = 'Backend service unavailable. Unable to connect to the server. Please check if the backend is running or try again later.';
+      }
+      
+      throw new ApiError(errorMessage, 0, error);
+    }
+  }
+
+  /**
    * Make a POST request to the API
    * @param {string} endpoint - API endpoint (e.g., '/generate-map')
    * @param {object} data - Request payload
