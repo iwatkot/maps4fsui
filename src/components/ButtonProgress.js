@@ -81,13 +81,6 @@ export default function ButtonProgress({
                 <span className="text-sm text-gray-600 dark:text-gray-300 font-medium leading-tight">
                   {statusText}
                 </span>
-                
-                {/* Error Text */}
-                {error && (
-                  <span className="text-xs text-red-600 dark:text-red-400 font-medium">
-                    {error}
-                  </span>
-                )}
               </div>
             </div>
           </div>

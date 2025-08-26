@@ -190,8 +190,13 @@ export const preprocessMainSettings = async (data) => {
   }
   preprocessedMainSettings.rotation = data.rotation;
 
-  if (!(await isDTMCodeValid(data.dtmCode))) {
-    throw new Error(`Invalid DTM code: ${data.dtmCode}`);
+  const validationResult = await isDTMCodeValid(data.dtmCode);
+  if (!validationResult.isValid) {
+    if (validationResult.isNetworkError) {
+      throw new Error(`Unable to validate DTM code due to network issue: ${validationResult.errorMessage}`);
+    } else {
+      throw new Error(`Invalid DTM code: ${data.dtmCode}`);
+    }
   }
   preprocessedMainSettings.dtmCode = data.dtmCode;
 

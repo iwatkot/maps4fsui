@@ -47,10 +47,36 @@ export async function isDTMCodeValid(dtmCode) {
 
     // If we get a response without error, the DTM code is valid
     logger.info(`DTM code ${dtmCode} is valid`);
-    return true;
+    return { isValid: true };
   } catch (error) {
     logger.error('Failed to validate DTM code:', error.message);
-    // If the API returns an error (like 404), the DTM code is invalid
-    return false;
+    
+    // Check if this is a network/backend error vs validation error
+    if (error.message.includes('Backend service unavailable') || 
+        error.message.includes('Network error') ||
+        error.message.includes('Failed to fetch')) {
+      // Return network error info
+      return { 
+        isValid: false, 
+        isNetworkError: true, 
+        errorMessage: error.message 
+      };
+    }
+    
+    // For HTTP errors (like 404), treat as invalid DTM code
+    if (error.status >= 400 && error.status < 500) {
+      return { 
+        isValid: false, 
+        isNetworkError: false, 
+        errorMessage: `DTM code '${dtmCode}' is not recognized or supported` 
+      };
+    }
+    
+    // For other errors, return as network error to be safe
+    return { 
+      isValid: false, 
+      isNetworkError: true, 
+      errorMessage: error.message 
+    };
   }
 }
