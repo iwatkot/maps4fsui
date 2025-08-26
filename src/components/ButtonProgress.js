@@ -2,6 +2,7 @@
 
 import { getSizeClasses } from './componentSizes';
 import { getStatusConfig, STATUS_TYPES } from '@/config/statusConfig';
+import ErrorDisplay from './ErrorDisplay';
 
 export default function ButtonProgress({ 
   label = "Generate",
@@ -89,14 +90,11 @@ export default function ButtonProgress({
       
       {/* Error Message */}
       {error && statusType === STATUS_TYPES.ERROR && (
-        <div className="mt-2 p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-          <div className="flex items-start space-x-2">
-            <div className="text-red-600 dark:text-red-400 text-sm">⚠️</div>
-            <div className="text-red-700 dark:text-red-300 text-sm font-medium">
-              {error}
-            </div>
-          </div>
-        </div>
+        <ErrorDisplay 
+          error={error} 
+          title=""
+          className="mt-2 mb-0" 
+        />
       )}
     </div>
   );
