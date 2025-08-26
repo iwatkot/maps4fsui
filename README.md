@@ -20,6 +20,7 @@
 
 [![Join Discord](https://img.shields.io/badge/join-discord-blue)](https://discord.gg/Sj5QKKyE42)
 [![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/iwatkot/maps4fsui)](https://github.com/iwatkot/maps4fsui/releases)
+[![Docker Pulls](https://img.shields.io/docker/pulls/iwatkot/maps4fsui)](https://hub.docker.com/r/iwatkot/maps4fsui)
 [![GitHub issues](https://img.shields.io/github/issues/iwatkot/maps4fsui)](https://github.com/iwatkot/maps4fsui/issues)
 [![GitHub Repo stars](https://img.shields.io/github/stars/iwatkot/maps4fsui)](https://github.com/iwatkot/maps4fsui/stargazers)
 
