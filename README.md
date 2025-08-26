@@ -1,36 +1,40 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+<p align="center">
+<a href="https://github.com/iwatkot/maps4fs">maps4fs</a> •
+<a href="https://github.com/iwatkot/maps4fsui">maps4fs UI</a> •
+<a href="https://github.com/iwatkot/maps4fsdata">maps4fs Data</a> •
+<a href="https://github.com/iwatkot/maps4fsapi">maps4fs API</a> •
+<a href="https://github.com/iwatkot/maps4fsstats">maps4fs Stats</a> •
+<a href="https://github.com/iwatkot/maps4fsbot">maps4fs Bot</a><br>
+<a href="https://github.com/iwatkot/pygmdl">pygmdl</a> •
+<a href="https://github.com/iwatkot/pydtmdl">pydtmdl</a>
+</p>
 
-## Getting Started
+<div align="center" markdown>
 
-First, run the development server:
+<img src="https://github.com/iwatkot/maps4fsuil/releases/download/0.0.2/maps4fs-poster_dev_3.png">
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+<p align="center">
+    <a href="#maps4fs">Maps4FS</a> •
+    <a href="#overview">Overview</a>
+</p>
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[![Join Discord](https://img.shields.io/badge/join-discord-blue)](https://discord.gg/Sj5QKKyE42)
+[![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/iwatkot/maps4fsui)](https://github.com/iwatkot/maps4fsui/releases)
+[![GitHub issues](https://img.shields.io/github/issues/iwatkot/maps4fsui)](https://github.com/iwatkot/maps4fsui/issues)
+[![GitHub Repo stars](https://img.shields.io/github/stars/iwatkot/maps4fsui)](https://github.com/iwatkot/maps4fsui/stargazers)
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+</div>
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Maps4FS
 
-## Learn More
+Maps4FS is a tool for automatic generation maps for Farming Simulator games using the real world data. More information can be found in the [main repository](https://github.com/iwatkot/maps4fs).  
 
-To learn more about Next.js, take a look at the following resources:
+This repository contains the source code for the Maps4FS UI, based on the `next.js` framework and all the required components to build Docker image and deploy it.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Overview
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+This repository is a part of the Maps4FS project, which consists of several components: the main maps4fs Python library, the maps4fs UI, the maps4fs API, the maps4fs stats, and the maps4fs bot.  
 
-## Deploy on Vercel
+This repository is just a place to store the source code for the Maps4FS UI, which is a web application that allows users to interact with the Maps4FS library and generate maps for Farming Simulator games.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Please, refer to the main repository for all the relevant information about the Maps4FS project, including the documentation.
