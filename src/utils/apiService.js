@@ -69,7 +69,14 @@ class ApiService {
       }
       
       logger.error('Network error:', error.message);
-      throw new ApiError(`Network error: ${error.message}`, 0, error);
+      
+      // Provide better error message for common network issues
+      let errorMessage = `Network error: ${error.message}`;
+      if (error.name === 'TypeError' && error.message.includes('Failed to fetch')) {
+        errorMessage = 'Backend service unavailable: Unable to connect to the server. Please check if the backend is running or try again later.';
+      }
+      
+      throw new ApiError(errorMessage, 0, error);
     }
   }
 
