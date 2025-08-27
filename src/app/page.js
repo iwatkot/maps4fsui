@@ -9,6 +9,7 @@ import Slider from '@/components/Slider';
 import ErrorDisplay from '@/components/ErrorDisplay';
 import MapWidget from '@/components/MapWidget';
 import Tabs from '@/components/Tabs';
+import MainTabs from '@/components/MainTabs';
 import { validateCoordinates } from '@/api/preprocess';
 import { useDTMProviders } from '@/hooks/useDTMProviders';
 import { useBackendVersion } from '@/hooks/useBackendVersion';
@@ -156,16 +157,14 @@ export default function Home() {
   );
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
-      {/* Tabs Header */}
-      <div className="px-8 pt-8 pb-4">
-        <Tabs 
-          tabs={tabs}
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          rightContent={rightNavLinks}
-        />
-      </div>
+    <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col">
+      {/* Main Navigation Header */}
+      <MainTabs 
+        tabs={tabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        rightContent={rightNavLinks}
+      />
 
       {/* Tab Content */}
       {activeTab === 'generator' && (
