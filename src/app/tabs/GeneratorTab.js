@@ -197,10 +197,9 @@ export default function GeneratorTab() {
         {/* Toggle Popular Settings */}
         <TooltipSwitch
           label="Show only popular"
-          checked={onlyPopularSettings}
+          description="Show only the most commonly used settings to simplify the interface."
+          value={onlyPopularSettings}
           onChange={setOnlyPopularSettings}
-          labelWidth='w-40'
-          tooltip="Show only the most commonly used settings to simplify the interface."
           size="sm"
         />
 
