@@ -16,7 +16,8 @@ import logger from '@/utils/logger';
 import { 
   gameOptions, 
   createSizeOptions, 
-  defaultValues, 
+  defaultValues,
+  constraints, 
 } from '@/config/validation';
 import ButtonProgress from '@/components/ButtonProgress';
 import { useMapGeneration } from '@/hooks/useMapGeneration';
@@ -161,9 +162,9 @@ export default function GeneratorTab() {
             onChange={setCustomSize}
             placeholder="Enter custom size"
             labelWidth='w-40'
-            tooltip="Custom map size in game units. Must be between 512 and 8192."
-            min={512}
-            max={8192}
+            tooltip="Custom map size in meters."
+            min={1}
+            max={100000}
             size="sm"
           />
         )}
@@ -186,8 +187,8 @@ export default function GeneratorTab() {
           label="Rotation"
           value={rotation}
           onChange={setRotation}
-          min={0}
-          max={360}
+          min={constraints.rotation.min}
+          max={constraints.rotation.max}
           step={1}
           labelWidth='w-40'
           tooltip="Rotation angle of the map in degrees. 0 means north is up."
@@ -281,6 +282,7 @@ export default function GeneratorTab() {
         ) : validateCoordinates(coordinatesInput) ? (
           <MapWidget 
             coordinates={coordinatesInput}
+            onCoordinatesChange={setCoordinatesInput}
             size={selectedSize === "custom" ? customSize : selectedSize}
             rotation={rotation}
             onRotationChange={setRotation}
