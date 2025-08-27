@@ -133,7 +133,7 @@ export default function Home() {
         className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
         title="GitHub Repository"
       >
-        <i className="zmdi zmdi-github text-xl"></i>
+        <i className="zmdi zmdi-github text-5xl" style={{fontSize: '2.5rem'}}></i>
       </a>
       <a
         href="https://www.youtube.com/@maps4fs"
@@ -142,7 +142,7 @@ export default function Home() {
         className="text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors"
         title="YouTube Channel"
       >
-        <i className="zmdi zmdi-youtube-play text-xl"></i>
+        <i className="zmdi zmdi-youtube-play text-5xl" style={{fontSize: '2.5rem'}}></i>
       </a>
       <a
         href="https://discord.gg/Sj5QKKyE42"
@@ -151,7 +151,7 @@ export default function Home() {
         className="text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors"
         title="Discord Server"
       >
-        <i className="zmdi zmdi-comments text-xl"></i>
+        <i className="zmdi zmdi-comments text-5xl" style={{fontSize: '2.5rem'}}></i>
       </a>
     </>
   );
