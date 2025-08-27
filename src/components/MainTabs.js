@@ -4,7 +4,7 @@
 
 const MainTabs = ({ tabs, activeTab, onTabChange, rightContent }) => {
   return (
-    <div className="bg-gray-100 dark:bg-gray-800 border-b border-gray-300 dark:border-gray-600 min-h-[80px]">
+    <div className="bg-gray-100 dark:bg-gray-800 border-b border-gray-300 dark:border-gray-600 min-h-[80px] overflow-hidden">
       <div className="flex justify-between items-center px-8 py-4 h-full">
         <nav className="flex space-x-2" aria-label="Main Navigation">
           {tabs.map((tab) => (

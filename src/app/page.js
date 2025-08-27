@@ -157,7 +157,7 @@ export default function Home() {
   );
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 flex flex-col">
+    <div className="h-screen bg-white dark:bg-gray-900 flex flex-col overflow-hidden">
       {/* Main Navigation Header */}
       <MainTabs 
         tabs={tabs}
@@ -168,9 +168,9 @@ export default function Home() {
 
       {/* Tab Content */}
       {activeTab === 'generator' && (
-        <div className="flex">
+        <div className="flex flex-1 overflow-hidden">
           {/* Left Panel */}
-          <div className="w-1/2 p-8 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+          <div className="w-1/2 p-8 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto">
         {/* Game Selector */}
         <Selector
           label="Game Version"
@@ -321,7 +321,7 @@ export default function Home() {
       </div>
 
       {/* Right Panel */}
-      <div className="w-1/2 p-8">
+      <div className="w-1/2 p-8 overflow-y-auto">
         {isBackendAvailable === false ? (
           /* Backend Unavailable Message */
           <div className="w-full h-full rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 relative overflow-hidden">
