@@ -8,6 +8,7 @@ import TooltipSwitch  from '@/components/TooltipSwitch';
 import Slider from '@/components/Slider';
 import ErrorDisplay from '@/components/ErrorDisplay';
 import MapWidget from '@/components/MapWidget';
+import Tabs from '@/components/Tabs';
 import { validateCoordinates } from '@/api/preprocess';
 import { useDTMProviders } from '@/hooks/useDTMProviders';
 import { useBackendVersion } from '@/hooks/useBackendVersion';
@@ -44,6 +45,9 @@ export default function Home() {
   const [rotation, setRotation] = useState(defaultValues.rotation);
 
   const [onlyPopularSettings, setOnlyPopularSettings] = useState(true);
+
+  // Tab state
+  const [activeTab, setActiveTab] = useState('generator');
 
   // DTM provider state managed by custom hook
   const { 
@@ -104,10 +108,70 @@ export default function Home() {
     ? "Click Generate map to start the generation process."
     : statusText;
 
+  // Define tabs
+  const tabs = [
+    {
+      id: 'generator',
+      label: 'Map Generator',
+      icon: <i className="zmdi zmdi-landscape"></i>
+    },
+    {
+      id: 'my-maps',
+      label: 'My Maps [BETA]',
+      icon: <i className="zmdi zmdi-collection-folder-image"></i>
+    }
+  ];
+
+  // Define right navigation links
+  const rightNavLinks = (
+    <>
+      <a
+        href="https://github.com/iwatkot/maps4fs"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+        title="GitHub Repository"
+      >
+        <i className="zmdi zmdi-github text-xl"></i>
+      </a>
+      <a
+        href="https://www.youtube.com/@maps4fs"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors"
+        title="YouTube Channel"
+      >
+        <i className="zmdi zmdi-youtube-play text-xl"></i>
+      </a>
+      <a
+        href="https://discord.gg/Sj5QKKyE42"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors"
+        title="Discord Server"
+      >
+        <i className="zmdi zmdi-comments text-xl"></i>
+      </a>
+    </>
+  );
+
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 flex">
-      {/* Left Panel */}
-      <div className="w-1/2 p-8 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+    <div className="min-h-screen bg-white dark:bg-gray-900">
+      {/* Tabs Header */}
+      <div className="px-8 pt-8 pb-4">
+        <Tabs 
+          tabs={tabs}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          rightContent={rightNavLinks}
+        />
+      </div>
+
+      {/* Tab Content */}
+      {activeTab === 'generator' && (
+        <div className="flex">
+          {/* Left Panel */}
+          <div className="w-1/2 p-8 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
         {/* Game Selector */}
         <Selector
           label="Game Version"
@@ -320,6 +384,21 @@ export default function Home() {
           </div>
         )}
       </div>
+        </div>
+      )}
+
+      {activeTab === 'my-maps' && (
+        <div className="flex">
+          {/* My Maps Content - Empty for now */}
+          <div className="w-full p-8">
+            <div className="text-center text-gray-500 dark:text-gray-400 space-y-4">
+              <i className="zmdi zmdi-collection-folder-image text-6xl"></i>
+              <div className="text-2xl font-medium">My Maps</div>
+              <div className="text-lg">Coming soon - Your saved maps will appear here</div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
