@@ -276,13 +276,20 @@ export default function GeneratorTab({
                 )}
                 <div className="flex flex-col space-y-3">
                   {isPublicVersion ? (
-                    <button
-                      onClick={() => window.location.reload()}
-                      className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
-                    >
-                      <i className="zmdi zmdi-refresh mr-2"></i>
-                      Try Again
-                    </button>
+                    <>
+                      <a
+                        href="https://github.com/iwatkot/maps4fs/blob/main/docs/local_deployment.md"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
+                      >
+                        <i className="zmdi zmdi-download mr-2"></i>
+                        Local Deployment
+                      </a>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                        Deploy the tool locally for full control and reliability.
+                      </div>
+                    </>
                   ) : (
                     <>
                       <a
