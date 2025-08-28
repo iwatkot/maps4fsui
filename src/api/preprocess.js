@@ -36,7 +36,7 @@ export const objectToSnakeCase = (obj, skipFalsy = true) => {
     const snakeKey = toSnakeCase(key);
     const value = obj[key];
 
-    if (skipFalsy && !value) {
+    if (skipFalsy && (value === null || value === undefined || value === '')) {
       continue;
     }
 

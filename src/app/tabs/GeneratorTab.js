@@ -67,10 +67,14 @@ export default function GeneratorTab({
 
   // Map generation state managed by custom hook
   const { 
+    statusType,
     statusText, 
     isGenerating, 
-    progressPercentage, 
-    generateMap
+    progress,
+    isDownloadMode,
+    error,
+    startGeneration,
+    downloadMap
   } = useMapGeneration();
 
   // Check if generate button should be enabled
@@ -203,25 +207,39 @@ export default function GeneratorTab({
         {/* Generate Button */}
         <div className="mt-8">
           <ButtonProgress
-            onClick={() => generateMap({
-              game: selectedGame,
-              coordinates: coordinatesInput,
-              size: selectedSize === "custom" ? customSize : selectedSize,
-              outputSize: outputSize,
-              rotation: rotation,
-              dtmProvider: selectedDTMProvider,
-              ...demValues,
-              ...backgroundValues,
-              ...grleValues,
-              ...i3dValues,
-              ...textureValues,
-              ...satelliteValues
-            })}
+            label="Generate map"
+            downloadLabel="Download map"
+            onClick={() => {
+              // Collect all form data
+              const settings = {
+                mainSettings: {
+                  gameCode: selectedGame,
+                  coordinates: coordinatesInput,
+                  dtmCode: selectedDTMProvider,
+                  size: selectedSize === "custom" ? customSize : selectedSize,
+                  rotation: rotation,
+                  outputSize: null, // Will be set later if needed
+                },
+                generationSettings: {
+                  dem_settings: demValues,
+                  background_settings: backgroundValues,
+                  i3d_settings: i3dValues,
+                  grle_settings: grleValues,
+                  texture_settings: textureValues,
+                  satellite_settings: satelliteValues,
+                },
+              };
+              startGeneration(settings);
+            }}
+            onDownload={downloadMap}
             disabled={!isGenerateEnabled}
-            isLoading={isGenerating}
-            progress={progressPercentage}
+            statusType={statusType}
             statusText={displayStatusText}
-            loadingText="Generating..."
+            progress={progress}
+            isDownloadMode={isDownloadMode}
+            error={error}
+            labelWidth='w-40'
+            size="sm"
           />
         </div>
       </div>
