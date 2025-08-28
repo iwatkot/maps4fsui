@@ -1,0 +1,56 @@
+name: Build Public Docker Image
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+    
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+    
+    - name: Build and push public image
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        file: ./Dockerfile.public
+        push: true
+        tags: iwatkot/maps4fsuip:latest
+        platforms: linux/amd64,linux/arm64
+        build-args: |
+          NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
+          NEXT_PUBLIC_BEARER_TOKEN=${{ secrets.NEXT_PUBLIC_BEARER_TOKEN }}
+          NEXT_PUBLIC_APP_ENV=${{ secrets.NEXT_PUBLIC_APP_ENV }}
+
+  deploy:
+
+    runs-on: ubuntu-latest
+    needs: build-and-push
+
+    steps:
+      - name: Wait until Docker image is available
+        uses: actions/github-script@v3
+        with:
+          script: |
+            const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+            await wait(120000); // Wait for 2 minutes
+
+      - name: Make POST request to redeploy UI container
+        run: |
+          curl -X POST "${{ secrets.REDEPLOY_ENDPOINT }}" \
+            -H "Authorization: Bearer ${{ secrets.PRIVATE_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"container_key": "ui"}'
