@@ -33,22 +33,22 @@ jobs:
         cache-from: type=gha
         cache-to: type=gha,mode=max
 
-  # deploy:
+  deploy:
 
-  #   runs-on: ubuntu-latest
-  #   needs: build
+    runs-on: ubuntu-latest
+    needs: build
 
-  #   steps:
-  #     - name: Wait until Docker image is available
-  #       uses: actions/github-script@v3
-  #       with:
-  #         script: |
-  #           const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-  #           await wait(120000); // Wait for 2 minutes
+    steps:
+      - name: Wait until Docker image is available
+        uses: actions/github-script@v3
+        with:
+          script: |
+            const wait = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+            await wait(120000); // Wait for 2 minutes
 
-  #     - name: Make POST request to redeploy UI container
-  #       run: |
-  #         curl -X POST "${{ secrets.REDEPLOY_ENDPOINT }}" \
-  #           -H "Authorization: Bearer ${{ secrets.PRIVATE_TOKEN }}" \
-  #           -H "Content-Type: application/json" \
-  #           -d '{"container_key": "ui"}'
+      - name: Make POST request to redeploy UI container
+        run: |
+          curl -X POST "${{ secrets.REDEPLOY_ENDPOINT }}" \
+            -H "Authorization: Bearer ${{ secrets.PRIVATE_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            -d '{"container_key": "ui"}'
