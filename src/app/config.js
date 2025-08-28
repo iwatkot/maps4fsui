@@ -1,11 +1,11 @@
 // Simple config with environment variables
-const publicHostName = process.env.NEXT_PUBLIC_HOSTNAME || '';
+const appEnv = process.env.NEXT_PUBLIC_APP_ENV || '';
 
 const config = {
   // Access environment variables like this:
   backendUrl: process.env.NEXT_PUBLIC_BACKEND_URL || 'http://localhost:8000',
-  publicHostName: publicHostName,
-  isPublicVersion: publicHostName === 'maps4fs',
+  appEnv: appEnv,
+  isPublicVersion: appEnv === 'maps4fs',
   bearerToken: process.env.NEXT_PUBLIC_BEARER_TOKEN || null,
 };
 
