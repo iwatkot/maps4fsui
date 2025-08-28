@@ -30,7 +30,6 @@ import SatelliteSettingsContent from '@/app/settings/satelliteSettings';
 const isPublicVersion = config.isPublicVersion;
 const backendUrl = config.backendUrl;
 logger.info(`Running in public version: ${isPublicVersion}. Backend URL: ${backendUrl}`);
-logger.info(`Public hostname: ${config.publicHostName}`);
 
 export default function GeneratorTab({ 
   backendVersion: currentBackendVersion, 
