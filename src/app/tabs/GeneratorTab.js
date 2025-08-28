@@ -10,7 +10,6 @@ import ErrorDisplay from '@/components/ErrorDisplay';
 import MapWidget from '@/components/MapWidget';
 import { validateCoordinates } from '@/api/preprocess';
 import { useDTMProviders } from '@/hooks/useDTMProviders';
-import { useBackendVersion } from '@/hooks/useBackendVersion';
 import config from '@/app/config';
 import logger from '@/utils/logger';
 import { 
@@ -33,7 +32,11 @@ const backendUrl = config.backendUrl;
 logger.info(`Running in public version: ${isPublicVersion}. Backend URL: ${backendUrl}`);
 logger.info(`Public hostname: ${config.publicHostName}`);
 
-export default function GeneratorTab() {
+export default function GeneratorTab({ 
+  backendVersion: currentBackendVersion, 
+  isBackendAvailable, 
+  backendError 
+}) {
   const [selectedGame, setSelectedGame] = useState(defaultValues.game);
   const [coordinatesInput, setCoordinatesInput] = useState(defaultValues.coordinates);
   const [selectedSize, setSelectedSize] = useState(defaultValues.size);
@@ -50,21 +53,6 @@ export default function GeneratorTab() {
     dtmLoading, 
     dtmError 
   } = useDTMProviders(coordinatesInput);
-
-  // Backend version and connectivity check
-  const { 
-    backendVersion: currentBackendVersion, 
-    isBackendAvailable, 
-    backendError 
-  } = useBackendVersion();
-
-  // Update the global backend version constant
-  useEffect(() => {
-    if (currentBackendVersion) {
-      config.backendVersion = currentBackendVersion;
-      logger.info(`Backend version set to: ${config.backendVersion}`);
-    }
-  }, [currentBackendVersion]);
 
   // Create size options based on version
   const sizeOptions = createSizeOptions(isPublicVersion);

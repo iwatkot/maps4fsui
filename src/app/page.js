@@ -1,9 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import MainTabs from '@/components/MainTabs';
 import GeneratorTab from '@/app/tabs/GeneratorTab';
 import MyMapsTab from '@/app/tabs/MyMapsTab';
+import { useBackendVersion } from '@/hooks/useBackendVersion';
 import config from '@/app/config';
 import logger from '@/utils/logger';
 
@@ -16,6 +17,21 @@ export default function Home() {
 
   // Tab state
   const [activeTab, setActiveTab] = useState('generator');
+
+  // Backend version state managed here
+  const { 
+    backendVersion: currentBackendVersion, 
+    isBackendAvailable, 
+    backendError 
+  } = useBackendVersion();
+
+  // Update the global backend version constant
+  useEffect(() => {
+    if (currentBackendVersion) {
+      config.backendVersion = currentBackendVersion;
+      logger.info(`Backend version set to: ${config.backendVersion}`);
+    }
+  }, [currentBackendVersion]);
 
   // Define tabs
   const tabs = [
@@ -44,7 +60,7 @@ export default function Home() {
         <i className="zmdi zmdi-github text-5xl" style={{fontSize: '2.5rem'}}></i>
       </a>
       <a
-        href="https://www.youtube.com/@maps4fs"
+        href="https://www.youtube.com/@iwatkot"
         target="_blank"
         rel="noopener noreferrer"
         className="text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors"
@@ -76,7 +92,13 @@ export default function Home() {
 
       {/* Tab Content */}
       <div className="flex-1 overflow-hidden">
-        {activeTab === 'generator' && <GeneratorTab />}
+        {activeTab === 'generator' && (
+          <GeneratorTab 
+            backendVersion={currentBackendVersion}
+            isBackendAvailable={isBackendAvailable}
+            backendError={backendError}
+          />
+        )}
         {activeTab === 'my-maps' && <MyMapsTab />}
       </div>
     </div>
