@@ -5,7 +5,7 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_BACKEND_URL: process.env.BACKEND_URL,
     NEXT_PUBLIC_BEARER_TOKEN: process.env.BEARER_TOKEN,
-    NEXT_PUBLIC_HOSTNAME: process.env.HOSTNAME,
+    NEXT_PUBLIC_HOSTNAME: process.env.APP_ENV, // Use APP_ENV instead of HOSTNAME
   },
 };
 
