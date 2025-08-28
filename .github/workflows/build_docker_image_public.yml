@@ -1,4 +1,4 @@
-name: Build Public Docker Image
+name: Build and Deploy Public Docker image
 
 on:
   release:
