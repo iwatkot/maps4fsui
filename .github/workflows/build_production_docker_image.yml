@@ -27,7 +27,9 @@ jobs:
         context: .
         file: ./Dockerfile.public
         push: true
-        tags: iwatkot/maps4fsuip:latest
+        tags: |
+          iwatkot/maps4fsuip:latest
+          iwatkot/maps4fsuip:${{ github.ref_name }}
         platforms: linux/amd64,linux/arm64
         build-args: |
           NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
