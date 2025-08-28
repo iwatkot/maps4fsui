@@ -10,9 +10,12 @@ const MainTabs = ({ tabs, activeTab, onTabChange, rightContent }) => {
           {tabs.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => onTabChange(tab.id)}
+              onClick={() => !tab.disabled && onTabChange(tab.id)}
+              disabled={tab.disabled}
               className={`px-6 py-3 rounded-lg font-medium text-base transition-colors duration-200 flex items-center min-h-[48px] ${
-                activeTab === tab.id
+                tab.disabled
+                  ? 'text-gray-400 dark:text-gray-600 cursor-not-allowed border border-transparent bg-gray-50 dark:bg-gray-900'
+                  : activeTab === tab.id
                   ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-md border border-gray-200 dark:border-gray-600'
                   : 'text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-800 dark:hover:text-white border border-transparent'
               }`}

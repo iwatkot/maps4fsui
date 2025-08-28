@@ -40,11 +40,13 @@ export default function Home() {
       label: 'Map Generator',
       icon: <i className="zmdi zmdi-landscape"></i>
     },
-    {
+    // Only show My Maps tab in non-public version
+    ...(!isPublicVersion ? [{
       id: 'my-maps',
-      label: 'My Maps [BETA]',
-      icon: <i className="zmdi zmdi-collection-folder-image"></i>
-    }
+      label: 'My Maps',
+      icon: <i className="zmdi zmdi-collection-folder-image"></i>,
+      disabled: true // Disabled for now
+    }] : [])
   ];
 
   // Define right navigation links
@@ -97,6 +99,7 @@ export default function Home() {
             backendVersion={currentBackendVersion}
             isBackendAvailable={isBackendAvailable}
             backendError={backendError}
+            isPublicVersion={isPublicVersion}
           />
         )}
         {activeTab === 'my-maps' && <MyMapsTab />}

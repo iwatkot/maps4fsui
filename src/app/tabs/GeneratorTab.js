@@ -35,7 +35,8 @@ logger.info(`Public hostname: ${config.publicHostName}`);
 export default function GeneratorTab({ 
   backendVersion: currentBackendVersion, 
   isBackendAvailable, 
-  backendError 
+  backendError,
+  isPublicVersion
 }) {
   const [selectedGame, setSelectedGame] = useState(defaultValues.game);
   const [coordinatesInput, setCoordinatesInput] = useState(defaultValues.coordinates);
