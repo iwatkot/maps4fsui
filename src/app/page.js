@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import MainTabs from '@/components/MainTabs';
 import GeneratorTab from '@/app/tabs/GeneratorTab';
 import MyMapsTab from '@/app/tabs/MyMapsTab';
+import SlideOutPromo from '@/components/SlideOutPromo';
 import { useBackendVersion } from '@/hooks/useBackendVersion';
 import config from '@/app/config';
 import logger from '@/utils/logger';
@@ -16,6 +17,9 @@ export default function Home() {
 
   // Tab state
   const [activeTab, setActiveTab] = useState('generator');
+
+  // Promo state (only for public version)
+  const [showPromo, setShowPromo] = useState(isPublicVersion);
 
   // Backend version state managed here
   const { 
@@ -111,6 +115,18 @@ export default function Home() {
         )}
         {activeTab === 'my-maps' && <MyMapsTab />}
       </div>
+
+      {/* Slide-out Promo (only for public version) */}
+      {isPublicVersion && (
+        <SlideOutPromo
+          title="Launch the tool locally"
+          message="Use it without limitations on your own machine with full access to all features and faster processing."
+          buttonText="Local Deployment"
+          buttonLink="https://github.com/iwatkot/maps4fs/blob/main/docs/local_deployment.md"
+          isVisible={showPromo}
+          onClose={() => setShowPromo(false)}
+        />
+      )}
     </div>
   );
 }
