@@ -29,7 +29,7 @@ const getRotatedRectangleCorners = (centerLat, centerLon, sizeMeters, rotationDe
 // Create the actual map component
 const ActualMapWidget = dynamic(() => {
   return import('react-leaflet').then((mod) => {
-    const { MapContainer, TileLayer, Polygon, LayersControl, useMap, useMapEvents, CircleMarker, Marker } = mod;
+    const { MapContainer, TileLayer, Polygon, LayersControl, useMap, useMapEvents, CircleMarker, Marker, GeoJSON } = mod;
     
     // Generic Icon Handle Component
     function IconHandle({ 
@@ -98,7 +98,7 @@ const ActualMapWidget = dynamic(() => {
     }
     
     // Internal component that uses Leaflet hooks
-    function MapContent({ coordinates, onCoordinatesChange, size, rotation, onRotationChange, onSizeChange, showResizeHandle }) {
+    function MapContent({ coordinates, onCoordinatesChange, size, rotation, onRotationChange, onSizeChange, showResizeHandle, osmData }) {
       const [isDragging, setIsDragging] = useState(false);
       const [isRotating, setIsRotating] = useState(false);
       const [isResizing, setIsResizing] = useState(false);
@@ -346,6 +346,125 @@ const ActualMapWidget = dynamic(() => {
             </LayersControl.BaseLayer>
           </LayersControl>
           
+          {/* Custom OSM Data Layer */}
+          {osmData && osmData.geoJson && (
+            <GeoJSON
+              key={`osm-data-${osmData.timestamp || Date.now()}`}
+              data={osmData.geoJson}
+              style={(feature) => {
+                // Import the style function dynamically to avoid SSR issues
+                const getFeatureStyle = (feature) => {
+                  const properties = feature.properties || {};
+                  const geometry = feature.geometry;
+                  
+                  // Default styles
+                  let style = {
+                    weight: 1,
+                    opacity: 0.8,
+                    fillOpacity: 0.3
+                  };
+                  
+                  // Roads and paths
+                  if (properties.highway) {
+                    const highway = properties.highway;
+                    if (['motorway', 'trunk', 'primary'].includes(highway)) {
+                      return { ...style, color: '#e74c3c', weight: 3 };
+                    } else if (['secondary', 'tertiary'].includes(highway)) {
+                      return { ...style, color: '#f39c12', weight: 2 };
+                    } else if (['residential', 'unclassified', 'service'].includes(highway)) {
+                      return { ...style, color: '#95a5a6', weight: 1 };
+                    } else if (['footway', 'path', 'track'].includes(highway)) {
+                      return { ...style, color: '#8e44ad', weight: 1, dashArray: '5, 5' };
+                    }
+                    return { ...style, color: '#34495e', weight: 1 };
+                  }
+                  
+                  // Buildings
+                  if (properties.building) {
+                    return { 
+                      ...style, 
+                      color: '#2c3e50', 
+                      fillColor: '#ecf0f1', 
+                      weight: 1,
+                      fillOpacity: 0.7 
+                    };
+                  }
+                  
+                  // Water features
+                  if (properties.natural === 'water' || properties.waterway) {
+                    return { 
+                      ...style, 
+                      color: '#3498db', 
+                      fillColor: '#85c1e9', 
+                      weight: 1,
+                      fillOpacity: 0.6 
+                    };
+                  }
+                  
+                  // Landuse
+                  if (properties.landuse) {
+                    const landuse = properties.landuse;
+                    if (['forest', 'wood'].includes(landuse)) {
+                      return { ...style, color: '#27ae60', fillColor: '#58d68d', fillOpacity: 0.4 };
+                    } else if (['farmland', 'meadow', 'grass'].includes(landuse)) {
+                      return { ...style, color: '#2ecc71', fillColor: '#7dcea0', fillOpacity: 0.3 };
+                    } else if (['residential', 'commercial', 'industrial'].includes(landuse)) {
+                      return { ...style, color: '#95a5a6', fillColor: '#d5dbdb', fillOpacity: 0.3 };
+                    }
+                  }
+                  
+                  // Default style
+                  return { ...style, color: '#7f8c8d', fillColor: '#bdc3c7' };
+                };
+                
+                return getFeatureStyle(feature);
+              }}
+              pointToLayer={(feature, latlng) => {
+                // Custom styling for point features
+                return new (require('leaflet')).CircleMarker(latlng, {
+                  radius: 4,
+                  fillColor: '#e67e22',
+                  color: '#d35400',
+                  weight: 1,
+                  opacity: 1,
+                  fillOpacity: 0.8
+                });
+              }}
+              onEachFeature={(feature, layer) => {
+                // Add popup with feature information
+                if (feature.properties) {
+                  const props = feature.properties;
+                  let popupContent = '<div class="text-xs">';
+                  
+                  // Add name if available
+                  if (props.name) {
+                    popupContent += `<strong>${props.name}</strong><br/>`;
+                  }
+                  
+                  // Add type information
+                  const type = props.highway || props.building || props.landuse || props.natural || props.amenity || 'Feature';
+                  popupContent += `Type: ${type}<br/>`;
+                  
+                  // Add other relevant properties
+                  Object.entries(props)
+                    .filter(([key, value]) => 
+                      !['name', 'highway', 'building', 'landuse', 'natural', 'amenity'].includes(key) && 
+                      value && 
+                      typeof value === 'string' && 
+                      value.length < 50
+                    )
+                    .slice(0, 5) // Limit to 5 additional properties
+                    .forEach(([key, value]) => {
+                      popupContent += `${key}: ${value}<br/>`;
+                    });
+                  
+                  popupContent += '</div>';
+                  layer.bindPopup(popupContent);
+                }
+              }}
+            />
+          )}
+          
           <Polygon
             ref={polygonRef}
             positions={rectangleCorners}
@@ -468,7 +587,7 @@ const ActualMapWidget = dynamic(() => {
     }
     
     // Return the component that will be dynamically loaded
-    function DynamicMapComponent({ coordinates, onCoordinatesChange, size, rotation, onRotationChange, onSizeChange, showResizeHandle }) {
+    function DynamicMapComponent({ coordinates, onCoordinatesChange, size, rotation, onRotationChange, onSizeChange, showResizeHandle, osmData }) {
       // Parse coordinates for initial center
       const parseCoordinates = (coordString) => {
         if (!coordString) return { lat: 51.505, lon: -0.09 };
@@ -515,6 +634,7 @@ const ActualMapWidget = dynamic(() => {
             onRotationChange={onRotationChange}
             onSizeChange={onSizeChange}
             showResizeHandle={showResizeHandle}
+            osmData={osmData}
           />
         </MapContainer>
       );
@@ -531,7 +651,8 @@ export default function MapWidget({
   rotation = 0,
   onRotationChange,
   onSizeChange,
-  showResizeHandle = false
+  showResizeHandle = false,
+  osmData = null
 }) {
   const [mounted, setMounted] = useState(false);
   
@@ -558,6 +679,7 @@ export default function MapWidget({
         onRotationChange={onRotationChange}
         onSizeChange={onSizeChange}
         showResizeHandle={showResizeHandle}
+        osmData={osmData}
       />
     </div>
   );
