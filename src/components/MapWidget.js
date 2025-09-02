@@ -331,7 +331,7 @@ const ActualMapWidget = dynamic(() => {
       return (
         <>
           <LayersControl position="topright">
-            <LayersControl.BaseLayer checked name="OpenStreetMap">
+            <LayersControl.BaseLayer checked={!osmData} name="OpenStreetMap">
               <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -344,6 +344,17 @@ const ActualMapWidget = dynamic(() => {
                 url="https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}&s=Ga"
               />
             </LayersControl.BaseLayer>
+
+            {/* Clean layer for custom OSM data */}
+            {osmData && (
+              <LayersControl.BaseLayer checked={!!osmData} name="Custom OSM Data">
+                <TileLayer
+                  attribution='Custom OSM Data'
+                  url="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
+                  opacity={0}
+                />
+              </LayersControl.BaseLayer>
+            )}
           </LayersControl>
           
           {/* Custom OSM Data Layer */}
@@ -359,24 +370,24 @@ const ActualMapWidget = dynamic(() => {
                   
                   // Default styles
                   let style = {
-                    weight: 1,
-                    opacity: 0.8,
-                    fillOpacity: 0.3
+                    weight: 2,
+                    opacity: 0.9,
+                    fillOpacity: 0.4
                   };
                   
                   // Roads and paths
                   if (properties.highway) {
                     const highway = properties.highway;
                     if (['motorway', 'trunk', 'primary'].includes(highway)) {
-                      return { ...style, color: '#e74c3c', weight: 3 };
+                      return { ...style, color: '#e74c3c', weight: 4 };
                     } else if (['secondary', 'tertiary'].includes(highway)) {
-                      return { ...style, color: '#f39c12', weight: 2 };
+                      return { ...style, color: '#f39c12', weight: 3 };
                     } else if (['residential', 'unclassified', 'service'].includes(highway)) {
-                      return { ...style, color: '#95a5a6', weight: 1 };
+                      return { ...style, color: '#95a5a6', weight: 2 };
                     } else if (['footway', 'path', 'track'].includes(highway)) {
-                      return { ...style, color: '#8e44ad', weight: 1, dashArray: '5, 5' };
+                      return { ...style, color: '#8e44ad', weight: 2, dashArray: '5, 5' };
                     }
-                    return { ...style, color: '#34495e', weight: 1 };
+                    return { ...style, color: '#34495e', weight: 2 };
                   }
                   
                   // Buildings
@@ -385,8 +396,8 @@ const ActualMapWidget = dynamic(() => {
                       ...style, 
                       color: '#2c3e50', 
                       fillColor: '#ecf0f1', 
-                      weight: 1,
-                      fillOpacity: 0.7 
+                      weight: 2,
+                      fillOpacity: 0.8 
                     };
                   }
                   
@@ -396,8 +407,8 @@ const ActualMapWidget = dynamic(() => {
                       ...style, 
                       color: '#3498db', 
                       fillColor: '#85c1e9', 
-                      weight: 1,
-                      fillOpacity: 0.6 
+                      weight: 2,
+                      fillOpacity: 0.7 
                     };
                   }
                   
@@ -405,11 +416,11 @@ const ActualMapWidget = dynamic(() => {
                   if (properties.landuse) {
                     const landuse = properties.landuse;
                     if (['forest', 'wood'].includes(landuse)) {
-                      return { ...style, color: '#27ae60', fillColor: '#58d68d', fillOpacity: 0.4 };
+                      return { ...style, color: '#27ae60', fillColor: '#58d68d', fillOpacity: 0.5 };
                     } else if (['farmland', 'meadow', 'grass'].includes(landuse)) {
-                      return { ...style, color: '#2ecc71', fillColor: '#7dcea0', fillOpacity: 0.3 };
+                      return { ...style, color: '#2ecc71', fillColor: '#7dcea0', fillOpacity: 0.4 };
                     } else if (['residential', 'commercial', 'industrial'].includes(landuse)) {
-                      return { ...style, color: '#95a5a6', fillColor: '#d5dbdb', fillOpacity: 0.3 };
+                      return { ...style, color: '#95a5a6', fillColor: '#d5dbdb', fillOpacity: 0.4 };
                     }
                   }
                   

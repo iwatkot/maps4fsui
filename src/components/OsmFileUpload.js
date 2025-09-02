@@ -40,12 +40,16 @@ export default function OsmFileUpload({
   };
 
   const handleFileSelect = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
     const file = e.target.files[0];
     if (file && validateOsmFile(file)) {
       onFileSelect(file);
     }
     // Reset the input value to allow selecting the same file again
-    e.target.value = '';
+    if (e.target) {
+      e.target.value = '';
+    }
   };
 
   const validateOsmFile = (file) => {
@@ -82,6 +86,10 @@ export default function OsmFileUpload({
     }
   };
 
+  const handleDivClick = () => {
+    handleBrowseClick();
+  };
+
   const handleRemoveFile = () => {
     onFileRemove();
     if (fileInputRef.current) {
@@ -106,14 +114,14 @@ export default function OsmFileUpload({
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
           onDrop={handleDrop}
-          onClick={handleBrowseClick}
+          onClick={handleDivClick}
         >
           <input
             ref={fileInputRef}
             type="file"
             accept=".osm,.xml"
             onChange={handleFileSelect}
-            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+            className="hidden"
             disabled={disabled}
           />
           
