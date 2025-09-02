@@ -357,7 +357,7 @@ const ActualMapWidget = dynamic(() => {
             )}
           </LayersControl>
           
-          {/* Custom OSM Data Layer */}
+          {/* Custom OSM Data Layer - Rendered below selection */}
           {osmData && osmData.geoJson && (
             <GeoJSON
               key={`osm-data-${osmData.timestamp || Date.now()}`}
