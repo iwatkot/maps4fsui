@@ -1,0 +1,16 @@
+{
+    "name": "Maps4FS",
+    "short_name": "Maps4FS",
+    "description": "Generate realistic Farming Simulator maps from real places",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#22c55e",
+    "icons": [
+        {
+            "src": "/favicon.ico",
+            "sizes": "48x48",
+            "type": "image/x-icon"
+        }
+    ]
+}

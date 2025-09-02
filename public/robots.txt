@@ -1,0 +1,10 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# Host
+Host: https://maps4fs.xyz
+
+# Sitemaps
+Sitemap: https://maps4fs.xyz/sitemap.xml
