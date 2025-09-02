@@ -75,9 +75,6 @@ export default function DataSourceSelector({
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center space-x-2">
-        <h3 className="text-sm font-medium text-gray-900 dark:text-gray-100">
-          Map Data Source
-        </h3>
         <InfoIcon 
           text="Choose between public OpenStreetMap data or upload your own custom OSM file. Custom files will be used for both map preview and generation."
         />
