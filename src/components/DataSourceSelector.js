@@ -84,10 +84,10 @@ export default function DataSourceSelector({
       </div>
 
       {/* Source Selection */}
-      <div className="space-y-3">
+      <div className="flex space-x-4">
         {/* Public OSM Option */}
         <label className={`
-          flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-all
+          flex items-center space-x-2 p-3 rounded-lg border cursor-pointer transition-all flex-1
           ${selectedSource === DATA_SOURCES.PUBLIC 
             ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
             : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
@@ -103,22 +103,22 @@ export default function DataSourceSelector({
             disabled={disabled}
             className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-900 dark:bg-gray-700 dark:border-gray-600"
           />
-          <div className="flex-1">
-            <div className="flex items-center space-x-2">
-              <i className="zmdi zmdi-globe text-blue-600 dark:text-blue-400"></i>
+          <div className="flex items-center space-x-2">
+            <i className="zmdi zmdi-globe text-blue-600 dark:text-blue-400"></i>
+            <div>
               <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                 Public OpenStreetMap
               </span>
-            </div>
-            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              Use real-time data from OpenStreetMap servers (default)
+              <div className="text-xs text-gray-500 dark:text-gray-400">
+                Real-time OSM data
+              </div>
             </div>
           </div>
         </label>
 
         {/* Custom OSM File Option */}
         <label className={`
-          flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-all
+          flex items-center space-x-2 p-3 rounded-lg border cursor-pointer transition-all flex-1
           ${selectedSource === DATA_SOURCES.CUSTOM 
             ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
             : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
@@ -134,46 +134,49 @@ export default function DataSourceSelector({
             disabled={disabled}
             className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-900 dark:bg-gray-700 dark:border-gray-600"
           />
-          <div className="flex-1">
-            <div className="flex items-center space-x-2">
-              <i className="zmdi zmdi-file text-orange-600 dark:text-orange-400"></i>
+          <div className="flex items-center space-x-2">
+            <i className="zmdi zmdi-file text-orange-600 dark:text-orange-400"></i>
+            <div>
               <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
                 Custom OSM File
               </span>
-            </div>
-            <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              Upload your own OpenStreetMap data file
+              <div className="text-xs text-gray-500 dark:text-gray-400">
+                Upload your own data
+              </div>
             </div>
           </div>
         </label>
-
-        {/* File Upload Section - Only show when custom is selected */}
-        {selectedSource === DATA_SOURCES.CUSTOM && (
-          <div className="ml-7 mt-3 space-y-3">
-            <OsmFileUpload
-              onFileSelect={handleFileSelect}
-              selectedFile={selectedFile}
-              onFileRemove={handleFileRemove}
-              disabled={disabled || isProcessing}
-            />
-            
-            {/* Processing Status */}
-            {isProcessing && (
-              <div className="flex items-center space-x-2 text-sm text-blue-600 dark:text-blue-400">
-                <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                <span>Processing OSM file...</span>
-              </div>
-            )}
-            
-            {/* Processing Error */}
-            {processingError && (
-              <div className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 p-2 rounded border border-red-200 dark:border-red-800">
-                <strong>Processing Error:</strong> {processingError}
-              </div>
-            )}
-          </div>
-        )}
       </div>
+
+      {/* File Upload Section - Only show when custom is selected */}
+      {selectedSource === DATA_SOURCES.CUSTOM && (
+        <div className="mt-4 space-y-3">
+          {processingError && (
+            <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+              <div className="text-sm text-red-800 dark:text-red-200">
+                <i className="zmdi zmdi-alert-triangle mr-2"></i>
+                {processingError}
+              </div>
+            </div>
+          )}
+          
+          {isProcessing && (
+            <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <div className="text-sm text-blue-800 dark:text-blue-200 flex items-center">
+                <div className="animate-spin mr-2">⏳</div>
+                Processing OSM file...
+              </div>
+            </div>
+          )}
+          
+          <OsmFileUpload
+            onFileSelect={handleFileSelect}
+            selectedFile={selectedFile}
+            onFileRemove={handleFileRemove}
+            disabled={disabled || isProcessing}
+          />
+        </div>
+      )}
     </div>
   );
 }
