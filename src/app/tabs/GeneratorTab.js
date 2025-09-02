@@ -91,6 +91,61 @@ export default function GeneratorTab({
     <div className="flex h-full">
       {/* Left Panel */}
       <div className="w-1/2 p-8 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto">
+        
+        {/* Informational Intro */}
+        <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+          <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">
+            Maps4FS - Farming Simulator Map Generator
+          </h3>
+          <p className="text-xs text-blue-800 dark:text-blue-200 leading-relaxed mb-3">
+            This tool creates map templates for Farming Simulator using real-world geographic data from <a href="https://www.openstreetmap.org">OpenStreetMap</a> and various <a href="https://github.com/iwatkot/pydtmdl">DTM Providers</a>. Templates provide a foundation for map creation in Giants Editor - they are not playable maps.
+          </p>
+          <p className="text-xs text-blue-700 dark:text-blue-300 mb-3">
+            New to map making? Check out {' '}
+            <a 
+              href="https://github.com/iwatkot/maps4fs/blob/main/docs/step_by_step.md" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="underline hover:text-blue-600 dark:hover:text-blue-200 font-medium"
+            >
+              step-by-step guide
+            </a>
+            {' '}and{' '}
+            <a 
+              href="https://www.youtube.com/watch?v=hPbJZ0HoiDE&list=PLug0g7UYHX8D1Jik6NkJjQhdxqS-NOtB9" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="underline hover:text-blue-600 dark:hover:text-blue-200 font-medium"
+            >
+              video tutorials
+            </a>
+            .
+          </p>
+          <p className="text-xs text-blue-700 dark:text-blue-300 mb-2">
+            Something missing or incorrect? Data comes from OpenStreetMap - you can contribute improvements there.
+          </p>
+          <div className="flex flex-wrap gap-2 text-xs">
+            <a 
+              href="https://github.com/iwatkot/maps4fs/blob/main/docs/FAQ.md" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-200 rounded hover:bg-blue-200 dark:hover:bg-blue-700 transition-colors"
+            >
+              <i className="zmdi zmdi-help-outline text-xs mr-1"></i>
+              FAQ
+            </a>
+            <a 
+              href="https://discord.gg/Sj5QKKyE42" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-200 rounded hover:bg-blue-200 dark:hover:bg-blue-700 transition-colors"
+            >
+              <i className="zmdi zmdi-comments text-xs mr-1"></i>
+              Discord
+            </a>
+          </div>
+        </div>
+
         {/* Game Selector */}
         <Selector
           label="Game Version"
