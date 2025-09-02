@@ -18,8 +18,26 @@ export default function Home() {
   // Tab state
   const [activeTab, setActiveTab] = useState('generator');
 
-  // Promo state (only for public version)
+  // Promo state (only for public version) - avoid hydration mismatch
   const [showPromo, setShowPromo] = useState(isPublicVersion);
+  const [isClient, setIsClient] = useState(false);
+
+  // Handle client-side mounting and localStorage check
+  useEffect(() => {
+    setIsClient(true);
+    if (isPublicVersion) {
+      const promoClosed = localStorage.getItem('maps4fs-promo-closed');
+      if (promoClosed === 'true') {
+        setShowPromo(false);
+      }
+    }
+  }, []);
+
+  // Handler to close promo and save to localStorage
+  const handleClosePromo = () => {
+    setShowPromo(false);
+    localStorage.setItem('maps4fs-promo-closed', 'true');
+  };
 
   // Backend version state managed here
   const { 
@@ -117,14 +135,14 @@ export default function Home() {
       </div>
 
       {/* Slide-out Promo (only for public version) */}
-      {isPublicVersion && (
+      {isClient && isPublicVersion && (
         <SlideOutPromo
           title="Launch the tool locally"
           message="Use it without limitations on your own machine with full access to all features and faster processing."
           buttonText="Local Deployment"
           buttonLink="https://github.com/iwatkot/maps4fs/blob/main/docs/local_deployment.md"
           isVisible={showPromo}
-          onClose={() => setShowPromo(false)}
+          onClose={handleClosePromo}
         />
       )}
     </div>

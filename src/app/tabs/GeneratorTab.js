@@ -45,6 +45,25 @@ export default function GeneratorTab({
   const [rotation, setRotation] = useState(defaultValues.rotation);
   const [onlyPopularSettings, setOnlyPopularSettings] = useState(true);
 
+  // State for managing closable sections - avoid hydration mismatch
+  const [showIntro, setShowIntro] = useState(true);
+  const [isClient, setIsClient] = useState(false);
+
+  // Handle client-side mounting and localStorage check
+  useEffect(() => {
+    setIsClient(true);
+    const closedIntro = localStorage.getItem('maps4fs-intro-closed');
+    if (closedIntro === 'true') {
+      setShowIntro(false);
+    }
+  }, []);
+
+  // Handler to close intro and save to localStorage
+  const handleCloseIntro = () => {
+    setShowIntro(false);
+    localStorage.setItem('maps4fs-intro-closed', 'true');
+  };
+
   // DTM provider state managed by custom hook
   const { 
     dtmOptions, 
@@ -92,11 +111,21 @@ export default function GeneratorTab({
       {/* Left Panel */}
       <div className="w-1/2 p-8 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto">
         
-        {/* Informational Intro */}
-        <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-          <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">
-            Maps4FS - Farming Simulator Map Generator
-          </h3>
+        {/* Informational Intro - Closable */}
+        {isClient && showIntro && (
+          <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg relative">
+            {/* Close button */}
+            <button
+              onClick={handleCloseIntro}
+              className="absolute top-2 right-2 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 text-lg leading-none p-1"
+              title="Close intro"
+            >
+              <i className="zmdi zmdi-close text-sm"></i>
+            </button>
+            
+            <h3 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2 pr-6">
+              Maps4FS - Farming Simulator Map Generator
+            </h3>
           <p className="text-xs text-blue-800 dark:text-blue-200 leading-relaxed mb-3">
             This tool creates map templates for Farming Simulator using real-world geographic data from <a href="https://www.openstreetmap.org">OpenStreetMap</a> and various <a href="https://github.com/iwatkot/pydtmdl">DTM Providers</a>. Templates provide a foundation for map creation in Giants Editor - they are not playable maps.
           </p>
@@ -145,6 +174,7 @@ export default function GeneratorTab({
             </a>
           </div>
         </div>
+        )}
 
         {/* Game Selector */}
         <Selector
