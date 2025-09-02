@@ -37,6 +37,7 @@ const ActualMapWidget = dynamic(() => {
       isActive, 
       zmdiIcon,
       className = 'icon-overlay',
+      handleRef,
       onMouseDown, 
       onMouseOver, 
       onMouseOut 
@@ -44,6 +45,7 @@ const ActualMapWidget = dynamic(() => {
       return (
         <>
           <CircleMarker
+            ref={handleRef}
             center={position}
             radius={12}
             pathOptions={{
@@ -109,6 +111,8 @@ const ActualMapWidget = dynamic(() => {
       const [lastActionWasDrag, setLastActionWasDrag] = useState(false);
       const lastCoordinatesRef = useRef(coordinates);
       const polygonRef = useRef();
+      const rotationHandleRef = useRef();
+      const resizeHandleRef = useRef();
       const updateTimeout = useRef(null);
       
       // Parse coordinates
@@ -318,6 +322,27 @@ const ActualMapWidget = dynamic(() => {
           lastCoordinatesRef.current = coordinates;
         }
       }, [centerLat, centerLon, coordinates, map, isDragging, lastActionWasDrag]);
+      
+      // Force re-render of polygon when OSM data changes to ensure it stays on top
+      useEffect(() => {
+        if (osmData && osmData.geoJson) {
+          // Use setTimeout to ensure the GeoJSON layer is rendered first
+          setTimeout(() => {
+            // Bring polygon to front
+            if (polygonRef.current && polygonRef.current.bringToFront) {
+              polygonRef.current.bringToFront();
+            }
+            // Bring rotation handle to front
+            if (rotationHandleRef.current && rotationHandleRef.current.bringToFront) {
+              rotationHandleRef.current.bringToFront();
+            }
+            // Bring resize handle to front
+            if (resizeHandleRef.current && resizeHandleRef.current.bringToFront) {
+              resizeHandleRef.current.bringToFront();
+            }
+          }, 100);
+        }
+      }, [osmData]);
       
       // Cleanup timeout on unmount
       useEffect(() => {
@@ -531,6 +556,7 @@ const ActualMapWidget = dynamic(() => {
             isActive={isRotating}
             zmdiIcon="zmdi-refresh"
             className="rotation-icon-overlay"
+            handleRef={rotationHandleRef}
             onMouseDown={(e) => {
               e.originalEvent.preventDefault();
               setIsRotating(true);
@@ -567,6 +593,7 @@ const ActualMapWidget = dynamic(() => {
               isActive={isResizing}
               zmdiIcon="zmdi-crop-free"
               className="resize-icon-overlay"
+              handleRef={resizeHandleRef}
               onMouseDown={(e) => {
                 e.originalEvent.preventDefault();
                 setIsResizing(true);
