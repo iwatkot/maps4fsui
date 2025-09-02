@@ -66,7 +66,8 @@ export const processOsmFile = async (file) => {
     return {
       geoJson,
       bounds: calculateBounds(geoJson),
-      featureCount: geoJson.features.length
+      featureCount: geoJson.features.length,
+      originalXml: osmXmlString // Store original XML for API calls
     };
   } catch (error) {
     console.error('Error processing OSM file:', error);

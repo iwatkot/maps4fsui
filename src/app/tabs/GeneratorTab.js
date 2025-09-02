@@ -354,7 +354,10 @@ export default function GeneratorTab({
                   satellite_settings: satelliteValues,
                 },
               };
-              startGeneration(settings);
+              
+              // Pass custom OSM data if using custom data source
+              const customOsmData = dataSource === DATA_SOURCES.CUSTOM ? osmData : null;
+              startGeneration(settings, customOsmData);
             }}
             onDownload={downloadMap}
             disabled={!isGenerateEnabled}
