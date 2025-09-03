@@ -9,44 +9,37 @@ import * as THREE from 'three';
 /**
  * STL Model component that loads and displays an STL file
  */
-function StlModel({ url, onError }) {
+function StlModel({ url }) {
   const meshRef = useRef();
 
-  try {
-    const geometry = useLoader(STLLoader, url);
-    
-    // Center the geometry
-    geometry.computeBoundingBox();
-    const center = new THREE.Vector3();
-    geometry.boundingBox.getCenter(center);
-    geometry.translate(-center.x, -center.y, -center.z);
-    
-    // Scale to fit in view
-    const size = new THREE.Vector3();
-    geometry.boundingBox.getSize(size);
-    const maxDim = Math.max(size.x, size.y, size.z);
-    const scale = 2 / maxDim; // Scale to fit in a 2-unit cube
+  const geometry = useLoader(STLLoader, url);
+  
+  // Center the geometry
+  geometry.computeBoundingBox();
+  const center = new THREE.Vector3();
+  geometry.boundingBox.getCenter(center);
+  geometry.translate(-center.x, -center.y, -center.z);
+  
+  // Scale to fit in view
+  const size = new THREE.Vector3();
+  geometry.boundingBox.getSize(size);
+  const maxDim = Math.max(size.x, size.y, size.z);
+  const scale = 2 / maxDim; // Scale to fit in a 2-unit cube
 
-    return (
-      <mesh
-        ref={meshRef}
-        geometry={geometry}
-        scale={[scale, scale, scale]}
-        rotation={[-Math.PI / 2, 0, 0]} // Rotate to standard orientation
-      >
-        <meshStandardMaterial 
-          color="#4f46e5" 
-          roughness={0.3}
-          metalness={0.1}
-        />
-      </mesh>
-    );
-  } catch (error) {
-    if (onError) {
-      onError(`Failed to load STL: ${error?.message || 'Unknown error'}`);
-    }
-    return null;
-  }
+  return (
+    <mesh
+      ref={meshRef}
+      geometry={geometry}
+      scale={[scale, scale, scale]}
+      rotation={[-Math.PI / 2, 0, 0]} // Rotate to standard orientation
+    >
+      <meshStandardMaterial 
+        color="#4f46e5" 
+        roughness={0.3}
+        metalness={0.1}
+      />
+    </mesh>
+  );
 }
 
 /**
@@ -95,7 +88,7 @@ export default function StlViewer({ url, filename, size, onError }) {
           <Environment preset="studio" />
           
           {/* STL Model */}
-          <StlModel url={url} onError={onError} />
+          <StlModel url={url} />
           
           {/* Controls */}
           <OrbitControls 
