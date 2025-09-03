@@ -28,8 +28,8 @@ export function useMapGeneration() {
         if (Math.abs(diff) < 0.2) {
           return targetProgress; // Close enough, snap to target
         }
-        // Simple smooth movement - 8% closer each frame
-        return current + diff * 0.08;
+        // Simple smooth movement - 4% closer each frame (slower than before)
+        return current + diff * 0.04;
       });
     };
 
@@ -96,9 +96,9 @@ export function useMapGeneration() {
           }
           
           if (statusResult.status === 'queued') {
-            // Task is still in queue - smooth progress up to 45%
+            // Task is still in queue - smooth progress up to 20%
             queueTime += 3; // 3 seconds per poll
-            const queueProgress = Math.min(10 + (queueTime / 2), 45); // Slower progress in queue
+            const queueProgress = Math.min(10 + (queueTime / 6), 20); // Even slower progress in queue, max 20%
             currentTargetProgress = queueProgress;
             setTargetProgress(currentTargetProgress);
             setStatusText("In queue");
@@ -106,11 +106,11 @@ export function useMapGeneration() {
             // Task is being processed - smooth progress up to 85%
             if (!hasStartedProcessing) {
               hasStartedProcessing = true;
-              currentTargetProgress = 50; // Jump to 50% when processing starts
+              currentTargetProgress = 25; // Jump to 25% when processing starts (lower than before)
             }
             
             processingTime += 3; // 3 seconds per poll
-            const processingProgress = Math.min(50 + (processingTime / 1.5), 85); // Faster progress when processing
+            const processingProgress = Math.min(25 + (processingTime / 1.5), 85); // Faster progress when processing, starting from 25%
             currentTargetProgress = processingProgress;
             setTargetProgress(currentTargetProgress);
             setStatusText("Generating the map...");
