@@ -9,6 +9,7 @@ import Slider from '@/components/Slider';
 import ErrorDisplay from '@/components/ErrorDisplay';
 import MapWidget from '@/components/MapWidget';
 import PageNavigator from '@/components/PageNavigator';
+import SlideNavigator from '@/components/SlideNavigator';
 import PreviewGallery from '@/components/PreviewGallery';
 import DataSourceSelector, { DATA_SOURCES } from '@/components/DataSourceSelector';
 import { validateCoordinates } from '@/api/preprocess';
@@ -411,20 +412,8 @@ export default function GeneratorTab({
           />
         </div>
 
-        {/* Page Navigation */}
-        {totalPages > 1 && (
-          <div className="mb-4">
-            <PageNavigator
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-              pageLabels={pageLabels}
-            />
-          </div>
-        )}
-
-        {/* Page Content Area */}
-        <div className="flex-1">
+        {/* Page Content Area - with relative positioning for overlay navigation */}
+        <div className="flex-1 relative">
         {isBackendAvailable === false ? (
           /* Backend Unavailable Message */
           <div className="w-full h-full rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 relative overflow-hidden">
@@ -499,7 +488,7 @@ export default function GeneratorTab({
           </div>
         ) : currentPage === PAGES.PREVIEWS && showPreviewsPage ? (
           /* Preview Gallery Page */
-          <div className="w-full h-full rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden">
+          <div className="w-full h-full rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden relative">
             <PreviewGallery
               previews={previews}
               taskId={taskId}
@@ -508,23 +497,41 @@ export default function GeneratorTab({
               }}
             />
             {previewsError && (
-              <div className="p-4">
+              <div className="absolute top-4 left-4 right-4 z-20">
                 <ErrorDisplay message={previewsError} />
               </div>
             )}
+            
+            {/* Slide Navigation Overlay */}
+            <SlideNavigator
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
           </div>
         ) : validateCoordinates(coordinatesInput) ? (
           /* Map Widget Page */
-          <MapWidget 
-            coordinates={coordinatesInput}
-            onCoordinatesChange={setCoordinatesInput}
-            size={selectedSize === "custom" ? customSize : selectedSize}
-            rotation={rotation}
-            onRotationChange={setRotation}
-            onSizeChange={setCustomSize}
-            showResizeHandle={selectedSize === "custom"}
-            osmData={dataSource === DATA_SOURCES.CUSTOM ? osmData : null}
-          />
+          <div className="relative w-full h-full">
+            <MapWidget 
+              coordinates={coordinatesInput}
+              onCoordinatesChange={setCoordinatesInput}
+              size={selectedSize === "custom" ? customSize : selectedSize}
+              rotation={rotation}
+              onRotationChange={setRotation}
+              onSizeChange={setCustomSize}
+              showResizeHandle={selectedSize === "custom"}
+              osmData={dataSource === DATA_SOURCES.CUSTOM ? osmData : null}
+            />
+            
+            {/* Slide Navigation Overlay for Map page when previews are available */}
+            {totalPages > 1 && (
+              <SlideNavigator
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={setCurrentPage}
+              />
+            )}
+          </div>
         ) : (
           /* Empty State */
           <div className="w-full h-full rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 flex flex-col items-center justify-center">

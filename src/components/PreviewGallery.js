@@ -53,58 +53,60 @@ export default function PreviewGallery({ previews, taskId, onError }) {
 
   return (
     <>
-      <div className="w-full h-full overflow-auto">
-        <div className="grid grid-cols-2 gap-4 p-4">
-          {previews.map((preview, index) => (
-            <div
-              key={`${taskId}-${index}`}
-              className="group cursor-pointer rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 transition-all hover:shadow-lg"
-              onClick={() => handleImageClick(preview, index)}
-            >
-              <div className="aspect-square bg-gray-100 dark:bg-gray-800 relative overflow-hidden">
-                {loadingImages[index] !== false && !imageErrors[index] && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="text-gray-400 dark:text-gray-500">
-                      <div className="animate-spin text-2xl">⏳</div>
+      <div className="absolute inset-0 overflow-hidden flex flex-col">
+        <div className="flex-1 overflow-auto">
+          <div className="grid grid-cols-2 gap-3 p-4">
+            {previews.map((preview, index) => (
+              <div
+                key={`${taskId}-${index}`}
+                className="group cursor-pointer rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 transition-all hover:shadow-lg aspect-square"
+                onClick={() => handleImageClick(preview, index)}
+              >
+                <div className="w-full h-full bg-gray-100 dark:bg-gray-800 relative overflow-hidden">
+                  {loadingImages[index] !== false && !imageErrors[index] && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="text-gray-400 dark:text-gray-500">
+                        <div className="animate-spin text-2xl">⏳</div>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {imageErrors[index] ? (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
+                      <div className="text-2xl mb-2">❌</div>
+                      <div className="text-xs text-center px-2">Failed to load</div>
+                    </div>
+                  ) : (
+                    <img
+                      src={getImageUrl(preview)}
+                      alt={preview.filename}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      onLoad={() => handleImageLoad(index)}
+                      onError={() => handleImageError(index, preview)}
+                      style={{ display: loadingImages[index] === false || imageErrors[index] ? 'block' : 'none' }}
+                    />
+                  )}
+                  
+                  {/* Overlay with filename */}
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                    <div className="text-white text-xs font-medium truncate">
+                      {preview.filename}
+                    </div>
+                    <div className="text-white/70 text-xs">
+                      {formatFileSize(preview.size)}
                     </div>
                   </div>
-                )}
-                
-                {imageErrors[index] ? (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
-                    <div className="text-2xl mb-2">❌</div>
-                    <div className="text-xs text-center px-2">Failed to load</div>
-                  </div>
-                ) : (
-                  <img
-                    src={getImageUrl(preview)}
-                    alt={preview.filename}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    onLoad={() => handleImageLoad(index)}
-                    onError={() => handleImageError(index, preview)}
-                    style={{ display: loadingImages[index] === false || imageErrors[index] ? 'block' : 'none' }}
-                  />
-                )}
-                
-                {/* Overlay with filename */}
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
-                  <div className="text-white text-xs font-medium truncate">
-                    {preview.filename}
-                  </div>
-                  <div className="text-white/70 text-xs">
-                    {formatFileSize(preview.size)}
-                  </div>
-                </div>
 
-                {/* Hover overlay */}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                  <div className="bg-white/90 dark:bg-gray-900/90 rounded-full p-2">
-                    <i className="zmdi zmdi-zoom-in text-gray-700 dark:text-gray-300 text-lg"></i>
+                  {/* Hover overlay */}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                    <div className="bg-white/90 dark:bg-gray-900/90 rounded-full p-2">
+                      <i className="zmdi zmdi-zoom-in text-gray-700 dark:text-gray-300 text-lg"></i>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
 
