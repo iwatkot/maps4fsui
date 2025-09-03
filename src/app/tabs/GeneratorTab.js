@@ -23,7 +23,9 @@ import {
   constraints, 
 } from '@/config/validation';
 import ButtonProgress from '@/components/ButtonProgress';
+import MixedPreviewGallery from '@/components/MixedPreviewGallery';
 import { useMapGeneration } from '@/hooks/useMapGeneration';
+import { separateFilesByType } from '@/utils/fileTypeUtils';
 import DemSettingsContent from '@/app/settings/demSettings';
 import BackgroundSettingsContent from '@/app/settings/backgroundSettings';
 import GrleSettingsContent from '@/app/settings/grleSettings';
@@ -54,7 +56,7 @@ export default function GeneratorTab({
   const [hasAutoSwitched, setHasAutoSwitched] = useState(false);
   const PAGES = {
     MAP: 0,
-    PREVIEWS: 1
+    PREVIEWS_START: 1
   };
 
   // OSM file upload state
@@ -144,15 +146,24 @@ export default function GeneratorTab({
   // Check if generate button should be enabled
   const isGenerateEnabled = validateCoordinates(coordinatesInput) && !isGenerating;
   
-  // Determine if we should show the previews page
-  const showPreviewsPage = previews && previews.length > 0;
-  const totalPages = showPreviewsPage ? 2 : 1;
-  const pageLabels = ['Map Preview', 'Generated Previews'];
+  // Determine pages based on available content
+  const { pngPreviews, stlModels } = separateFilesByType(previews);
+  const hasPngPreviews = pngPreviews && pngPreviews.length > 0;
+  const hasStlModels = stlModels && stlModels.length > 0;
+  const showPreviewsPage = hasPngPreviews || hasStlModels;
+  
+  // Calculate total pages: Map page (1) + Preview pages (1 for PNG gallery + 1 per STL)
+  const previewPages = (hasPngPreviews ? 1 : 0) + (stlModels ? stlModels.length : 0);
+  const totalPages = showPreviewsPage ? 1 + previewPages : 1;
+  const pageLabels = ['Map Preview', ...(showPreviewsPage ? ['Generated Previews'] : [])];
+  
+  // Helper function to check if current page is a preview page
+  const isPreviewPage = (page) => showPreviewsPage && page >= PAGES.PREVIEWS_START;
   
   // Auto-switch to previews page when they become available (only once)
   useEffect(() => {
     if (showPreviewsPage && !hasAutoSwitched) {
-      setCurrentPage(PAGES.PREVIEWS);
+      setCurrentPage(PAGES.PREVIEWS_START);
       setHasAutoSwitched(true);
     }
     
@@ -160,7 +171,7 @@ export default function GeneratorTab({
     if (!showPreviewsPage && hasAutoSwitched) {
       setHasAutoSwitched(false);
     }
-  }, [showPreviewsPage, hasAutoSwitched, PAGES.PREVIEWS]);
+  }, [showPreviewsPage, hasAutoSwitched, PAGES.PREVIEWS_START]);
 
   // Compute display status based on form state
   const displayStatusText = !isGenerateEnabled && statusText === "Ready" 
@@ -493,12 +504,13 @@ export default function GeneratorTab({
               <div className="text-sm">Connecting to backend service...</div>
             </div>
           </div>
-        ) : currentPage === PAGES.PREVIEWS && showPreviewsPage ? (
-          /* Preview Gallery Page */
+        ) : isPreviewPage(currentPage) && showPreviewsPage ? (
+          /* Mixed Preview Gallery Page (PNG + STL) */
           <div className="w-full h-full rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 relative" style={{ overflow: 'hidden', scrollbarGutter: 'stable' }}>
-            <PreviewGallery
+            <MixedPreviewGallery
               previews={previews}
               taskId={taskId}
+              currentPage={currentPage - PAGES.PREVIEWS_START}
               onError={(error) => {
                 logger.error('Preview gallery error:', error);
               }}
