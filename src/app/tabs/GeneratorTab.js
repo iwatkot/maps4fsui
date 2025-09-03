@@ -51,6 +51,7 @@ export default function GeneratorTab({
   
   // Page navigation state
   const [currentPage, setCurrentPage] = useState(0);
+  const [hasAutoSwitched, setHasAutoSwitched] = useState(false);
   const PAGES = {
     MAP: 0,
     PREVIEWS: 1
@@ -148,12 +149,18 @@ export default function GeneratorTab({
   const totalPages = showPreviewsPage ? 2 : 1;
   const pageLabels = ['Map Preview', 'Generated Previews'];
   
-  // Auto-switch to previews page when they become available
+  // Auto-switch to previews page when they become available (only once)
   useEffect(() => {
-    if (showPreviewsPage && currentPage === PAGES.MAP) {
+    if (showPreviewsPage && !hasAutoSwitched) {
       setCurrentPage(PAGES.PREVIEWS);
+      setHasAutoSwitched(true);
     }
-  }, [showPreviewsPage, currentPage, PAGES.MAP, PAGES.PREVIEWS]);
+    
+    // Reset auto-switch flag when previews are no longer available (new generation started)
+    if (!showPreviewsPage && hasAutoSwitched) {
+      setHasAutoSwitched(false);
+    }
+  }, [showPreviewsPage, hasAutoSwitched, PAGES.PREVIEWS]);
 
   // Compute display status based on form state
   const displayStatusText = !isGenerateEnabled && statusText === "Ready" 
@@ -529,6 +536,7 @@ export default function GeneratorTab({
                 currentPage={currentPage}
                 totalPages={totalPages}
                 onPageChange={setCurrentPage}
+                className="z-[9999]"
               />
             )}
           </div>
