@@ -121,14 +121,6 @@ export default function PreviewGallery({ previews, taskId, onError }) {
                 onClick={() => handleImageClick(preview, index)}
               >
                 <div className="w-full h-full bg-gray-100 dark:bg-gray-800 relative overflow-hidden">
-                  {loadingImages[index] !== false && !imageErrors[index] && (
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-gray-400 dark:text-gray-500">
-                        <div className="animate-spin text-2xl">⏳</div>
-                      </div>
-                    </div>
-                  )}
-                  
                   {imageErrors[index] ? (
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-400 dark:text-gray-500">
                       <div className="text-2xl mb-2">❌</div>

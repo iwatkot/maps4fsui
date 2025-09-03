@@ -44,16 +44,11 @@ function StlModel({ blobUrl }) {
 }
 
 /**
- * Loading component
+ * Loading component - now returns empty div
  */
 function LoadingFallback() {
   return (
-    <div className="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
-      <div className="text-center">
-        <div className="text-3xl animate-spin mb-2">⏳</div>
-        <div className="text-gray-600 dark:text-gray-400">Loading 3D Model...</div>
-      </div>
-    </div>
+    <div className="absolute inset-0 bg-gray-100 dark:bg-gray-800"></div>
   );
 }
 
