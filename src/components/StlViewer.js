@@ -115,15 +115,6 @@ export default function StlViewer({ url, filename, size, onError }) {
           {formatFileSize(size)} • 3D Model (STL)
         </div>
       </div>
-      
-      {/* Controls info */}
-      <div className="absolute top-4 right-4 bg-black/70 backdrop-blur-sm rounded-lg p-2 text-white text-xs">
-        <div className="flex flex-col space-y-1">
-          <div>🖱️ Rotate: Left click + drag</div>
-          <div>🔍 Zoom: Scroll wheel</div>
-          <div>✋ Pan: Right click + drag</div>
-        </div>
-      </div>
     </div>
   );
 }
