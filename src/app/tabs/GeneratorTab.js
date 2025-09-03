@@ -8,6 +8,7 @@ import TooltipSwitch  from '@/components/TooltipSwitch';
 import Slider from '@/components/Slider';
 import ErrorDisplay from '@/components/ErrorDisplay';
 import MapWidget from '@/components/MapWidget';
+import DataSourceSelector, { DATA_SOURCES } from '@/components/DataSourceSelector';
 import { validateCoordinates } from '@/api/preprocess';
 import { useDTMProviders } from '@/hooks/useDTMProviders';
 import config from '@/app/config';
@@ -45,6 +46,11 @@ export default function GeneratorTab({
   const [rotation, setRotation] = useState(defaultValues.rotation);
   const [onlyPopularSettings, setOnlyPopularSettings] = useState(true);
 
+  // OSM file upload state
+  const [dataSource, setDataSource] = useState(DATA_SOURCES.PUBLIC);
+  const [selectedOsmFile, setSelectedOsmFile] = useState(null);
+  const [osmData, setOsmData] = useState(null);
+
   // State for managing closable sections - avoid hydration mismatch
   const [showIntro, setShowIntro] = useState(true);
   const [isClient, setIsClient] = useState(false);
@@ -62,6 +68,31 @@ export default function GeneratorTab({
   const handleCloseIntro = () => {
     setShowIntro(false);
     localStorage.setItem('maps4fs-intro-closed', 'true');
+  };
+
+  // OSM file handlers
+  const handleDataSourceChange = (source) => {
+    setDataSource(source);
+    logger.info(`Data source changed to: ${source}`);
+  };
+
+  const handleOsmFileSelect = (file) => {
+    setSelectedOsmFile(file);
+    logger.info(`OSM file selected: ${file.name} (${file.size} bytes)`);
+  };
+
+  const handleOsmFileRemove = () => {
+    setSelectedOsmFile(null);
+    setOsmData(null);
+    setDataSource(DATA_SOURCES.PUBLIC);
+    logger.info('OSM file removed, switched back to public data source');
+  };
+
+  const handleOsmDataProcessed = (processedData) => {
+    setOsmData(processedData);
+    if (processedData) {
+      logger.info(`OSM data processed: ${processedData.featureCount} features`);
+    }
   };
 
   // DTM provider state managed by custom hook
@@ -323,7 +354,10 @@ export default function GeneratorTab({
                   satellite_settings: satelliteValues,
                 },
               };
-              startGeneration(settings);
+              
+              // Pass custom OSM data if using custom data source
+              const customOsmData = dataSource === DATA_SOURCES.CUSTOM ? osmData : null;
+              startGeneration(settings, customOsmData);
             }}
             onDownload={downloadMap}
             disabled={!isGenerateEnabled}
@@ -339,7 +373,22 @@ export default function GeneratorTab({
       </div>
 
       {/* Right Panel */}
-      <div className="w-1/2 p-8">
+      <div className="w-1/2 p-8 flex flex-col">
+        {/* Data Source Selector */}
+        <div className="mb-6">
+          <DataSourceSelector
+            selectedSource={dataSource}
+            onSourceChange={handleDataSourceChange}
+            selectedFile={selectedOsmFile}
+            onFileSelect={handleOsmFileSelect}
+            onFileRemove={handleOsmFileRemove}
+            onOsmDataProcessed={handleOsmDataProcessed}
+            disabled={isBackendAvailable === false}
+          />
+        </div>
+
+        {/* Map Preview Area */}
+        <div className="flex-1">
         {isBackendAvailable === false ? (
           /* Backend Unavailable Message */
           <div className="w-full h-full rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 relative overflow-hidden">
@@ -421,6 +470,7 @@ export default function GeneratorTab({
             onRotationChange={setRotation}
             onSizeChange={setCustomSize}
             showResizeHandle={selectedSize === "custom"}
+            osmData={dataSource === DATA_SOURCES.CUSTOM ? osmData : null}
           />
         ) : (
           <div className="w-full h-full rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 flex flex-col items-center justify-center">
@@ -433,6 +483,7 @@ export default function GeneratorTab({
             </div>
           </div>
         )}
+        </div>
       </div>
     </div>
   );

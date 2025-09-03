@@ -29,7 +29,7 @@ const getRotatedRectangleCorners = (centerLat, centerLon, sizeMeters, rotationDe
 // Create the actual map component
 const ActualMapWidget = dynamic(() => {
   return import('react-leaflet').then((mod) => {
-    const { MapContainer, TileLayer, Polygon, LayersControl, useMap, useMapEvents, CircleMarker, Marker } = mod;
+    const { MapContainer, TileLayer, Polygon, LayersControl, useMap, useMapEvents, CircleMarker, Marker, GeoJSON } = mod;
     
     // Generic Icon Handle Component
     function IconHandle({ 
@@ -37,6 +37,7 @@ const ActualMapWidget = dynamic(() => {
       isActive, 
       zmdiIcon,
       className = 'icon-overlay',
+      handleRef,
       onMouseDown, 
       onMouseOver, 
       onMouseOut 
@@ -44,6 +45,7 @@ const ActualMapWidget = dynamic(() => {
       return (
         <>
           <CircleMarker
+            ref={handleRef}
             center={position}
             radius={12}
             pathOptions={{
@@ -98,7 +100,7 @@ const ActualMapWidget = dynamic(() => {
     }
     
     // Internal component that uses Leaflet hooks
-    function MapContent({ coordinates, onCoordinatesChange, size, rotation, onRotationChange, onSizeChange, showResizeHandle }) {
+    function MapContent({ coordinates, onCoordinatesChange, size, rotation, onRotationChange, onSizeChange, showResizeHandle, osmData }) {
       const [isDragging, setIsDragging] = useState(false);
       const [isRotating, setIsRotating] = useState(false);
       const [isResizing, setIsResizing] = useState(false);
@@ -109,6 +111,8 @@ const ActualMapWidget = dynamic(() => {
       const [lastActionWasDrag, setLastActionWasDrag] = useState(false);
       const lastCoordinatesRef = useRef(coordinates);
       const polygonRef = useRef();
+      const rotationHandleRef = useRef();
+      const resizeHandleRef = useRef();
       const updateTimeout = useRef(null);
       
       // Parse coordinates
@@ -319,6 +323,27 @@ const ActualMapWidget = dynamic(() => {
         }
       }, [centerLat, centerLon, coordinates, map, isDragging, lastActionWasDrag]);
       
+      // Force re-render of polygon when OSM data changes to ensure it stays on top
+      useEffect(() => {
+        if (osmData && osmData.geoJson) {
+          // Use setTimeout to ensure the GeoJSON layer is rendered first
+          setTimeout(() => {
+            // Bring polygon to front
+            if (polygonRef.current && polygonRef.current.bringToFront) {
+              polygonRef.current.bringToFront();
+            }
+            // Bring rotation handle to front
+            if (rotationHandleRef.current && rotationHandleRef.current.bringToFront) {
+              rotationHandleRef.current.bringToFront();
+            }
+            // Bring resize handle to front
+            if (resizeHandleRef.current && resizeHandleRef.current.bringToFront) {
+              resizeHandleRef.current.bringToFront();
+            }
+          }, 100);
+        }
+      }, [osmData]);
+      
       // Cleanup timeout on unmount
       useEffect(() => {
         return () => {
@@ -331,7 +356,7 @@ const ActualMapWidget = dynamic(() => {
       return (
         <>
           <LayersControl position="topright">
-            <LayersControl.BaseLayer checked name="OpenStreetMap">
+            <LayersControl.BaseLayer checked={!osmData} name="OpenStreetMap">
               <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -344,7 +369,137 @@ const ActualMapWidget = dynamic(() => {
                 url="https://mt0.google.com/vt/lyrs=s&hl=en&x={x}&y={y}&z={z}&s=Ga"
               />
             </LayersControl.BaseLayer>
+
+            {/* Clean layer for custom OSM data */}
+            {osmData && (
+              <LayersControl.BaseLayer checked={!!osmData} name="Custom OSM Data">
+                <TileLayer
+                  attribution='Custom OSM Data'
+                  url="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
+                  opacity={0}
+                />
+              </LayersControl.BaseLayer>
+            )}
           </LayersControl>
+          
+          {/* Custom OSM Data Layer - Rendered below selection */}
+          {osmData && osmData.geoJson && (
+            <GeoJSON
+              key={`osm-data-${osmData.timestamp || Date.now()}`}
+              data={osmData.geoJson}
+              style={(feature) => {
+                // Import the style function dynamically to avoid SSR issues
+                const getFeatureStyle = (feature) => {
+                  const properties = feature.properties || {};
+                  const geometry = feature.geometry;
+                  
+                  // Default styles
+                  let style = {
+                    weight: 2,
+                    opacity: 0.9,
+                    fillOpacity: 0.4
+                  };
+                  
+                  // Roads and paths
+                  if (properties.highway) {
+                    const highway = properties.highway;
+                    if (['motorway', 'trunk', 'primary'].includes(highway)) {
+                      return { ...style, color: '#e74c3c', weight: 4 };
+                    } else if (['secondary', 'tertiary'].includes(highway)) {
+                      return { ...style, color: '#f39c12', weight: 3 };
+                    } else if (['residential', 'unclassified', 'service'].includes(highway)) {
+                      return { ...style, color: '#95a5a6', weight: 2 };
+                    } else if (['footway', 'path', 'track'].includes(highway)) {
+                      return { ...style, color: '#8e44ad', weight: 2, dashArray: '5, 5' };
+                    }
+                    return { ...style, color: '#34495e', weight: 2 };
+                  }
+                  
+                  // Buildings
+                  if (properties.building) {
+                    return { 
+                      ...style, 
+                      color: '#2c3e50', 
+                      fillColor: '#ecf0f1', 
+                      weight: 2,
+                      fillOpacity: 0.8 
+                    };
+                  }
+                  
+                  // Water features
+                  if (properties.natural === 'water' || properties.waterway) {
+                    return { 
+                      ...style, 
+                      color: '#3498db', 
+                      fillColor: '#85c1e9', 
+                      weight: 2,
+                      fillOpacity: 0.7 
+                    };
+                  }
+                  
+                  // Landuse
+                  if (properties.landuse) {
+                    const landuse = properties.landuse;
+                    if (['forest', 'wood'].includes(landuse)) {
+                      return { ...style, color: '#27ae60', fillColor: '#58d68d', fillOpacity: 0.5 };
+                    } else if (['farmland', 'meadow', 'grass'].includes(landuse)) {
+                      return { ...style, color: '#2ecc71', fillColor: '#7dcea0', fillOpacity: 0.4 };
+                    } else if (['residential', 'commercial', 'industrial'].includes(landuse)) {
+                      return { ...style, color: '#95a5a6', fillColor: '#d5dbdb', fillOpacity: 0.4 };
+                    }
+                  }
+                  
+                  // Default style
+                  return { ...style, color: '#7f8c8d', fillColor: '#bdc3c7' };
+                };
+                
+                return getFeatureStyle(feature);
+              }}
+              pointToLayer={(feature, latlng) => {
+                // Custom styling for point features
+                return new (require('leaflet')).CircleMarker(latlng, {
+                  radius: 4,
+                  fillColor: '#e67e22',
+                  color: '#d35400',
+                  weight: 1,
+                  opacity: 1,
+                  fillOpacity: 0.8
+                });
+              }}
+              onEachFeature={(feature, layer) => {
+                // Add popup with feature information
+                if (feature.properties) {
+                  const props = feature.properties;
+                  let popupContent = '<div class="text-xs">';
+                  
+                  // Add name if available
+                  if (props.name) {
+                    popupContent += `<strong>${props.name}</strong><br/>`;
+                  }
+                  
+                  // Add type information
+                  const type = props.highway || props.building || props.landuse || props.natural || props.amenity || 'Feature';
+                  popupContent += `Type: ${type}<br/>`;
+                  
+                  // Add other relevant properties
+                  Object.entries(props)
+                    .filter(([key, value]) => 
+                      !['name', 'highway', 'building', 'landuse', 'natural', 'amenity'].includes(key) && 
+                      value && 
+                      typeof value === 'string' && 
+                      value.length < 50
+                    )
+                    .slice(0, 5) // Limit to 5 additional properties
+                    .forEach(([key, value]) => {
+                      popupContent += `${key}: ${value}<br/>`;
+                    });
+                  
+                  popupContent += '</div>';
+                  layer.bindPopup(popupContent);
+                }
+              }}
+            />
+          )}
           
           <Polygon
             ref={polygonRef}
@@ -401,6 +556,7 @@ const ActualMapWidget = dynamic(() => {
             isActive={isRotating}
             zmdiIcon="zmdi-refresh"
             className="rotation-icon-overlay"
+            handleRef={rotationHandleRef}
             onMouseDown={(e) => {
               e.originalEvent.preventDefault();
               setIsRotating(true);
@@ -437,6 +593,7 @@ const ActualMapWidget = dynamic(() => {
               isActive={isResizing}
               zmdiIcon="zmdi-crop-free"
               className="resize-icon-overlay"
+              handleRef={resizeHandleRef}
               onMouseDown={(e) => {
                 e.originalEvent.preventDefault();
                 setIsResizing(true);
@@ -468,7 +625,7 @@ const ActualMapWidget = dynamic(() => {
     }
     
     // Return the component that will be dynamically loaded
-    function DynamicMapComponent({ coordinates, onCoordinatesChange, size, rotation, onRotationChange, onSizeChange, showResizeHandle }) {
+    function DynamicMapComponent({ coordinates, onCoordinatesChange, size, rotation, onRotationChange, onSizeChange, showResizeHandle, osmData }) {
       // Parse coordinates for initial center
       const parseCoordinates = (coordString) => {
         if (!coordString) return { lat: 51.505, lon: -0.09 };
@@ -515,6 +672,7 @@ const ActualMapWidget = dynamic(() => {
             onRotationChange={onRotationChange}
             onSizeChange={onSizeChange}
             showResizeHandle={showResizeHandle}
+            osmData={osmData}
           />
         </MapContainer>
       );
@@ -531,7 +689,8 @@ export default function MapWidget({
   rotation = 0,
   onRotationChange,
   onSizeChange,
-  showResizeHandle = false
+  showResizeHandle = false,
+  osmData = null
 }) {
   const [mounted, setMounted] = useState(false);
   
@@ -558,6 +717,7 @@ export default function MapWidget({
         onRotationChange={onRotationChange}
         onSizeChange={onSizeChange}
         showResizeHandle={showResizeHandle}
+        osmData={osmData}
       />
     </div>
   );

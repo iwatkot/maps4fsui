@@ -5,9 +5,10 @@ import logger from '@/utils/logger';
 /**
  * Start map generation process
  * @param {Object} settings - Main settings from the UI
+ * @param {Object} osmData - Optional custom OSM data with originalXml
  * @returns {Promise<Object>} - API response with task_id or error
  */
-export async function startMapGeneration(settings) {
+export async function startMapGeneration(settings, osmData = null) {
   try {
     logger.info('Starting map generation process');
     
@@ -25,9 +26,15 @@ export async function startMapGeneration(settings) {
       payload[key] = processedSectionSettings;
     }
 
+    // Step 3: Add custom OSM XML if provided
+    if (osmData && osmData.originalXml) {
+      payload.custom_osm_xml = osmData.originalXml;
+      logger.info(`Including custom OSM data (${osmData.originalXml.length} characters, ${osmData.featureCount} features)`);
+    }
+
     logger.info('Sending generation request to /map/generate');
     
-    // Step 3: Send to /map/generate endpoint using apiService
+    // Step 4: Send to /map/generate endpoint using apiService
     const data = await apiService.post('/map/generate', payload);
     
     logger.info(`Generation started successfully with task ID: ${data.task_id}`);
