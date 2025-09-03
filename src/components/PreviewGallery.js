@@ -113,14 +113,15 @@ export default function PreviewGallery({ previews, taskId, onError }) {
       {/* Fullscreen Modal */}
       {selectedImage && (
         <div 
-          className="fixed inset-0 bg-black/90 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 bg-black/90 flex items-center justify-center z-[10000] p-4"
           onClick={() => setSelectedImage(null)}
         >
-          <div className="relative max-w-full max-h-full">
+          <div className="relative inline-block">
             <img
               src={getImageUrl(selectedImage)}
               alt={selectedImage.filename}
-              className="max-w-full max-h-full object-contain"
+              className="max-w-full max-h-full object-contain block"
+              style={{ maxHeight: 'calc(100vh - 2rem)', maxWidth: 'calc(100vw - 2rem)' }}
             />
             
             {/* Close button */}
