@@ -2,6 +2,14 @@
 User-agent: *
 Allow: /
 Disallow: /api/
+Disallow: /auth/
+Disallow: /path/
+Disallow: /sql/
+Disallow: /home/
+Disallow: /*.sqlite
+Disallow: /*.db
+Disallow: /tmp/
+Disallow: /etc/
 
 # Host
 Host: https://maps4fs.xyz
