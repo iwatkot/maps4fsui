@@ -34,7 +34,7 @@ function StlModel({ url }) {
       rotation={[-Math.PI / 2, 0, 0]} // Rotate to standard orientation
     >
       <meshStandardMaterial 
-        color="#4f46e5" 
+        color="#6b7280"
         roughness={0.3}
         metalness={0.1}
       />
