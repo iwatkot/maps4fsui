@@ -8,6 +8,9 @@ import TooltipSwitch  from '@/components/TooltipSwitch';
 import Slider from '@/components/Slider';
 import ErrorDisplay from '@/components/ErrorDisplay';
 import MapWidget from '@/components/MapWidget';
+import PageNavigator from '@/components/PageNavigator';
+import SlideNavigator from '@/components/SlideNavigator';
+import PreviewGallery from '@/components/PreviewGallery';
 import DataSourceSelector, { DATA_SOURCES } from '@/components/DataSourceSelector';
 import { validateCoordinates } from '@/api/preprocess';
 import { useDTMProviders } from '@/hooks/useDTMProviders';
@@ -20,7 +23,9 @@ import {
   constraints, 
 } from '@/config/validation';
 import ButtonProgress from '@/components/ButtonProgress';
+import MixedPreviewGallery from '@/components/MixedPreviewGallery';
 import { useMapGeneration } from '@/hooks/useMapGeneration';
+import { separateFilesByType } from '@/utils/fileTypeUtils';
 import DemSettingsContent from '@/app/settings/demSettings';
 import BackgroundSettingsContent from '@/app/settings/backgroundSettings';
 import GrleSettingsContent from '@/app/settings/grleSettings';
@@ -45,6 +50,14 @@ export default function GeneratorTab({
   const [outputSize, setOutputSize] = useState(defaultValues.outputSize);
   const [rotation, setRotation] = useState(defaultValues.rotation);
   const [onlyPopularSettings, setOnlyPopularSettings] = useState(true);
+  
+  // Page navigation state
+  const [currentPage, setCurrentPage] = useState(0);
+  const [hasAutoSwitched, setHasAutoSwitched] = useState(false);
+  const PAGES = {
+    MAP: 0,
+    PREVIEWS_START: 1
+  };
 
   // OSM file upload state
   const [dataSource, setDataSource] = useState(DATA_SOURCES.PUBLIC);
@@ -123,12 +136,42 @@ export default function GeneratorTab({
     progress,
     isDownloadMode,
     error,
+    taskId,
+    previews,
+    previewsError,
     startGeneration,
     downloadMap
   } = useMapGeneration();
 
   // Check if generate button should be enabled
   const isGenerateEnabled = validateCoordinates(coordinatesInput) && !isGenerating;
+  
+  // Determine pages based on available content
+  const { pngPreviews, stlModels } = separateFilesByType(previews);
+  const hasPngPreviews = pngPreviews && pngPreviews.length > 0;
+  const hasStlModels = stlModels && stlModels.length > 0;
+  const showPreviewsPage = hasPngPreviews || hasStlModels;
+  
+  // Calculate total pages: Map page (1) + Preview pages (1 for PNG gallery + 1 per STL)
+  const previewPages = (hasPngPreviews ? 1 : 0) + (stlModels ? stlModels.length : 0);
+  const totalPages = showPreviewsPage ? 1 + previewPages : 1;
+  const pageLabels = ['Map Preview', ...(showPreviewsPage ? ['Generated Previews'] : [])];
+  
+  // Helper function to check if current page is a preview page
+  const isPreviewPage = (page) => showPreviewsPage && page >= PAGES.PREVIEWS_START;
+  
+  // Auto-switch to previews page when they become available (only once)
+  useEffect(() => {
+    if (showPreviewsPage && !hasAutoSwitched) {
+      setCurrentPage(PAGES.PREVIEWS_START);
+      setHasAutoSwitched(true);
+    }
+    
+    // Reset auto-switch flag when previews are no longer available (new generation started)
+    if (!showPreviewsPage && hasAutoSwitched) {
+      setHasAutoSwitched(false);
+    }
+  }, [showPreviewsPage, hasAutoSwitched, PAGES.PREVIEWS_START]);
 
   // Compute display status based on form state
   const displayStatusText = !isGenerateEnabled && statusText === "Ready" 
@@ -387,8 +430,8 @@ export default function GeneratorTab({
           />
         </div>
 
-        {/* Map Preview Area */}
-        <div className="flex-1">
+        {/* Page Content Area - with relative positioning for overlay navigation */}
+        <div className="flex-1 relative">
         {isBackendAvailable === false ? (
           /* Backend Unavailable Message */
           <div className="w-full h-full rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 relative overflow-hidden">
@@ -461,18 +504,41 @@ export default function GeneratorTab({
               <div className="text-sm">Connecting to backend service...</div>
             </div>
           </div>
+        ) : isPreviewPage(currentPage) && showPreviewsPage ? (
+          /* Mixed Preview Gallery Page (PNG + STL) */
+          <div className="w-full h-full rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 relative" style={{ overflow: 'hidden', scrollbarGutter: 'stable' }}>
+            <MixedPreviewGallery
+              previews={previews}
+              taskId={taskId}
+              currentPage={currentPage - PAGES.PREVIEWS_START}
+              onError={(error) => {
+                logger.error('Preview gallery error:', error);
+              }}
+            />
+            {previewsError && (
+              <div className="absolute top-4 left-4 right-4 z-20">
+                <ErrorDisplay message={previewsError} />
+              </div>
+            )}
+            
+          </div>
         ) : validateCoordinates(coordinatesInput) ? (
-          <MapWidget 
-            coordinates={coordinatesInput}
-            onCoordinatesChange={setCoordinatesInput}
-            size={selectedSize === "custom" ? customSize : selectedSize}
-            rotation={rotation}
-            onRotationChange={setRotation}
-            onSizeChange={setCustomSize}
-            showResizeHandle={selectedSize === "custom"}
-            osmData={dataSource === DATA_SOURCES.CUSTOM ? osmData : null}
-          />
+          /* Map Widget Page */
+          <div className="relative w-full h-full" style={{ scrollbarGutter: 'stable' }}>
+            <MapWidget 
+              coordinates={coordinatesInput}
+              onCoordinatesChange={setCoordinatesInput}
+              size={selectedSize === "custom" ? customSize : selectedSize}
+              rotation={rotation}
+              onRotationChange={setRotation}
+              onSizeChange={setCustomSize}
+              showResizeHandle={selectedSize === "custom"}
+              osmData={dataSource === DATA_SOURCES.CUSTOM ? osmData : null}
+            />
+            
+          </div>
         ) : (
+          /* Empty State */
           <div className="w-full h-full rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 flex flex-col items-center justify-center">
             <div className="text-center text-gray-500 dark:text-gray-400 space-y-2">
               <div className="text-2xl">🗺️</div>
@@ -482,6 +548,16 @@ export default function GeneratorTab({
               </div>
             </div>
           </div>
+        )}
+
+        {/* Global Slide Navigation - positioned relative to Page Content Area */}
+        {totalPages > 1 && (
+          <SlideNavigator
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            className="z-[9999]"
+          />
         )}
         </div>
       </div>

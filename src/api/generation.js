@@ -136,4 +136,33 @@ export async function downloadGeneratedMap(taskId) {
   }
 }
 
+/**
+ * Get preview information for a completed task
+ * @param {string} taskId - Task ID
+ * @returns {Promise<Object>} - Preview information with URLs
+ */
+export async function getTaskPreviews(taskId) {
+  try {
+    logger.info(`Getting task previews for: ${taskId}`);
+    
+    const data = await apiService.post('/task/previews', { task_id: taskId });
+    
+    logger.info(`Got ${data.preview_count} previews for task: ${taskId}`);
+    
+    return {
+      success: true,
+      taskId: data.task_id,
+      previewCount: data.preview_count,
+      previews: data.previews
+    };
+    
+  } catch (error) {
+    logger.error('Failed to get task previews:', error.message);
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+}
+
 export async function generateMap(data) {}
