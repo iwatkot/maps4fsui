@@ -30,6 +30,20 @@ export default function PreviewGallery({ previews, taskId, onError }) {
     setSelectedImage({ ...preview, index });
   };
 
+  const handlePreviousImage = () => {
+    if (selectedImage && selectedImage.index > 0) {
+      const prevIndex = selectedImage.index - 1;
+      setSelectedImage({ ...previews[prevIndex], index: prevIndex });
+    }
+  };
+
+  const handleNextImage = () => {
+    if (selectedImage && selectedImage.index < previews.length - 1) {
+      const nextIndex = selectedImage.index + 1;
+      setSelectedImage({ ...previews[nextIndex], index: nextIndex });
+    }
+  };
+
   const formatFileSize = (bytes) => {
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
@@ -122,6 +136,7 @@ export default function PreviewGallery({ previews, taskId, onError }) {
               alt={selectedImage.filename}
               className="max-w-full max-h-full object-contain block"
               style={{ maxHeight: 'calc(100vh - 2rem)', maxWidth: 'calc(100vw - 2rem)' }}
+              onClick={(e) => e.stopPropagation()}
             />
             
             {/* Close button */}
@@ -132,6 +147,34 @@ export default function PreviewGallery({ previews, taskId, onError }) {
             >
               <i className="zmdi zmdi-close text-lg"></i>
             </button>
+
+            {/* Previous button */}
+            {selectedImage.index > 0 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handlePreviousImage();
+                }}
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 transition-colors"
+                title="Previous image"
+              >
+                <i className="zmdi zmdi-chevron-left text-xl"></i>
+              </button>
+            )}
+
+            {/* Next button */}
+            {selectedImage.index < previews.length - 1 && (
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleNextImage();
+                }}
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white rounded-full p-3 transition-colors"
+                title="Next image"
+              >
+                <i className="zmdi zmdi-chevron-right text-xl"></i>
+              </button>
+            )}
 
             {/* Image info */}
             <div className="absolute bottom-4 left-4 right-4 bg-black/70 rounded-lg p-3 text-white">
