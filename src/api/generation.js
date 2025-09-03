@@ -147,6 +147,15 @@ export async function getTaskPreviews(taskId) {
     
     const data = await apiService.post('/task/previews', { task_id: taskId });
     
+    // Log STL files found in API response
+    const stlFiles = data.previews?.filter(p => p.filename?.toLowerCase().endsWith('.stl')) || [];
+    if (stlFiles.length > 0) {
+      console.log('🎯 STL files found in API response:');
+      stlFiles.forEach(stl => {
+        console.log(`   - ${stl.filename} → ${stl.url}`);
+      });
+    }
+    
     logger.info(`Got ${data.preview_count} previews for task: ${taskId}`);
     
     return {

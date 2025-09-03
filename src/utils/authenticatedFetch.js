@@ -10,24 +10,18 @@ export async function getAuthenticatedImageUrl(url) {
   try {
     // Check if URL is already full URL or just relative path
     const fullUrl = url.startsWith('http') ? url : `${config.backendUrl}${url}`;
-    console.log('Fetching authenticated image from:', fullUrl);
     
     const response = await fetch(fullUrl, {
       method: 'GET',
       headers: apiService.getHeaders(),
     });
 
-    console.log('Image fetch response:', response.status, response.statusText);
-
     if (!response.ok) {
       throw new Error(`Failed to fetch image: ${response.status}`);
     }
 
     const blob = await response.blob();
-    console.log('Image blob created:', blob.size, 'bytes, type:', blob.type);
-    const blobUrl = URL.createObjectURL(blob);
-    console.log('Image blob URL created:', blobUrl);
-    return blobUrl;
+    return URL.createObjectURL(blob);
   } catch (error) {
     console.error('Error fetching authenticated image:', error);
     throw error;

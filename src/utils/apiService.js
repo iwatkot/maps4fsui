@@ -22,7 +22,6 @@ class ApiService {
     // Add bearer token if available
     if (this.bearerToken) {
       headers['Authorization'] = `Bearer ${this.bearerToken}`;
-      logger.info('Using bearer token for API request');
     } else {
       logger.info('No bearer token configured - making request without authentication');
     }
