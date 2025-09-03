@@ -495,7 +495,7 @@ export default function GeneratorTab({
           </div>
         ) : currentPage === PAGES.PREVIEWS && showPreviewsPage ? (
           /* Preview Gallery Page */
-          <div className="w-full h-full rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden relative">
+          <div className="w-full h-full rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 relative" style={{ overflow: 'hidden', scrollbarGutter: 'stable' }}>
             <PreviewGallery
               previews={previews}
               taskId={taskId}
@@ -509,16 +509,10 @@ export default function GeneratorTab({
               </div>
             )}
             
-            {/* Slide Navigation Overlay */}
-            <SlideNavigator
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
           </div>
         ) : validateCoordinates(coordinatesInput) ? (
           /* Map Widget Page */
-          <div className="relative w-full h-full">
+          <div className="relative w-full h-full" style={{ scrollbarGutter: 'stable' }}>
             <MapWidget 
               coordinates={coordinatesInput}
               onCoordinatesChange={setCoordinatesInput}
@@ -530,15 +524,6 @@ export default function GeneratorTab({
               osmData={dataSource === DATA_SOURCES.CUSTOM ? osmData : null}
             />
             
-            {/* Slide Navigation Overlay for Map page when previews are available */}
-            {totalPages > 1 && (
-              <SlideNavigator
-                currentPage={currentPage}
-                totalPages={totalPages}
-                onPageChange={setCurrentPage}
-                className="z-[9999]"
-              />
-            )}
           </div>
         ) : (
           /* Empty State */
@@ -551,6 +536,16 @@ export default function GeneratorTab({
               </div>
             </div>
           </div>
+        )}
+
+        {/* Global Slide Navigation - positioned relative to Page Content Area */}
+        {totalPages > 1 && (
+          <SlideNavigator
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            className="z-[9999]"
+          />
         )}
         </div>
       </div>
