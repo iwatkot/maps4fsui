@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import config from '@/app/config';
+import { getAuthenticatedImageUrl, revokeBlobUrl } from '@/utils/authenticatedFetch';
 
 /**
  * PreviewGallery - Gallery component for displaying preview images
@@ -13,6 +14,49 @@ export default function PreviewGallery({ previews, taskId, onError }) {
   const [selectedImage, setSelectedImage] = useState(null);
   const [imageErrors, setImageErrors] = useState({});
   const [loadingImages, setLoadingImages] = useState({});
+  const [imageBlobUrls, setImageBlobUrls] = useState({});
+
+  // Load authenticated image URLs
+  useEffect(() => {
+    if (!previews) return;
+
+    const loadImages = async () => {
+      const newBlobUrls = {};
+      
+      for (let i = 0; i < previews.length; i++) {
+        const preview = previews[i];
+        if (!imageBlobUrls[i] && !imageErrors[i]) {
+          setLoadingImages(prev => ({ ...prev, [i]: true }));
+          
+          try {
+            const blobUrl = await getAuthenticatedImageUrl(preview.url);
+            newBlobUrls[i] = blobUrl;
+            setLoadingImages(prev => ({ ...prev, [i]: false }));
+          } catch (error) {
+            console.error(`Failed to load image ${i}:`, error);
+            setImageErrors(prev => ({ ...prev, [i]: true }));
+            setLoadingImages(prev => ({ ...prev, [i]: false }));
+            if (onError) {
+              onError(`Failed to load preview: ${preview.filename}`);
+            }
+          }
+        }
+      }
+      
+      if (Object.keys(newBlobUrls).length > 0) {
+        setImageBlobUrls(prev => ({ ...prev, ...newBlobUrls }));
+      }
+    };
+
+    loadImages();
+  }, [previews, imageBlobUrls, imageErrors, onError]);
+
+  // Cleanup blob URLs on unmount
+  useEffect(() => {
+    return () => {
+      Object.values(imageBlobUrls).forEach(revokeBlobUrl);
+    };
+  }, [imageBlobUrls]);
 
   const handleImageLoad = (index) => {
     setLoadingImages(prev => ({ ...prev, [index]: false }));
@@ -50,9 +94,9 @@ export default function PreviewGallery({ previews, taskId, onError }) {
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
-  const getImageUrl = (preview) => {
-    // Use the full URL from the API response
-    return `${config.backendUrl}${preview.url}`;
+  const getImageUrl = (preview, index) => {
+    // Only use blob URL if available, don't fallback to unauthenticated direct URL
+    return imageBlobUrls[index] || null;
   };
 
   if (!previews || previews.length === 0) {
@@ -90,16 +134,15 @@ export default function PreviewGallery({ previews, taskId, onError }) {
                       <div className="text-2xl mb-2">❌</div>
                       <div className="text-xs text-center px-2">Failed to load</div>
                     </div>
-                  ) : (
+                  ) : imageBlobUrls[index] ? (
                     <img
-                      src={getImageUrl(preview)}
+                      src={imageBlobUrls[index]}
                       alt={preview.filename}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       onLoad={() => handleImageLoad(index)}
                       onError={() => handleImageError(index, preview)}
-                      style={{ display: loadingImages[index] === false || imageErrors[index] ? 'block' : 'none' }}
                     />
-                  )}
+                  ) : null}
                   
                   {/* Overlay with filename */}
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
@@ -125,14 +168,14 @@ export default function PreviewGallery({ previews, taskId, onError }) {
       </div>
 
       {/* Fullscreen Modal */}
-      {selectedImage && (
+      {selectedImage && imageBlobUrls[selectedImage.index] && (
         <div 
           className="fixed inset-0 bg-black/90 flex items-center justify-center z-[10000] p-4"
           onClick={() => setSelectedImage(null)}
         >
           <div className="relative inline-block">
             <img
-              src={getImageUrl(selectedImage)}
+              src={imageBlobUrls[selectedImage.index]}
               alt={selectedImage.filename}
               className="max-w-full max-h-full object-contain block"
               style={{ maxHeight: 'calc(100vh - 2rem)', maxWidth: 'calc(100vw - 2rem)' }}

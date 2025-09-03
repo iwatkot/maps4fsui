@@ -1,18 +1,19 @@
 'use client';
 
-import { Suspense, useRef } from 'react';
+import { Suspense, useRef, useState, useEffect } from 'react';
 import { Canvas, useLoader } from '@react-three/fiber';
 import { OrbitControls, Environment, PerspectiveCamera } from '@react-three/drei';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
 import * as THREE from 'three';
+import { getAuthenticatedStlUrl, revokeBlobUrl } from '@/utils/authenticatedFetch';
 
 /**
  * STL Model component that loads and displays an STL file
  */
-function StlModel({ url }) {
+function StlModel({ blobUrl }) {
   const meshRef = useRef();
 
-  const geometry = useLoader(STLLoader, url);
+  const geometry = useLoader(STLLoader, blobUrl);
   
   // Center the geometry
   geometry.computeBoundingBox();
@@ -64,11 +65,60 @@ function LoadingFallback() {
  * @param {function} onError - Error callback
  */
 export default function StlViewer({ url, filename, size, onError }) {
+  const [stlBlobUrl, setStlBlobUrl] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [hasError, setHasError] = useState(false);
+
+  // Load authenticated STL file
+  useEffect(() => {
+    const loadStl = async () => {
+      try {
+        setIsLoading(true);
+        setHasError(false);
+        const blobUrl = await getAuthenticatedStlUrl(url);
+        setStlBlobUrl(blobUrl);
+        setIsLoading(false);
+      } catch (error) {
+        console.error('Failed to load STL:', error);
+        setHasError(true);
+        setIsLoading(false);
+        if (onError) {
+          onError(`Failed to load STL: ${error.message}`);
+        }
+      }
+    };
+
+    loadStl();
+
+    // Cleanup blob URL on unmount or URL change
+    return () => {
+      if (stlBlobUrl) {
+        revokeBlobUrl(stlBlobUrl);
+      }
+    };
+  }, [url, onError]);
+
   const formatFileSize = (bytes) => {
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
+
+  if (isLoading) {
+    return <LoadingFallback />;
+  }
+
+  if (hasError || !stlBlobUrl) {
+    return (
+      <div className="w-full h-full flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800">
+        <div className="text-3xl mb-3">❌</div>
+        <div className="text-lg font-medium">Failed to Load 3D Model</div>
+        <div className="text-sm text-center px-4">
+          Could not load STL file: {filename}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full relative bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900">
@@ -88,7 +138,7 @@ export default function StlViewer({ url, filename, size, onError }) {
           <Environment preset="studio" />
           
           {/* STL Model */}
-          <StlModel url={url} />
+          <StlModel blobUrl={stlBlobUrl} />
           
           {/* Controls */}
           <OrbitControls 
