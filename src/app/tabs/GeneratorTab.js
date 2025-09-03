@@ -183,7 +183,10 @@ export default function GeneratorTab({
   return (
     <div className="flex h-full">
       {/* Left Panel */}
-      <div className="w-1/2 p-8 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto">
+      <div className="w-1/2 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
+        
+        {/* Scrollable Settings Area */}
+        <div className="flex-1 overflow-y-auto p-8">
         
         {/* Informational Intro - Closable */}
         {isClient && showIntro && (
@@ -371,9 +374,10 @@ export default function GeneratorTab({
         {i3dContent}
         {textureContent}
         {satelliteContent}
+        </div>
 
-        {/* Generate Button */}
-        <div className="mt-8">
+        {/* Fixed Generate Button at Bottom */}
+        <div className="border-t border-gray-200 dark:border-gray-700 p-6 bg-gray-50 dark:bg-gray-800">
           <ButtonProgress
             label="Generate map"
             downloadLabel="Download map"
