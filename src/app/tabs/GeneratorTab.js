@@ -8,6 +8,8 @@ import TooltipSwitch  from '@/components/TooltipSwitch';
 import Slider from '@/components/Slider';
 import ErrorDisplay from '@/components/ErrorDisplay';
 import MapWidget from '@/components/MapWidget';
+import PageNavigator from '@/components/PageNavigator';
+import PreviewGallery from '@/components/PreviewGallery';
 import DataSourceSelector, { DATA_SOURCES } from '@/components/DataSourceSelector';
 import { validateCoordinates } from '@/api/preprocess';
 import { useDTMProviders } from '@/hooks/useDTMProviders';
@@ -45,6 +47,13 @@ export default function GeneratorTab({
   const [outputSize, setOutputSize] = useState(defaultValues.outputSize);
   const [rotation, setRotation] = useState(defaultValues.rotation);
   const [onlyPopularSettings, setOnlyPopularSettings] = useState(true);
+  
+  // Page navigation state
+  const [currentPage, setCurrentPage] = useState(0);
+  const PAGES = {
+    MAP: 0,
+    PREVIEWS: 1
+  };
 
   // OSM file upload state
   const [dataSource, setDataSource] = useState(DATA_SOURCES.PUBLIC);
@@ -123,12 +132,27 @@ export default function GeneratorTab({
     progress,
     isDownloadMode,
     error,
+    taskId,
+    previews,
+    previewsError,
     startGeneration,
     downloadMap
   } = useMapGeneration();
 
   // Check if generate button should be enabled
   const isGenerateEnabled = validateCoordinates(coordinatesInput) && !isGenerating;
+  
+  // Determine if we should show the previews page
+  const showPreviewsPage = previews && previews.length > 0;
+  const totalPages = showPreviewsPage ? 2 : 1;
+  const pageLabels = ['Map Preview', 'Generated Previews'];
+  
+  // Auto-switch to previews page when they become available
+  useEffect(() => {
+    if (showPreviewsPage && currentPage === PAGES.MAP) {
+      setCurrentPage(PAGES.PREVIEWS);
+    }
+  }, [showPreviewsPage, currentPage, PAGES.MAP, PAGES.PREVIEWS]);
 
   // Compute display status based on form state
   const displayStatusText = !isGenerateEnabled && statusText === "Ready" 
@@ -387,7 +411,19 @@ export default function GeneratorTab({
           />
         </div>
 
-        {/* Map Preview Area */}
+        {/* Page Navigation */}
+        {totalPages > 1 && (
+          <div className="mb-4">
+            <PageNavigator
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+              pageLabels={pageLabels}
+            />
+          </div>
+        )}
+
+        {/* Page Content Area */}
         <div className="flex-1">
         {isBackendAvailable === false ? (
           /* Backend Unavailable Message */
@@ -461,7 +497,24 @@ export default function GeneratorTab({
               <div className="text-sm">Connecting to backend service...</div>
             </div>
           </div>
+        ) : currentPage === PAGES.PREVIEWS && showPreviewsPage ? (
+          /* Preview Gallery Page */
+          <div className="w-full h-full rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 overflow-hidden">
+            <PreviewGallery
+              previews={previews}
+              taskId={taskId}
+              onError={(error) => {
+                logger.error('Preview gallery error:', error);
+              }}
+            />
+            {previewsError && (
+              <div className="p-4">
+                <ErrorDisplay message={previewsError} />
+              </div>
+            )}
+          </div>
         ) : validateCoordinates(coordinatesInput) ? (
+          /* Map Widget Page */
           <MapWidget 
             coordinates={coordinatesInput}
             onCoordinatesChange={setCoordinatesInput}
@@ -473,6 +526,7 @@ export default function GeneratorTab({
             osmData={dataSource === DATA_SOURCES.CUSTOM ? osmData : null}
           />
         ) : (
+          /* Empty State */
           <div className="w-full h-full rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 flex flex-col items-center justify-center">
             <div className="text-center text-gray-500 dark:text-gray-400 space-y-2">
               <div className="text-2xl">🗺️</div>
