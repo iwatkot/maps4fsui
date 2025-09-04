@@ -74,6 +74,15 @@ export default function Home() {
   const rightNavLinks = (
     <>
       <a
+        href="https://maps4fs.gitbook.io/docs/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+        title="Documentation"
+      >
+        <i className="zmdi zmdi-book text-5xl" style={{fontSize: '1.2rem'}}></i>
+      </a>
+      <a
         href="https://github.com/iwatkot/maps4fs"
         target="_blank"
         rel="noopener noreferrer"
@@ -140,7 +149,7 @@ export default function Home() {
           title="Launch the tool locally"
           message="Use it without limitations on your own machine with full access to all features and faster processing."
           buttonText="Local Deployment"
-          buttonLink="https://github.com/iwatkot/maps4fs/blob/main/docs/local_deployment.md"
+          buttonLink="https://maps4fs.gitbook.io/docs/setup-and-installation/local_deployment"
           isVisible={showPromo}
           onClose={handleClosePromo}
         />

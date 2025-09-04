@@ -223,7 +223,7 @@ export default function GeneratorTab({
           <p className="text-xs text-blue-700 dark:text-blue-300 mb-3">
             New to map making? Check out {' '}
             <a 
-              href="https://github.com/iwatkot/maps4fs/blob/main/docs/step_by_step.md" 
+              href="https://maps4fs.gitbook.io/docs/getting-started/step_by_step_guide" 
               target="_blank" 
               rel="noopener noreferrer"
               className="underline hover:text-blue-600 dark:hover:text-blue-200 font-medium"
@@ -246,7 +246,16 @@ export default function GeneratorTab({
           </p>
           <div className="flex flex-wrap gap-2 text-xs">
             <a 
-              href="https://github.com/iwatkot/maps4fs/blob/main/docs/FAQ.md" 
+              href="https://maps4fs.gitbook.io/docs" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-200 rounded hover:bg-blue-200 dark:hover:bg-blue-700 transition-colors"
+            >
+              <i className="zmdi zmdi-book text-xs mr-1"></i>
+              Documentation
+            </a>
+            <a 
+              href="https://maps4fs.gitbook.io/docs/getting-started/faq" 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-flex items-center px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-200 rounded hover:bg-blue-200 dark:hover:bg-blue-700 transition-colors"
@@ -255,7 +264,7 @@ export default function GeneratorTab({
               FAQ
             </a>
             <a 
-              href="https://github.com/iwatkot/maps4fs/blob/main/docs/get_help.md" 
+              href="https://maps4fs.gitbook.io/docs/setup-and-installation/get_help" 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-flex items-center px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-200 rounded hover:bg-blue-200 dark:hover:bg-blue-700 transition-colors"
@@ -553,7 +562,7 @@ export default function GeneratorTab({
                   {isPublicVersion ? (
                     <>
                       <a
-                        href="https://github.com/iwatkot/maps4fs/blob/main/docs/local_deployment.md"
+                        href="https://maps4fs.gitbook.io/docs/setup-and-installation/local_deployment"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
@@ -568,7 +577,7 @@ export default function GeneratorTab({
                   ) : (
                     <>
                       <a
-                        href="https://github.com/iwatkot/maps4fs/blob/main/docs/local_deployment.md#troubleshooting"
+                        href="https://maps4fs.gitbook.io/docs/setup-and-installation/local_deployment#troubleshooting"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
