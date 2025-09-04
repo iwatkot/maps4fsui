@@ -39,6 +39,39 @@ export async function getDTMProviders(lat, lon) {
   }
 }
 
+/**
+ * Get DTM provider information including settings configuration
+ * @param {string} providerCode - The DTM provider code
+ * @returns {Promise<object>} - Provider information and settings
+ * 
+ * Example response:
+ * {
+ *   "valid": true,
+ *   "provider": "Switzerland DGM1",
+ *   "settings_required": true,
+ *   "settings": {
+ *     "api_key": "str",
+ *     "dataset": {"mv_dgm": "Mecklenburg-Vorpommern DGM1", "mv_dgm5": "..."},
+ *     "resolution": ["0.5", "2.0"]
+ *   }
+ * }
+ */
+export async function getDTMProviderInfo(providerCode) {
+  try {
+    logger.info(`Getting DTM provider info for: ${providerCode}`);
+    
+    const response = await apiService.post('/dtm/info', { code: providerCode });
+
+    logger.info(`Retrieved DTM provider info for ${providerCode}`);
+    logger.debug('DTM provider info:', response);
+    
+    return response;
+  } catch (error) {
+    logger.error('Failed to get DTM provider info:', error.message);
+    throw error;
+  }
+}
+
 export async function isDTMCodeValid(dtmCode) {
   try {
     logger.info(`Validating DTM code: ${dtmCode}`);

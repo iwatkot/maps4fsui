@@ -1,11 +1,11 @@
 /**
- * Custom hook for managing DTM providers
- * Handles fetching providers based on coordinates and state management
+ * Custom hook for managing DTM providers and their settings
+ * Handles fetching providers based on coordinates and provider info for settings
  */
 
 import { useState, useEffect } from 'react';
 import { useApiCall } from './useApi';
-import { getDTMProviders } from '@/api/dtm';
+import { getDTMProviders, getDTMProviderInfo } from '@/api/dtm';
 import { parseCoordinates } from '@/api/preprocess';
 import { defaultDTMOption } from '../config/validation';
 import logger from '../utils/logger';
@@ -13,9 +13,12 @@ import logger from '../utils/logger';
 export const useDTMProviders = (coordinatesInput) => {
   const [dtmOptions, setDtmOptions] = useState([defaultDTMOption]);
   const [selectedDTMProvider, setSelectedDTMProvider] = useState(defaultDTMOption.value);
+  const [providerInfo, setProviderInfo] = useState(null);
+  const [dtmSettings, setDtmSettings] = useState({});
   
-  // API hook for fetching DTM providers
+  // API hooks for fetching DTM providers and provider info
   const { loading: dtmLoading, error: dtmError, execute: fetchDTMProviders } = useApiCall(getDTMProviders);
+  const { loading: providerInfoLoading, error: providerInfoError, execute: fetchProviderInfo } = useApiCall(getDTMProviderInfo);
 
   // Effect to fetch DTM providers when coordinates change
   useEffect(() => {
@@ -63,11 +66,60 @@ export const useDTMProviders = (coordinatesInput) => {
     }
   }, [coordinatesInput, fetchDTMProviders, selectedDTMProvider]);
 
+  // Effect to fetch provider info when selected DTM provider changes
+  useEffect(() => {
+    if (selectedDTMProvider && selectedDTMProvider !== defaultDTMOption.value) {
+      logger.info('Selected DTM provider changed, fetching provider info for:', selectedDTMProvider);
+      
+      fetchProviderInfo(selectedDTMProvider)
+        .then((info) => {
+          logger.info('DTM provider info fetched:', info);
+          setProviderInfo(info);
+          
+          // Initialize DTM settings with default values when provider changes
+          if (info && info.settings_required && info.settings) {
+            const defaultSettings = {};
+            
+            Object.entries(info.settings).forEach(([key, setting]) => {
+              if (typeof setting === 'string') {
+                // String type - use empty string as default
+                defaultSettings[key] = '';
+              } else if (typeof setting === 'object' && Array.isArray(setting)) {
+                // Array/tuple type - use first item as default
+                defaultSettings[key] = setting[0] || '';
+              } else if (typeof setting === 'object') {
+                // Dict type - use first key as default
+                const keys = Object.keys(setting);
+                defaultSettings[key] = keys[0] || '';
+              }
+            });
+            
+            logger.info('Initializing DTM settings with defaults:', defaultSettings);
+            setDtmSettings(defaultSettings);
+          } else {
+            setDtmSettings({});
+          }
+        })
+        .catch((error) => {
+          logger.error('Failed to fetch DTM provider info:', error.message);
+          setProviderInfo(null);
+          setDtmSettings({});
+        });
+    } else {
+      // Clear provider info for default option
+      setProviderInfo(null);
+      setDtmSettings({});
+    }
+  }, [selectedDTMProvider, fetchProviderInfo]);
+
   return {
     dtmOptions,
     selectedDTMProvider,
     setSelectedDTMProvider,
-    dtmLoading,
-    dtmError
+    dtmLoading: dtmLoading || providerInfoLoading,
+    dtmError: dtmError || providerInfoError,
+    providerInfo,
+    dtmSettings,
+    setDtmSettings
   };
 };

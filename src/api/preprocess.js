@@ -200,5 +200,10 @@ export const preprocessMainSettings = async (data) => {
   }
   preprocessedMainSettings.dtmCode = data.dtmCode;
 
+  // Add DTM settings if present
+  if (data.dtm_settings) {
+    preprocessedMainSettings.dtmSettings = data.dtm_settings;
+  }
+
   return preprocessedMainSettings;
 }
