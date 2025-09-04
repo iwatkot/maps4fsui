@@ -37,6 +37,17 @@ const isPublicVersion = config.isPublicVersion;
 const backendUrl = config.backendUrl;
 logger.info(`Running in public version: ${isPublicVersion}. Backend URL: ${backendUrl}`);
 
+/**
+ * Format field key to human-readable label
+ * @param {string} key - The field key
+ * @returns {string} - Formatted label
+ */
+function formatLabel(key) {
+  return key
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, l => l.toUpperCase());
+}
+
 export default function GeneratorTab({ 
   backendVersion: currentBackendVersion, 
   isBackendAvailable, 
@@ -114,7 +125,10 @@ export default function GeneratorTab({
     selectedDTMProvider, 
     setSelectedDTMProvider, 
     dtmLoading, 
-    dtmError 
+    dtmError,
+    providerInfo,
+    dtmSettings,
+    setDtmSettings
   } = useDTMProviders(coordinatesInput);
 
   // Create size options based on version
@@ -305,6 +319,71 @@ export default function GeneratorTab({
           <ErrorDisplay message={dtmError} />
         )}
 
+        {/* DTM Provider Settings - rendered inline when needed */}
+        {providerInfo && providerInfo.settings_required && providerInfo.settings && (
+          <div className="space-y-4">
+            {Object.entries(providerInfo.settings).map(([key, setting]) => {
+              if (typeof setting === 'string') {
+                // String type - TextInput for API keys
+                return (
+                  <TextInput
+                    key={`dtm-${key}`}
+                    label={formatLabel(key)}
+                    value={dtmSettings[key] || ''}
+                    onChange={(value) => setDtmSettings(prev => ({ ...prev, [key]: value }))}
+                    placeholder={`Enter ${formatLabel(key).toLowerCase()}...`}
+                    labelWidth="w-40"
+                    tooltip={`${formatLabel(key)} for ${providerInfo.provider}`}
+                    size="sm"
+                  />
+                );
+              } else if (typeof setting === 'object' && Array.isArray(setting)) {
+                // Array/tuple type - Selector
+                const options = setting.map(item => ({
+                  value: item,
+                  label: item,
+                  description: ''
+                }));
+                return (
+                  <Selector
+                    key={`dtm-${key}`}
+                    label={formatLabel(key)}
+                    options={options}
+                    value={dtmSettings[key] || setting[0] || ''}
+                    onChange={(value) => setDtmSettings(prev => ({ ...prev, [key]: value }))}
+                    placeholder={`Select ${formatLabel(key).toLowerCase()}...`}
+                    labelWidth="w-40"
+                    tooltip={`${formatLabel(key)} for ${providerInfo.provider}`}
+                    size="sm"
+                  />
+                );
+              } else if (typeof setting === 'object') {
+                // Dict type - Selector with key-value mapping
+                const options = Object.entries(setting).map(([key, label]) => ({
+                  value: key,
+                  label: label,
+                  description: ''
+                }));
+                const keys = Object.keys(setting);
+                return (
+                  <Selector
+                    key={`dtm-${key}`}
+                    label={formatLabel(key)}
+                    options={options}
+                    value={dtmSettings[key] || keys[0] || ''}
+                    onChange={(value) => setDtmSettings(prev => ({ ...prev, [key]: value }))}
+                    placeholder={`Select ${formatLabel(key).toLowerCase()}...`}
+                    labelWidth="w-40"
+                    tooltip={`${formatLabel(key)} for ${providerInfo.provider}`}
+                    size="sm"
+                  />
+                );
+              }
+              return null;
+            })}
+          </div>
+        )}
+
         {/* Size Selector */}
         <Selector
           label="Map Size"
@@ -383,15 +462,22 @@ export default function GeneratorTab({
             downloadLabel="Download map"
             onClick={() => {
               // Collect all form data
+              const mainSettings = {
+                gameCode: selectedGame,
+                coordinates: coordinatesInput,
+                dtmCode: selectedDTMProvider,
+                size: selectedSize === "custom" ? customSize : selectedSize,
+                rotation: rotation,
+                outputSize: null, // Will be set later if needed
+              };
+
+              // Add DTM settings if provider requires them
+              if (providerInfo && providerInfo.settings_required) {
+                mainSettings.dtm_settings = dtmSettings;
+              }
+
               const settings = {
-                mainSettings: {
-                  gameCode: selectedGame,
-                  coordinates: coordinatesInput,
-                  dtmCode: selectedDTMProvider,
-                  size: selectedSize === "custom" ? customSize : selectedSize,
-                  rotation: rotation,
-                  outputSize: null, // Will be set later if needed
-                },
+                mainSettings,
                 generationSettings: {
                   dem_settings: demValues,
                   background_settings: backgroundValues,
