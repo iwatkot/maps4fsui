@@ -50,7 +50,7 @@ export async function GET() {
             coordinates: `${mainSettingsData.latitude}, ${mainSettingsData.longitude}`,
             size: mainSettingsData.size,
             outputSize: mainSettingsData.output_size,
-            game: getGameFromSettings(generationSettingsData),
+            game: getGameFromSettings(mainSettingsData),
             createdAt: stats.birthtime.toISOString().split('T')[0],
             status: status,
             country: mainSettingsData.country,
@@ -130,12 +130,21 @@ function findMapName(mapPath) {
 }
 
 /**
- * Determine game version from generation settings
+ * Determine game version from main settings
  */
-function getGameFromSettings(generationSettings) {
-  // This is a placeholder - adjust based on actual settings structure
-  if (generationSettings.game_version) {
-    return `Farming Simulator ${generationSettings.game_version}`;
+function getGameFromSettings(mainSettings) {
+  if (mainSettings.game) {
+    const gameCode = mainSettings.game;
+    switch (gameCode) {
+      case 'FS25':
+        return 'Farming Simulator 25';
+      case 'FS22':
+        return 'Farming Simulator 22';
+      case 'FS19':
+        return 'Farming Simulator 19';
+      default:
+        return `Farming Simulator ${gameCode}`;
+    }
   }
   return 'Farming Simulator';
 }

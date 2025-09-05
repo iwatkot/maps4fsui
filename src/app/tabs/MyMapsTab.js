@@ -52,9 +52,9 @@ export default function MyMapsTab() {
   };
 
   return (
-    <div className="flex flex-1">
+    <div className="flex h-full">
       {/* Left Panel - Map List */}
-      <div className="w-1/2 p-8 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto">
+      <div className="w-1/2 p-8 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto max-h-full">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">My Maps</h2>
@@ -161,7 +161,7 @@ export default function MyMapsTab() {
       </div>
 
       {/* Right Panel - Map Details */}
-      <div className="w-1/2 p-8">
+      <div className="w-1/2 p-8 overflow-y-auto max-h-full">
         {!selectedMap ? (
           <div className="w-full h-full rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 flex flex-col items-center justify-center">
             <div className="text-center text-gray-500 dark:text-gray-400 space-y-2">
