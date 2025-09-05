@@ -30,6 +30,10 @@ export default function MixedPreviewGallery({ previews, taskId, currentPage, onE
   };
 
   const getStlUrl = (stlFile) => {
+    // For local files, use the URL as-is. For backend files, add the backend URL prefix
+    if (stlFile.isLocal) {
+      return stlFile.url;
+    }
     return `${config.backendUrl}${stlFile.url}`;
   };
 
@@ -74,6 +78,7 @@ export default function MixedPreviewGallery({ previews, taskId, currentPage, onE
           url={getStlUrl(stlFile)}
           filename={stlFile.filename}
           size={stlFile.size}
+          isLocal={stlFile.isLocal}
           onError={(error) => handleStlError(stlPageIndex, error)}
         />
       );

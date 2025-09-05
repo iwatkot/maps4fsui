@@ -29,7 +29,14 @@ export default function PreviewGallery({ previews, taskId, onError }) {
           setLoadingImages(prev => ({ ...prev, [i]: true }));
           
           try {
-            const blobUrl = await getAuthenticatedImageUrl(preview.url);
+            let blobUrl;
+            // Handle local files differently - no authentication needed
+            if (preview.isLocal) {
+              blobUrl = preview.url; // Use direct URL for local files
+            } else {
+              // Use authenticated fetch for backend API files
+              blobUrl = await getAuthenticatedImageUrl(preview.url);
+            }
             newBlobUrls[i] = blobUrl;
             setLoadingImages(prev => ({ ...prev, [i]: false }));
           } catch (error) {
@@ -51,12 +58,17 @@ export default function PreviewGallery({ previews, taskId, onError }) {
     loadImages();
   }, [previews, imageBlobUrls, imageErrors, onError]);
 
-  // Cleanup blob URLs on unmount
+  // Cleanup blob URLs on unmount (only for authenticated images)
   useEffect(() => {
     return () => {
-      Object.values(imageBlobUrls).forEach(revokeBlobUrl);
+      Object.entries(imageBlobUrls).forEach(([index, blobUrl]) => {
+        // Only revoke blob URLs for authenticated images, not local file URLs
+        if (previews && previews[index] && !previews[index].isLocal && blobUrl.startsWith('blob:')) {
+          revokeBlobUrl(blobUrl);
+        }
+      });
     };
-  }, [imageBlobUrls]);
+  }, [imageBlobUrls, previews]);
 
   const handleImageLoad = (index) => {
     setLoadingImages(prev => ({ ...prev, [index]: false }));

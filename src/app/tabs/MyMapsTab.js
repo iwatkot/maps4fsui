@@ -1,12 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import MixedPreviewGallery from '@/components/MixedPreviewGallery';
+import SlideNavigator from '@/components/SlideNavigator';
+import { separateFilesByType } from '@/utils/fileTypeUtils';
 
 export default function MyMapsTab() {
   const [selectedMap, setSelectedMap] = useState(null);
   const [maps, setMaps] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [previewPage, setPreviewPage] = useState(0);
 
   // Fetch maps from API
   const fetchMaps = async () => {
@@ -50,6 +54,20 @@ export default function MyMapsTab() {
       default: return '?';
     }
   };
+
+  const handleMapSelect = (map) => {
+    setSelectedMap(map);
+    setPreviewPage(0); // Reset preview page when switching maps
+  };
+
+  // Calculate total pages for preview navigation
+  const totalPreviewPages = useMemo(() => {
+    if (!selectedMap?.previews || selectedMap.previews.length === 0) return 0;
+    
+    const { pngPreviews, stlModels } = separateFilesByType(selectedMap.previews);
+    const hasPngPreviews = pngPreviews && pngPreviews.length > 0;
+    return (hasPngPreviews ? 1 : 0) + (stlModels ? stlModels.length : 0);
+  }, [selectedMap?.previews]);
 
   return (
     <div className="flex h-full">
@@ -97,7 +115,7 @@ export default function MyMapsTab() {
               {maps.map((map) => (
                 <div
                   key={map.id}
-                  onClick={() => setSelectedMap(map)}
+                  onClick={() => handleMapSelect(map)}
                   className={`p-4 rounded-lg border cursor-pointer transition-all ${
                     selectedMap?.id === map.id
                       ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-md'
@@ -204,16 +222,31 @@ export default function MyMapsTab() {
             </div>
 
             {/* Map Preview */}
-            <div className="aspect-video bg-gray-100 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 overflow-hidden">
-              {selectedMap.status === 'completed' ? (
-                <img
-                  src={selectedMap.thumbnail}
-                  alt={`Preview of ${selectedMap.name}`}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZjNmNGY2Ii8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzZiNzI4MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk1hcCBQcmV2aWV3PC90ZXh0Pjwvc3ZnPg==';
-                  }}
-                />
+            <div className="aspect-video bg-gray-100 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 overflow-hidden relative">
+              {selectedMap.previews && selectedMap.previews.length > 0 ? (
+                <>
+                  <MixedPreviewGallery
+                    previews={selectedMap.previews}
+                    taskId={selectedMap.id}
+                    currentPage={previewPage}
+                    onError={(error) => console.error('Preview error:', error)}
+                  />
+                  <SlideNavigator
+                    currentPage={previewPage}
+                    totalPages={totalPreviewPages}
+                    onPageChange={setPreviewPage}
+                  />
+                </>
+              ) : selectedMap.status === 'completed' ? (
+                <div className="w-full h-full flex flex-col items-center justify-center space-y-2">
+                  <div className="text-4xl">📁</div>
+                  <div className="text-lg font-medium text-gray-600 dark:text-gray-400">
+                    No Previews Available
+                  </div>
+                  <div className="text-sm text-gray-500 dark:text-gray-500">
+                    Preview files may not have been generated
+                  </div>
+                </div>
               ) : selectedMap.status === 'generating' ? (
                 <div className="w-full h-full flex flex-col items-center justify-center space-y-4">
                   <div className="text-4xl animate-spin">⚙️</div>

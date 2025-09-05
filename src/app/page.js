@@ -62,7 +62,7 @@ export default function Home() {
       icon: <i className="zmdi zmdi-landscape"></i>
     },
     // Only show My Maps tab in non-public version
-    ...(!isPublicVersion ? [{
+    ...(isPublicVersion ? [{
       id: 'my-maps',
       label: 'My Maps',
       icon: <i className="zmdi zmdi-collection-folder-image"></i>,

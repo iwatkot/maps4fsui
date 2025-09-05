@@ -54,12 +54,13 @@ function LoadingFallback() {
 
 /**
  * STL Viewer component
- * @param {string} url - URL to the STL file
- * @param {string} filename - Name of the STL file
+ * @param {string} url - STL file URL
+ * @param {string} filename - STL filename  
  * @param {number} size - File size in bytes
+ * @param {boolean} isLocal - Whether this is a local file (no auth needed)
  * @param {function} onError - Error callback
  */
-export default function StlViewer({ url, filename, size, onError }) {
+export default function StlViewer({ url, filename, size, isLocal = false, onError }) {
   const [stlBlobUrl, setStlBlobUrl] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
@@ -70,7 +71,16 @@ export default function StlViewer({ url, filename, size, onError }) {
       try {
         setIsLoading(true);
         setHasError(false);
-        const blobUrl = await getAuthenticatedStlUrl(url);
+        
+        let blobUrl;
+        if (isLocal) {
+          // Use direct URL for local files - no authentication needed
+          blobUrl = url;
+        } else {
+          // Use authenticated fetch for backend API files
+          blobUrl = await getAuthenticatedStlUrl(url);
+        }
+        
         setStlBlobUrl(blobUrl);
         setIsLoading(false);
       } catch (error) {
@@ -85,13 +95,13 @@ export default function StlViewer({ url, filename, size, onError }) {
 
     loadStl();
 
-    // Cleanup blob URL on unmount or URL change
+    // Cleanup blob URL on unmount or URL change (only for authenticated files)
     return () => {
-      if (stlBlobUrl) {
+      if (stlBlobUrl && !isLocal && stlBlobUrl.startsWith('blob:')) {
         revokeBlobUrl(stlBlobUrl);
       }
     };
-  }, [url, onError]);
+  }, [url, isLocal, onError]);
 
   const formatFileSize = (bytes) => {
     if (bytes < 1024) return `${bytes} B`;

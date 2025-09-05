@@ -150,16 +150,34 @@ function getGameFromSettings(mainSettings) {
 }
 
 /**
- * Get preview image files from the map directory
+ * Get preview image and STL files from the map directory
  */
 function getPreviewFiles(mapPath) {
   try {
-    const files = fs.readdirSync(mapPath);
-    const imageExtensions = ['.png', '.jpg', '.jpeg'];
+    const previewsDir = path.join(mapPath, 'previews');
+    if (!fs.existsSync(previewsDir)) {
+      return [];
+    }
+
+    const files = fs.readdirSync(previewsDir);
+    const supportedExtensions = ['.png', '.jpg', '.jpeg', '.stl'];
+    
     const previews = files
-      .filter(file => imageExtensions.some(ext => file.toLowerCase().endsWith(ext)))
-      .filter(file => file.toLowerCase().includes('preview') || file.toLowerCase().includes('overview'))
-      .map(file => path.join(mapPath, file));
+      .filter(file => supportedExtensions.some(ext => file.toLowerCase().endsWith(ext)))
+      .map(file => {
+        const filePath = path.join(previewsDir, file);
+        const stats = fs.statSync(filePath);
+        const ext = path.extname(file).toLowerCase();
+        
+        return {
+          filename: file,
+          url: `/api/maps/preview?path=${encodeURIComponent(filePath)}`,
+          size: stats.size,
+          type: ext === '.stl' ? 'stl' : 'image',
+          path: filePath,
+          isLocal: true // Flag to indicate this is a local file, not from backend API
+        };
+      });
     
     return previews;
   } catch (error) {
