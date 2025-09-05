@@ -66,7 +66,7 @@ export default function Home() {
       id: 'my-maps',
       label: 'My Maps',
       icon: <i className="zmdi zmdi-collection-folder-image"></i>,
-      disabled: true // Disabled for now
+      // disabled: true // Disabled for now
     }] : [])
   ];
 

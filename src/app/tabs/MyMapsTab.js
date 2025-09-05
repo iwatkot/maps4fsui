@@ -1,43 +1,37 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export default function MyMapsTab() {
   const [selectedMap, setSelectedMap] = useState(null);
+  const [maps, setMaps] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Placeholder data - will be replaced with actual map data from API
-  const maps = [
-    {
-      id: 1,
-      name: "Mountain Valley Map",
-      coordinates: "45.26, 19.79",
-      size: "4096",
-      game: "Farming Simulator 25",
-      createdAt: "2024-01-15",
-      status: "completed",
-      thumbnail: "/api/placeholder/300/200"
-    },
-    {
-      id: 2,
-      name: "Coastal Plains",
-      coordinates: "52.13, 4.29",
-      size: "2048",
-      game: "Farming Simulator 22",
-      createdAt: "2024-01-10",
-      status: "generating",
-      progress: 65
-    },
-    {
-      id: 3,
-      name: "Alpine Region",
-      coordinates: "46.82, 10.75",
-      size: "8192",
-      game: "Farming Simulator 25",
-      createdAt: "2024-01-05",
-      status: "failed",
-      error: "Elevation data not available for this region"
+  // Fetch maps from API
+  const fetchMaps = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await fetch('/api/maps');
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch maps');
+      }
+      
+      setMaps(data.maps || []);
+    } catch (err) {
+      console.error('Error fetching maps:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
     }
-  ];
+  };
+
+  useEffect(() => {
+    fetchMaps();
+  }, []);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -64,13 +58,35 @@ export default function MyMapsTab() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">My Maps</h2>
-            <button className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors">
-              <i className="zmdi zmdi-refresh mr-2"></i>
-              Refresh
+            <button 
+              onClick={fetchMaps}
+              disabled={loading}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white text-sm font-medium rounded-lg transition-colors"
+            >
+              <i className={`zmdi zmdi-refresh mr-2 ${loading ? 'animate-spin' : ''}`}></i>
+              {loading ? 'Loading...' : 'Refresh'}
             </button>
           </div>
           
-          {maps.length === 0 ? (
+          {error ? (
+            <div className="text-center py-12 text-red-500 dark:text-red-400">
+              <div className="text-4xl mb-4">⚠️</div>
+              <div className="text-lg font-medium mb-2">Error Loading Maps</div>
+              <div className="text-sm mb-4">{error}</div>
+              <button 
+                onClick={fetchMaps}
+                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+              >
+                Try Again
+              </button>
+            </div>
+          ) : loading ? (
+            <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+              <div className="text-4xl mb-4 animate-spin">⚙️</div>
+              <div className="text-lg font-medium mb-2">Loading Maps...</div>
+              <div className="text-sm">Scanning map directory...</div>
+            </div>
+          ) : maps.length === 0 ? (
             <div className="text-center py-12 text-gray-500 dark:text-gray-400">
               <div className="text-4xl mb-4">🗺️</div>
               <div className="text-lg font-medium mb-2">No maps yet</div>
