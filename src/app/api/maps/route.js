@@ -42,6 +42,9 @@ export async function GET() {
           // Find custom name (from name.txt if exists, otherwise use directory name)
           const customName = findMapName(mapDir);
           
+          // Create proper datetime from JSON fields
+          const createdDateTime = `${mainSettingsData.date} ${mainSettingsData.time}`;
+          
           // Create map object
           const mapData = {
             id: dir.name, // Use directory name as ID
@@ -51,7 +54,7 @@ export async function GET() {
             size: mainSettingsData.size,
             outputSize: mainSettingsData.output_size,
             game: getGameFromSettings(mainSettingsData),
-            createdAt: stats.birthtime.toISOString().split('T')[0],
+            createdAt: createdDateTime,
             status: status,
             country: mainSettingsData.country,
             rotation: mainSettingsData.rotation,
@@ -72,8 +75,13 @@ export async function GET() {
       }
     }
 
-    // Sort maps by creation date (newest first)
-    maps.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    // Sort maps by creation date and time from JSON (newest first)
+    maps.sort((a, b) => {
+      // Create datetime strings from JSON date and time fields
+      const dateTimeA = new Date(`${a.date}T${a.time}`);
+      const dateTimeB = new Date(`${b.date}T${b.time}`);
+      return dateTimeB - dateTimeA; // Newest first
+    });
 
     return NextResponse.json({ maps });
   } catch (error) {
