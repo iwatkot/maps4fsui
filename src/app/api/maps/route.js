@@ -36,8 +36,8 @@ export async function GET() {
           // Get directory stats for creation date
           const stats = fs.statSync(mapDir);
           
-          // Determine map status based on file existence
-          const status = determineMapStatus(mapDir);
+          // Determine map status based on JSON data and file existence
+          const status = determineMapStatus(mapDir, mainSettingsData);
           
           // Find custom name (from name.txt if exists, otherwise use directory name)
           const customName = findMapName(mapDir);
@@ -86,10 +86,30 @@ export async function GET() {
 }
 
 /**
- * Determine the status of a map based on file existence
+ * Determine the status of a map based on JSON data and file existence
  */
-function determineMapStatus(mapPath) {
-  // Check for common completion indicators
+function determineMapStatus(mapPath, mainSettings) {
+  // First priority: Check for errors
+  if (mainSettings.error && mainSettings.error !== null) {
+    return 'error';
+  }
+  
+  // Second priority: Check completion status
+  if (mainSettings.completed === true) {
+    return 'completed';
+  }
+  
+  if (mainSettings.completed === false) {
+    // Check if generation is still in progress
+    const lockFile = path.join(mapPath, '.generating');
+    if (fs.existsSync(lockFile)) {
+      return 'generating';
+    }
+    // If no lock file but not completed and no error, it's incomplete (manually stopped)
+    return 'incomplete';
+  }
+
+  // Fallback: check for file system indicators when JSON data is unclear
   const modPath = path.join(mapPath, 'mod');
   const zipFiles = fs.readdirSync(mapPath).filter(file => file.endsWith('.zip'));
   
@@ -98,10 +118,10 @@ function determineMapStatus(mapPath) {
     return 'completed';
   }
 
-  // Check for error indicators
+  // Check for error log files
   const errorFile = path.join(mapPath, 'error.log');
   if (fs.existsSync(errorFile)) {
-    return 'failed';
+    return 'error';
   }
 
   // Check for generation in progress indicators
@@ -110,8 +130,12 @@ function determineMapStatus(mapPath) {
     return 'generating';
   }
 
-  // Default to completed if we have the JSON files
-  return 'completed';
+  // Default fallback based on JSON data
+  if (mainSettings.completed === undefined || mainSettings.completed === null) {
+    return 'incomplete';
+  }
+  
+  return mainSettings.completed ? 'completed' : 'incomplete';
 }
 
 /**

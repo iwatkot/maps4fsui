@@ -41,7 +41,8 @@ export default function MyMapsTab() {
     switch (status) {
       case 'completed': return 'text-green-600 dark:text-green-400';
       case 'generating': return 'text-blue-600 dark:text-blue-400';
-      case 'failed': return 'text-red-600 dark:text-red-400';
+      case 'incomplete': return 'text-yellow-600 dark:text-yellow-400';
+      case 'error': return 'text-red-600 dark:text-red-400';
       default: return 'text-gray-600 dark:text-gray-400';
     }
   };
@@ -50,7 +51,8 @@ export default function MyMapsTab() {
     switch (status) {
       case 'completed': return '✓';
       case 'generating': return '⏳';
-      case 'failed': return '✗';
+      case 'incomplete': return '⏸️';
+      case 'error': return '✗';
       default: return '?';
     }
   };
@@ -151,6 +153,33 @@ export default function MyMapsTab() {
                     </div>
                   </div>
 
+                  {/* Additional info pills */}
+                  <div className="flex flex-wrap gap-1.5 mt-3">
+                    {/* DTM Provider */}
+                    {map.dtmProvider && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                        <i className="zmdi zmdi-globe-alt mr-1 text-xs"></i>
+                        {map.dtmProvider}
+                      </span>
+                    )}
+                    
+                    {/* Version */}
+                    {map.mainSettings?.version && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
+                        <i className="zmdi zmdi-tag mr-1 text-xs"></i>
+                        {map.mainSettings.version}
+                      </span>
+                    )}
+                    
+                    {/* Custom OSM */}
+                    {map.mainSettings?.custom_osm && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
+                        <i className="zmdi zmdi-map mr-1 text-xs"></i>
+                        Custom OSM
+                      </span>
+                    )}
+                  </div>
+
                   {map.status === 'generating' && map.progress && (
                     <div className="mt-3">
                       <div className="flex justify-between text-xs text-gray-600 dark:text-gray-400 mb-1">
@@ -166,7 +195,7 @@ export default function MyMapsTab() {
                     </div>
                   )}
 
-                  {map.status === 'failed' && map.error && (
+                  {map.status === 'error' && map.error && (
                     <div className="mt-2 p-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded text-xs text-red-700 dark:text-red-300">
                       <strong>Error:</strong> {map.error}
                     </div>
@@ -268,7 +297,7 @@ export default function MyMapsTab() {
                     </div>
                   )}
                 </div>
-              ) : (
+              ) : selectedMap.status === 'error' ? (
                 <div className="w-full h-full flex flex-col items-center justify-center space-y-2">
                   <div className="text-4xl">❌</div>
                   <div className="text-lg font-medium text-red-600 dark:text-red-400">
@@ -279,6 +308,26 @@ export default function MyMapsTab() {
                       {selectedMap.error}
                     </div>
                   )}
+                </div>
+              ) : selectedMap.status === 'incomplete' ? (
+                <div className="w-full h-full flex flex-col items-center justify-center space-y-2">
+                  <div className="text-4xl">⏸️</div>
+                  <div className="text-lg font-medium text-yellow-600 dark:text-yellow-400">
+                    Generation Incomplete
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400 text-center max-w-sm">
+                    Map generation was stopped or interrupted
+                  </div>
+                </div>
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center space-y-2">
+                  <div className="text-4xl">❓</div>
+                  <div className="text-lg font-medium text-gray-600 dark:text-gray-400">
+                    Unknown Status
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400 text-center max-w-sm">
+                    Unable to determine map status
+                  </div>
                 </div>
               )}
             </div>
@@ -322,7 +371,7 @@ export default function MyMapsTab() {
                       </button>
                     </>
                   )}
-                  {selectedMap.status === 'failed' && (
+                  {(selectedMap.status === 'error' || selectedMap.status === 'incomplete') && (
                     <button className="w-full px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg transition-colors text-left">
                       <i className="zmdi zmdi-refresh mr-2"></i>
                       Retry Generation
@@ -337,7 +386,7 @@ export default function MyMapsTab() {
             </div>
 
             {/* Error Details */}
-            {selectedMap.status === 'failed' && selectedMap.error && (
+            {selectedMap.status === 'error' && selectedMap.error && (
               <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
                 <h4 className="font-medium text-red-800 dark:text-red-300 mb-2">Error Details</h4>
                 <p className="text-sm text-red-700 dark:text-red-300">{selectedMap.error}</p>
