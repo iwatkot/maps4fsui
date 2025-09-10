@@ -18,6 +18,10 @@ export default function MyMapsTab() {
   const [showJSONModal, setShowJSONModal] = useState(false);
   const [jsonData, setJsonData] = useState(null);
   const [jsonType, setJsonType] = useState('');
+  const [downloading, setDownloading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   // Fetch maps from API
   const fetchMaps = async () => {
@@ -43,6 +47,14 @@ export default function MyMapsTab() {
   useEffect(() => {
     fetchMaps();
   }, []);
+
+  // Show toast notification
+  const showToast = (message, type = 'success') => {
+    setToast({ show: true, message, type });
+    setTimeout(() => {
+      setToast({ show: false, message: '', type: 'success' });
+    }, 3000);
+  };
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -143,16 +155,19 @@ export default function MyMapsTab() {
   };
 
   // Handle map deletion
-  const handleDeleteMap = async () => {
-    if (!selectedMap) return;
-    
-    const confirmDelete = window.confirm(
-      `Are you sure you want to delete "${selectedMap.name}"? This action cannot be undone.`
-    );
-    
-    if (!confirmDelete) return;
+  const handleDeleteMap = () => {
+    if (!selectedMap || deleting) return;
+    setShowDeleteModal(true);
+  };
+
+  // Confirm and perform deletion
+  const confirmDeleteMap = async () => {
+    if (!selectedMap || deleting) return;
     
     try {
+      setDeleting(true);
+      setShowDeleteModal(false);
+      
       const response = await fetch(`/api/maps/delete?mapId=${selectedMap.id}`, {
         method: 'DELETE',
       });
@@ -164,7 +179,7 @@ export default function MyMapsTab() {
       }
       
       // Show success message
-      alert('Map deleted successfully!');
+      showToast('Map deleted successfully!', 'success');
       
       // Refresh the maps list and clear selection
       await fetchMaps();
@@ -172,15 +187,20 @@ export default function MyMapsTab() {
       
     } catch (error) {
       console.error('Error deleting map:', error);
-      alert(`Failed to delete map: ${error.message}`);
+      showToast(`Failed to delete map: ${error.message}`, 'error');
+    } finally {
+      setDeleting(false);
     }
   };
 
   // Handle map download
   const handleDownloadMap = async () => {
-    if (!selectedMap) return;
+    if (!selectedMap || downloading) return;
     
     try {
+      setDownloading(true);
+      showToast('Preparing download...', 'info');
+      
       const response = await fetch(`/api/maps/download?mapId=${selectedMap.id}`);
       
       if (!response.ok) {
@@ -199,11 +219,13 @@ export default function MyMapsTab() {
       window.URL.revokeObjectURL(url);
       document.body.removeChild(a);
       
-      alert('Map download started!');
+      showToast('Download started successfully!', 'success');
       
     } catch (error) {
       console.error('Error downloading map:', error);
-      alert(`Failed to download map: ${error.message}`);
+      showToast(`Failed to download map: ${error.message}`, 'error');
+    } finally {
+      setDownloading(false);
     }
   };
 
@@ -716,10 +738,24 @@ export default function MyMapsTab() {
                   {selectedMap.status === 'completed' && (
                     <button 
                       onClick={handleDownloadMap}
-                      className="w-full px-4 py-3 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
+                      disabled={downloading}
+                      className={`w-full px-4 py-3 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center ${
+                        downloading 
+                          ? 'bg-green-400 cursor-not-allowed' 
+                          : 'bg-green-600 hover:bg-green-700'
+                      }`}
                     >
-                      <i className="zmdi zmdi-download mr-2"></i>
-                      Download Map
+                      {downloading ? (
+                        <>
+                          <div className="animate-spin mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+                          Creating Archive...
+                        </>
+                      ) : (
+                        <>
+                          <i className="zmdi zmdi-download mr-2"></i>
+                          Download Map
+                        </>
+                      )}
                     </button>
                   )}
                   
@@ -756,10 +792,24 @@ export default function MyMapsTab() {
                   )}
                   <button 
                     onClick={handleDeleteMap}
-                    className="w-full px-4 py-3 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
+                    disabled={deleting}
+                    className={`w-full px-4 py-3 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center ${
+                      deleting 
+                        ? 'bg-red-400 cursor-not-allowed' 
+                        : 'bg-red-600 hover:bg-red-700'
+                    }`}
                   >
-                    <i className="zmdi zmdi-delete mr-2"></i>
-                    Delete Map
+                    {deleting ? (
+                      <>
+                        <div className="animate-spin mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+                        Deleting...
+                      </>
+                    ) : (
+                      <>
+                        <i className="zmdi zmdi-delete mr-2"></i>
+                        Delete Map
+                      </>
+                    )}
                   </button>
                 </div>
               </div>
@@ -783,6 +833,84 @@ export default function MyMapsTab() {
         jsonData={jsonData}
         title={jsonType}
       />
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full mx-4 shadow-xl">
+            <div className="flex items-center mb-4">
+              <div className="flex-shrink-0 w-10 h-10 bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center mr-3">
+                <i className="zmdi zmdi-alert-triangle text-red-600 dark:text-red-400 text-lg"></i>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                Delete Map
+              </h3>
+            </div>
+            
+            <div className="mb-6">
+              <p className="text-gray-600 dark:text-gray-300">
+                Are you sure you want to delete <span className="font-semibold">"{selectedMap?.name}"</span>?
+              </p>
+              <p className="text-sm text-red-600 dark:text-red-400 mt-2">
+                This action cannot be undone. The entire map directory will be permanently removed.
+              </p>
+            </div>
+            
+            <div className="flex justify-end space-x-3">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                disabled={deleting}
+                className="px-4 py-2 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100 font-medium transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteMap}
+                disabled={deleting}
+                className={`px-4 py-2 text-white font-medium rounded-lg transition-colors flex items-center ${
+                  deleting 
+                    ? 'bg-red-400 cursor-not-allowed' 
+                    : 'bg-red-600 hover:bg-red-700'
+                }`}
+              >
+                {deleting ? (
+                  <>
+                    <div className="animate-spin mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full"></div>
+                    Deleting...
+                  </>
+                ) : (
+                  <>
+                    <i className="zmdi zmdi-delete mr-2"></i>
+                    Delete Map
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Toast Notification */}
+      {toast.show && (
+        <div className="fixed bottom-4 right-4 z-50 animate-slide-in">
+          <div className={`px-6 py-4 rounded-lg shadow-lg flex items-center space-x-3 max-w-md ${
+            toast.type === 'success' 
+              ? 'bg-green-600 text-white' 
+              : toast.type === 'error'
+              ? 'bg-red-600 text-white'
+              : 'bg-blue-600 text-white'
+          }`}>
+            <div className="flex-shrink-0">
+              {toast.type === 'success' && <i className="zmdi zmdi-check-circle text-lg"></i>}
+              {toast.type === 'error' && <i className="zmdi zmdi-alert-circle text-lg"></i>}
+              {toast.type === 'info' && <i className="zmdi zmdi-info text-lg"></i>}
+            </div>
+            <div className="flex-1 text-sm font-medium">
+              {toast.message}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
