@@ -155,14 +155,6 @@ export default function MyMapsTab() {
 
                   {/* Additional info pills */}
                   <div className="flex flex-wrap gap-1.5 mt-3">
-                    {/* DTM Provider */}
-                    {map.dtmProvider && (
-                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
-                        <i className="zmdi zmdi-globe-alt mr-1 text-xs"></i>
-                        {map.dtmProvider}
-                      </span>
-                    )}
-                    
                     {/* Version */}
                     {map.mainSettings?.version && (
                       <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300">
@@ -171,11 +163,69 @@ export default function MyMapsTab() {
                       </span>
                     )}
                     
+                    {/* DTM Provider */}
+                    {map.dtmProvider && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
+                        <i className="zmdi zmdi-globe-alt mr-1 text-xs"></i>
+                        {map.dtmProvider}
+                      </span>
+                    )}
+                    
                     {/* Custom OSM */}
                     {map.mainSettings?.custom_osm && (
                       <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300">
                         <i className="zmdi zmdi-map mr-1 text-xs"></i>
                         Custom OSM
+                      </span>
+                    )}
+                    
+                    {/* Generation Settings Pills */}
+                    {map.generationSettings?.DEMSettings?.add_foundations && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
+                        <i className="zmdi zmdi-layers mr-1 text-xs"></i>
+                        Foundations
+                      </span>
+                    )}
+                    
+                    {map.generationSettings?.BackgroundSettings?.generate_background && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300">
+                        <i className="zmdi zmdi-landscape mr-1 text-xs"></i>
+                        Background
+                      </span>
+                    )}
+                    
+                    {map.generationSettings?.BackgroundSettings?.generate_water && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300">
+                        <i className="zmdi zmdi-water-drop mr-1 text-xs"></i>
+                        Water
+                      </span>
+                    )}
+                    
+                    {map.generationSettings?.BackgroundSettings?.flatten_roads && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-300">
+                        <i className="zmdi zmdi-settings mr-1 text-xs"></i>
+                        Flattened Roads
+                      </span>
+                    )}
+                    
+                    {map.generationSettings?.I3DSettings?.add_trees && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                        <i className="zmdi zmdi-nature mr-1 text-xs"></i>
+                        Forests
+                      </span>
+                    )}
+                    
+                    {map.generationSettings?.TextureSettings?.dissolve && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300">
+                        <i className="zmdi zmdi-blur mr-1 text-xs"></i>
+                        Dissolved
+                      </span>
+                    )}
+                    
+                    {map.generationSettings?.SatelliteSettings?.download_images && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300">
+                        <i className="zmdi zmdi-satellite mr-1 text-xs"></i>
+                        Satellite Images
                       </span>
                     )}
                   </div>
@@ -247,6 +297,58 @@ export default function MyMapsTab() {
                     Share
                   </button>
                 </div>
+              )}
+            </div>
+            
+            {/* Generation Settings Badges */}
+            <div className="flex flex-wrap gap-2">
+              {selectedMap.generationSettings?.DEMSettings?.add_foundations && (
+                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
+                  <i className="zmdi zmdi-layers mr-2"></i>
+                  Foundations
+                </span>
+              )}
+              
+              {selectedMap.generationSettings?.BackgroundSettings?.generate_background && (
+                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300">
+                  <i className="zmdi zmdi-landscape mr-2"></i>
+                  Background
+                </span>
+              )}
+              
+              {selectedMap.generationSettings?.BackgroundSettings?.generate_water && (
+                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300">
+                  <i className="zmdi zmdi-water-drop mr-2"></i>
+                  Water
+                </span>
+              )}
+              
+              {selectedMap.generationSettings?.BackgroundSettings?.flatten_roads && (
+                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-300">
+                  <i className="zmdi zmdi-settings mr-2"></i>
+                  Flattened Roads
+                </span>
+              )}
+              
+              {selectedMap.generationSettings?.I3DSettings?.add_trees && (
+                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                  <i className="zmdi zmdi-nature mr-2"></i>
+                  Forests
+                </span>
+              )}
+              
+              {selectedMap.generationSettings?.TextureSettings?.dissolve && (
+                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300">
+                  <i className="zmdi zmdi-blur mr-2"></i>
+                  Dissolved
+                </span>
+              )}
+              
+              {selectedMap.generationSettings?.SatelliteSettings?.download_images && (
+                <span className="inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300">
+                  <i className="zmdi zmdi-satellite mr-2"></i>
+                  Satellite Images
+                </span>
               )}
             </div>
 
