@@ -143,6 +143,18 @@ export default function MyMapsTab() {
                       <span>Size:</span>
                       <span>{map.size}</span>
                     </div>
+                    {map.mainSettings?.output_size && (
+                      <div className="flex justify-between">
+                        <span>Output Size:</span>
+                        <span>{map.mainSettings.output_size}</span>
+                      </div>
+                    )}
+                    {map.mainSettings?.rotation && map.mainSettings.rotation !== 0 && (
+                      <div className="flex justify-between">
+                        <span>Rotation:</span>
+                        <span>{map.mainSettings.rotation}°</span>
+                      </div>
+                    )}
                     <div className="flex justify-between">
                       <span>Game:</span>
                       <span className="truncate ml-2">{map.game}</span>
@@ -447,6 +459,18 @@ export default function MyMapsTab() {
                     <span className="text-gray-600 dark:text-gray-400">Size:</span>
                     <span className="text-gray-900 dark:text-gray-100">{selectedMap.size}</span>
                   </div>
+                  {selectedMap.mainSettings?.output_size && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600 dark:text-gray-400">Output Size:</span>
+                      <span className="text-gray-900 dark:text-gray-100">{selectedMap.mainSettings.output_size}</span>
+                    </div>
+                  )}
+                  {selectedMap.mainSettings?.rotation && selectedMap.mainSettings.rotation !== 0 && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600 dark:text-gray-400">Rotation:</span>
+                      <span className="text-gray-900 dark:text-gray-100">{selectedMap.mainSettings.rotation}°</span>
+                    </div>
+                  )}
                   <div className="flex justify-between">
                     <span className="text-gray-600 dark:text-gray-400">Game:</span>
                     <span className="text-gray-900 dark:text-gray-100">{selectedMap.game}</span>

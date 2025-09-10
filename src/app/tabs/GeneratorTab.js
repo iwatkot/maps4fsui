@@ -477,7 +477,7 @@ export default function GeneratorTab({
                 dtmCode: selectedDTMProvider,
                 size: selectedSize === "custom" ? customSize : selectedSize,
                 rotation: rotation,
-                outputSize: null, // Will be set later if needed
+                outputSize: outputSize, // Use the actual outputSize state variable
               };
 
               // Add DTM settings if provider requires them
