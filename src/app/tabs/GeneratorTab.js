@@ -180,10 +180,24 @@ export default function GeneratorTab({
         const osmBlob = new Blob([customOsm.content], { type: 'application/xml' });
         const osmFile = new File([osmBlob], customOsm.fileName, { type: 'application/xml' });
         
-        setDataSource(DATA_SOURCES.UPLOAD);
+        console.log('Setting custom OSM file from duplication:', osmFile.name, osmFile.size);
+        setDataSource(DATA_SOURCES.CUSTOM);
         setSelectedOsmFile(osmFile);
         
-        // The OSM data will be processed by the OsmFileUpload component when it's rendered
+        // Process the OSM file to extract map data for the MapWidget
+        const processOsmData = async () => {
+          try {
+            const { processOsmFile } = await import('@/utils/osmUtils');
+            const processedData = await processOsmFile(osmFile);
+            processedData.timestamp = Date.now(); // Add timestamp for cache busting
+            setOsmData(processedData);
+            console.log('OSM data processed from duplication:', processedData.featureCount, 'features');
+          } catch (error) {
+            console.error('Error processing duplicated OSM file:', error);
+          }
+        };
+        
+        processOsmData();
       }
       
       // Handle generation settings
