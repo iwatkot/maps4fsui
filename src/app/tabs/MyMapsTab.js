@@ -188,21 +188,21 @@ export default function MyMapsTab() {
                       : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-500 hover:shadow-sm'
                   }`}
                 >
-                  {/* Subtle radial gradient from top-right corner */}
+                  {/* Linear gradient from right side */}
                   <div 
-                    className="absolute top-0 right-0 w-32 h-32 opacity-25 pointer-events-none"
+                    className="absolute top-0 right-0 w-40 h-full opacity-15 pointer-events-none"
                     style={{
-                      background: `radial-gradient(circle at top right, ${
+                      background: `linear-gradient(to left, ${
                         map.status === 'completed' ? 'rgb(34, 197, 94)' :  // green-500
                         map.status === 'generating' ? 'rgb(59, 130, 246)' : // blue-500
                         map.status === 'error' ? 'rgb(239, 68, 68)' :       // red-500
                         'rgb(234, 179, 8)'                                   // yellow-500
                       } 0%, ${
-                        map.status === 'completed' ? 'rgba(34, 197, 94, 0.6)' :
-                        map.status === 'generating' ? 'rgba(59, 130, 246, 0.6)' :
-                        map.status === 'error' ? 'rgba(239, 68, 68, 0.6)' :
-                        'rgba(234, 179, 8, 0.6)'
-                      } 25%, transparent 65%)`
+                        map.status === 'completed' ? 'rgba(34, 197, 94, 0.4)' :
+                        map.status === 'generating' ? 'rgba(59, 130, 246, 0.4)' :
+                        map.status === 'error' ? 'rgba(239, 68, 68, 0.4)' :
+                        'rgba(234, 179, 8, 0.4)'
+                      } 40%, transparent 100%)`
                     }}
                   ></div>
                   
