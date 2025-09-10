@@ -6,7 +6,7 @@ import SlideNavigator from '@/components/SlideNavigator';
 import JSONEditorModal from '@/components/JSONEditorModal';
 import { separateFilesByType } from '@/utils/fileTypeUtils';
 
-export default function MyMapsTab() {
+export default function MyMapsTab({ onDuplicateMap }) {
   const [selectedMap, setSelectedMap] = useState(null);
   const [maps, setMaps] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -226,6 +226,37 @@ export default function MyMapsTab() {
       showToast(`Failed to download map: ${error.message}`, 'error');
     } finally {
       setDownloading(false);
+    }
+  };
+
+  // Handle map duplication
+  const handleDuplicateMapClick = async () => {
+    if (!selectedMap || !onDuplicateMap) return;
+    
+    try {
+      showToast('Preparing map duplication...', 'info');
+      
+      // Check for custom OSM file
+      const osmResponse = await fetch(`/api/maps/osm?mapId=${selectedMap.id}`);
+      const osmData = await osmResponse.json();
+      
+      // Prepare duplication data
+      const duplicateData = {
+        mainSettings: selectedMap.mainSettings,
+        generationSettings: selectedMap.generationSettings,
+        customOsm: osmData.hasCustomOsm ? {
+          content: osmData.osmContent,
+          fileName: osmData.fileName
+        } : null
+      };
+      
+      // Call the parent handler to switch tabs and populate data
+      onDuplicateMap(duplicateData);
+      showToast('Map settings loaded in Generator!', 'success');
+      
+    } catch (error) {
+      console.error('Error duplicating map:', error);
+      showToast(`Failed to duplicate map: ${error.message}`, 'error');
     }
   };
 
@@ -761,7 +792,10 @@ export default function MyMapsTab() {
                   
                   {/* Duplicate Map - Position 2 with primary blue */}
                   {selectedMap.status === 'completed' && (
-                    <button className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center">
+                    <button 
+                      onClick={handleDuplicateMapClick}
+                      className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
+                    >
                       <i className="zmdi zmdi-copy mr-2"></i>
                       Duplicate Map
                     </button>

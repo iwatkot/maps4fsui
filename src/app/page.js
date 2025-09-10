@@ -18,6 +18,9 @@ export default function Home() {
   // Tab state
   const [activeTab, setActiveTab] = useState('generator');
 
+  // Map duplication state
+  const [duplicateMapData, setDuplicateMapData] = useState(null);
+
   // Promo state (only for public version) - avoid hydration mismatch
   const [showPromo, setShowPromo] = useState(isPublicVersion);
   const [isClient, setIsClient] = useState(false);
@@ -37,6 +40,12 @@ export default function Home() {
   const handleClosePromo = () => {
     setShowPromo(false);
     localStorage.setItem('maps4fs-promo-closed', 'true');
+  };
+
+  // Handler for map duplication
+  const handleDuplicateMap = (mapData) => {
+    setDuplicateMapData(mapData);
+    setActiveTab('generator');
   };
 
   // Backend version state managed here
@@ -138,9 +147,15 @@ export default function Home() {
             isBackendAvailable={isBackendAvailable}
             backendError={backendError}
             isPublicVersion={isPublicVersion}
+            duplicateMapData={duplicateMapData}
+            onDuplicateDataProcessed={() => setDuplicateMapData(null)}
           />
         )}
-        {activeTab === 'my-maps' && <MyMapsTab />}
+        {activeTab === 'my-maps' && (
+          <MyMapsTab 
+            onDuplicateMap={handleDuplicateMap}
+          />
+        )}
       </div>
 
       {/* Slide-out Promo (only for public version) */}

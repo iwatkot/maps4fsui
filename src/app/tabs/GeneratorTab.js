@@ -52,7 +52,9 @@ export default function GeneratorTab({
   backendVersion: currentBackendVersion, 
   isBackendAvailable, 
   backendError,
-  isPublicVersion
+  isPublicVersion,
+  duplicateMapData,
+  onDuplicateDataProcessed
 }) {
   const [selectedGame, setSelectedGame] = useState(defaultValues.game);
   const [coordinatesInput, setCoordinatesInput] = useState(defaultValues.coordinates);
@@ -74,6 +76,9 @@ export default function GeneratorTab({
   const [dataSource, setDataSource] = useState(DATA_SOURCES.PUBLIC);
   const [selectedOsmFile, setSelectedOsmFile] = useState(null);
   const [osmData, setOsmData] = useState(null);
+
+  // State for pending DTM provider from duplication
+  const [pendingDTMProvider, setPendingDTMProvider] = useState(null);
 
   // State for managing closable sections - avoid hydration mismatch
   const [showIntro, setShowIntro] = useState(true);
@@ -130,6 +135,76 @@ export default function GeneratorTab({
     dtmSettings,
     setDtmSettings
   } = useDTMProviders(coordinatesInput);
+
+  // Handle map duplication data
+  useEffect(() => {
+    if (duplicateMapData && onDuplicateDataProcessed) {
+      const { mainSettings, generationSettings, customOsm } = duplicateMapData;
+      
+      // Populate form fields from main settings
+      if (mainSettings) {
+        setSelectedGame(mainSettings.game || defaultValues.game);
+        setCoordinatesInput(`${mainSettings.latitude}, ${mainSettings.longitude}`);
+        setSelectedSize(mainSettings.size || defaultValues.size);
+        if (mainSettings.output_size) {
+          setOutputSize(mainSettings.output_size);
+        }
+        setRotation(mainSettings.rotation || defaultValues.rotation);
+        
+        // Store DTM provider to be set after options are loaded
+        if (mainSettings.dtm_provider) {
+          console.log('Storing pending DTM provider from duplication:', mainSettings.dtm_provider);
+          setPendingDTMProvider(mainSettings.dtm_provider);
+        }
+      }
+      
+      // Handle custom OSM file if available
+      if (customOsm) {
+        // Create a File object from the OSM content
+        const osmBlob = new Blob([customOsm.content], { type: 'application/xml' });
+        const osmFile = new File([osmBlob], customOsm.fileName, { type: 'application/xml' });
+        
+        setDataSource(DATA_SOURCES.UPLOAD);
+        setSelectedOsmFile(osmFile);
+        
+        // The OSM data will be processed by the OsmFileUpload component when it's rendered
+      }
+      
+      // Mark as processed
+      onDuplicateDataProcessed();
+    }
+  }, [duplicateMapData, onDuplicateDataProcessed, setSelectedDTMProvider]);
+
+  // Set pending DTM provider when options are loaded
+  useEffect(() => {
+    if (pendingDTMProvider && dtmOptions && dtmOptions.length > 0 && !dtmLoading) {
+      console.log('Attempting to set DTM provider by label:', pendingDTMProvider);
+      console.log('Available DTM options:', dtmOptions.map(opt => ({ label: opt.label, value: opt.value })));
+      
+      // Search by label since the JSON stores the provider name/label
+      const providerByLabel = dtmOptions.find(option => option.label === pendingDTMProvider);
+      
+      if (providerByLabel) {
+        console.log('Found provider by label:', providerByLabel);
+        setSelectedDTMProvider(providerByLabel.value);
+        setPendingDTMProvider(null); // Clear the pending provider
+      } else {
+        console.log('Provider not found by exact label, checking for partial matches...');
+        // Try to find a partial match in case of slight differences
+        const partialMatch = dtmOptions.find(option => 
+          option.label.toLowerCase().includes(pendingDTMProvider.toLowerCase()) ||
+          pendingDTMProvider.toLowerCase().includes(option.label.toLowerCase())
+        );
+        if (partialMatch) {
+          console.log('Found partial match:', partialMatch);
+          setSelectedDTMProvider(partialMatch.value);
+          setPendingDTMProvider(null);
+        } else {
+          console.log('No match found for DTM provider:', pendingDTMProvider);
+        }
+      }
+    }
+  }, [pendingDTMProvider, dtmOptions, dtmLoading, setSelectedDTMProvider]);
 
   // Create size options based on version
   const sizeOptions = createSizeOptions(isPublicVersion);
