@@ -169,7 +169,7 @@ export default function MyMapsTab() {
                     )}
                     <div className="flex justify-between items-center py-1">
                       <span className="flex items-center">
-                        <i className="zmdi zmdi-videogame text-indigo-500 w-5 mr-2 text-base flex-shrink-0"></i>
+                        <i className="zmdi zmdi-gamepad text-indigo-500 w-5 mr-2 text-base flex-shrink-0"></i>
                         Game:
                       </span>
                       <span className="font-medium text-gray-900 dark:text-gray-100 truncate ml-2">{map.game}</span>
@@ -503,7 +503,7 @@ export default function MyMapsTab() {
                   )}
                   <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
                     <span className="flex items-center text-gray-600 dark:text-gray-400">
-                      <i className="zmdi zmdi-videogame text-indigo-500 w-6 mr-3 text-lg flex-shrink-0"></i>
+                      <i className="zmdi zmdi-gamepad text-indigo-500 w-6 mr-3 text-lg flex-shrink-0"></i>
                       Game:
                     </span>
                     <span className="font-semibold text-gray-900 dark:text-gray-100">{selectedMap.game}</span>
