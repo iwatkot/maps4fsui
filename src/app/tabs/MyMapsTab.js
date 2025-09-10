@@ -142,6 +142,71 @@ export default function MyMapsTab() {
     setShowJSONModal(true);
   };
 
+  // Handle map deletion
+  const handleDeleteMap = async () => {
+    if (!selectedMap) return;
+    
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete "${selectedMap.name}"? This action cannot be undone.`
+    );
+    
+    if (!confirmDelete) return;
+    
+    try {
+      const response = await fetch(`/api/maps/delete?mapId=${selectedMap.id}`, {
+        method: 'DELETE',
+      });
+      
+      const result = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to delete map');
+      }
+      
+      // Show success message
+      alert('Map deleted successfully!');
+      
+      // Refresh the maps list and clear selection
+      await fetchMaps();
+      setSelectedMap(null);
+      
+    } catch (error) {
+      console.error('Error deleting map:', error);
+      alert(`Failed to delete map: ${error.message}`);
+    }
+  };
+
+  // Handle map download
+  const handleDownloadMap = async () => {
+    if (!selectedMap) return;
+    
+    try {
+      const response = await fetch(`/api/maps/download?mapId=${selectedMap.id}`);
+      
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to download map');
+      }
+      
+      // Create blob and download
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${selectedMap.id}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      alert('Map download started!');
+      
+    } catch (error) {
+      console.error('Error downloading map:', error);
+      alert(`Failed to download map: ${error.message}`);
+    }
+  };
+
   // Calculate total pages for preview navigation
   const totalPreviewPages = useMemo(() => {
     if (!selectedMap?.previews || selectedMap.previews.length === 0) return 0;
@@ -649,7 +714,10 @@ export default function MyMapsTab() {
                 <div className="space-y-3 flex-1 flex flex-col justify-start">
                   {/* Status-specific actions first */}
                   {selectedMap.status === 'completed' && (
-                    <button className="w-full px-4 py-3 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center">
+                    <button 
+                      onClick={handleDownloadMap}
+                      className="w-full px-4 py-3 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
+                    >
                       <i className="zmdi zmdi-download mr-2"></i>
                       Download Map
                     </button>
@@ -686,7 +754,10 @@ export default function MyMapsTab() {
                       Retry Generation
                     </button>
                   )}
-                  <button className="w-full px-4 py-3 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center">
+                  <button 
+                    onClick={handleDeleteMap}
+                    className="w-full px-4 py-3 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
+                  >
                     <i className="zmdi zmdi-delete mr-2"></i>
                     Delete Map
                   </button>
