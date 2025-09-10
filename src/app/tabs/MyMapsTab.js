@@ -655,29 +655,31 @@ export default function MyMapsTab() {
                     </button>
                   )}
                   
-                  {/* JSON Viewer Actions */}
+                  {/* Duplicate Map - Position 2 with primary blue */}
+                  {selectedMap.status === 'completed' && (
+                    <button className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center">
+                      <i className="zmdi zmdi-copy mr-2"></i>
+                      Duplicate Map
+                    </button>
+                  )}
+                  
+                  {/* JSON Viewer Actions - Positions 3 & 4 with grey */}
                   <button 
                     onClick={() => handleShowJSON('generation_settings')}
-                    className="w-full px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
+                    className="w-full px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
                   >
                     <i className="zmdi zmdi-code mr-2"></i>
                     Generation Settings
                   </button>
                   <button 
                     onClick={() => handleShowJSON('generation_info')}
-                    className="w-full px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
+                    className="w-full px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
                   >
                     <i className="zmdi zmdi-info mr-2"></i>
                     Generation Info
                   </button>
                   
                   {/* Other status-specific actions */}
-                  {selectedMap.status === 'completed' && (
-                    <button className="w-full px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center">
-                      <i className="zmdi zmdi-copy mr-2"></i>
-                      Duplicate Map
-                    </button>
-                  )}
                   {(selectedMap.status === 'error' || selectedMap.status === 'incomplete') && (
                     <button className="w-full px-4 py-3 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center">
                       <i className="zmdi zmdi-refresh mr-2"></i>
