@@ -232,27 +232,30 @@ export default function GeneratorTab({
   // Create size options based on version
   const sizeOptions = createSizeOptions(isPublicVersion);
   
-  // Get settings content and values.
-  const { content: demContent, values: demValues } = DemSettingsContent(!onlyPopularSettings);
-  const { content: backgroundContent, values: backgroundValues } = BackgroundSettingsContent(!onlyPopularSettings, config.isPublicVersion);
-  const { content: grleContent, values: grleValues } = GrleSettingsContent(!onlyPopularSettings);
-  const { content: i3dContent, values: i3dValues } = I3dSettingsContent(!onlyPopularSettings);
-  const { content: textureContent, values: textureValues } = TextureSettingsContent(!onlyPopularSettings);
-  const { content: satelliteContent, values: satelliteValues } = SatelliteSettingsContent(!onlyPopularSettings, config.isPublicVersion);
+  // Get settings content and values - use empty object initially, then actual settings when available
+  const demSettings = pendingGenerationSettings?.DEMSettings || {};
+  const backgroundSettings = pendingGenerationSettings?.BackgroundSettings || {};
+  const grleSettings = pendingGenerationSettings?.GRLESettings || {};
+  const i3dSettings = pendingGenerationSettings?.I3DSettings || {};
+  const textureSettings = pendingGenerationSettings?.TextureSettings || {};
+  const satelliteSettings = pendingGenerationSettings?.SatelliteSettings || {};
+
+  const { content: demContent, values: demValues } = DemSettingsContent(!onlyPopularSettings, demSettings);
+  const { content: backgroundContent, values: backgroundValues } = BackgroundSettingsContent(!onlyPopularSettings, config.isPublicVersion, backgroundSettings);
+  const { content: grleContent, values: grleValues } = GrleSettingsContent(!onlyPopularSettings, false, grleSettings);
+  const { content: i3dContent, values: i3dValues } = I3dSettingsContent(!onlyPopularSettings, false, i3dSettings);
+  const { content: textureContent, values: textureValues } = TextureSettingsContent(!onlyPopularSettings, false, textureSettings);
+  const { content: satelliteContent, values: satelliteValues } = SatelliteSettingsContent(!onlyPopularSettings, config.isPublicVersion, satelliteSettings);
 
   // Apply pending generation settings from duplication
   useEffect(() => {
     if (pendingGenerationSettings) {
-      console.log('Applying pending generation settings:', pendingGenerationSettings);
+      console.log('Generation settings applied to components:', pendingGenerationSettings);
       
-      // Apply settings by programmatically triggering the onChange handlers
-      // This is a bit hacky but avoids modifying all settings components
-      
-      // For now, we'll just clear the pending settings and log what we would apply
-      // In the future, we could modify each settings component to accept initial values
-      console.log('Generation settings that would be applied:', pendingGenerationSettings);
-      
-      setPendingGenerationSettings(null);
+      // Clear the pending settings after a short delay to allow components to initialize
+      setTimeout(() => {
+        setPendingGenerationSettings(null);
+      }, 100);
     }
   }, [pendingGenerationSettings]);
 

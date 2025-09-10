@@ -1,16 +1,25 @@
 import Expander from '@/components/Expander';
 import NumberInput from '@/components/NumberInput';
 import Switch from '@/components/Switch';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
     defaultValues,
     constraints
 } from '@/config/validation';
 
-export default function SatelliteSettingsContent(showAll = false, onPublic = false){
-    const [downloadImages, setDownloadImages] = useState(defaultValues.downloadImages);
+export default function SatelliteSettingsContent(showAll = false, onPublic = false, initialValues = {}){
+    const [downloadImages, setDownloadImages] = useState(initialValues.download_images ?? defaultValues.downloadImages);
     const downloadImagesSummary = downloadImages ? "Download images     " : "";
-    const [zoomLevel, setZoomLevel] = useState(defaultValues.zoomLevel);
+    const [zoomLevel, setZoomLevel] = useState(initialValues.zoom_level ?? defaultValues.zoomLevel);
+
+    // Update state when initialValues change (for duplication feature)
+    useEffect(() => {
+        if (Object.keys(initialValues).length > 0) {
+            console.log('Satellite Settings: Applying initial values', initialValues);
+            setDownloadImages(initialValues.download_images ?? defaultValues.downloadImages);
+            setZoomLevel(initialValues.zoom_level ?? defaultValues.zoomLevel);
+        }
+    }, [initialValues]);
 
     const expanderSummary = `${downloadImagesSummary} | Zoom level: ${zoomLevel}`.replace(/^ \| /, '');
     const maxZoomLevel = onPublic ? 16 : constraints.zoomLevel.max;

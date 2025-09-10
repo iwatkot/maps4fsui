@@ -2,22 +2,35 @@ import Expander from '@/components/Expander';
 import NumberInput from '@/components/NumberInput';
 import Switch from '@/components/Switch';
 import Selector  from '@/components/Selector';  
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
     defaultValues,
     constraints
 } from '@/config/validation';
 
-export default function GrleSettingsContent(showAll = false, onPublic = false){
-    const [farmlandMargin, setFarmlandMargin] = useState(defaultValues.farmlandMargin);
-    const [addGrass, setAddGrass] = useState(defaultValues.addGrass);
+export default function GrleSettingsContent(showAll = false, onPublic = false, initialValues = {}){
+    const [farmlandMargin, setFarmlandMargin] = useState(initialValues.farmland_margin ?? defaultValues.farmlandMargin);
+    const [addGrass, setAddGrass] = useState(initialValues.add_grass ?? defaultValues.addGrass);
     const addGrassSummary = addGrass ? " │ Add grass" : "";
-    const [randomPlants, setRandomPlants] = useState(defaultValues.randomPlants);
+    const [randomPlants, setRandomPlants] = useState(initialValues.random_plants ?? defaultValues.randomPlants);
     const randomPlantsSummary = randomPlants ? " │ Random plants" : "";
 
-    const [baseGrass, setBaseGrass] = useState(defaultValues.baseGrass);
-    const [addFarmyards, setAddFarmyards] = useState(defaultValues.addFarmyards);
-    const [basePrice, setBasePrice] = useState(defaultValues.basePrice);
+    const [baseGrass, setBaseGrass] = useState(initialValues.base_grass ?? defaultValues.baseGrass);
+    const [addFarmyards, setAddFarmyards] = useState(initialValues.add_farmyards ?? defaultValues.addFarmyards);
+    const [basePrice, setBasePrice] = useState(initialValues.base_price ?? defaultValues.basePrice);
+
+    // Update state when initialValues change (for duplication feature)
+    useEffect(() => {
+        if (Object.keys(initialValues).length > 0) {
+            console.log('GRLE Settings: Applying initial values', initialValues);
+            setFarmlandMargin(initialValues.farmland_margin ?? defaultValues.farmlandMargin);
+            setAddGrass(initialValues.add_grass ?? defaultValues.addGrass);
+            setRandomPlants(initialValues.random_plants ?? defaultValues.randomPlants);
+            setBaseGrass(initialValues.base_grass ?? defaultValues.baseGrass);
+            setAddFarmyards(initialValues.add_farmyards ?? defaultValues.addFarmyards);
+            setBasePrice(initialValues.base_price ?? defaultValues.basePrice);
+        }
+    }, [initialValues]);
 
     const expanderSummary = `Farmland margin: ${farmlandMargin}${addGrassSummary}${randomPlantsSummary}`;
 

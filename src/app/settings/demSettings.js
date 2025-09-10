@@ -1,19 +1,31 @@
 import Expander from '../../components/Expander';
 import NumberInput from '../../components/NumberInput';
 import Switch from '../../components/Switch';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
   defaultValues,
   constraints 
 } from '../../config/validation';
 
-export default function DemSettingsContent(showAll = true){
-    const [blurRadius, setBlurRadius] = useState(defaultValues.blurRadius);
-    const [waterDepth, setWaterDepth] = useState(defaultValues.waterDepth);
-    const [addFoundations, setAddFoundations] = useState(defaultValues.addFoundations);
+export default function DemSettingsContent(showAll = true, initialValues = {}){
+    const [blurRadius, setBlurRadius] = useState(initialValues.blur_radius ?? defaultValues.blurRadius);
+    const [waterDepth, setWaterDepth] = useState(initialValues.water_depth ?? defaultValues.waterDepth);
+    const [addFoundations, setAddFoundations] = useState(initialValues.add_foundations ?? defaultValues.addFoundations);
     const addFoundationsSummary = addFoundations ? " │ Add foundations" : "";
-    const [plateau, setPlateau] = useState(defaultValues.plateau);
-    const [ceiling, setCeiling] = useState(defaultValues.ceiling);
+    const [plateau, setPlateau] = useState(initialValues.plateau ?? defaultValues.plateau);
+    const [ceiling, setCeiling] = useState(initialValues.ceiling ?? defaultValues.ceiling);
+
+    // Update state when initialValues change (for duplication feature)
+    useEffect(() => {
+        if (Object.keys(initialValues).length > 0) {
+            console.log('DEM Settings: Applying initial values', initialValues);
+            setBlurRadius(initialValues.blur_radius ?? defaultValues.blurRadius);
+            setWaterDepth(initialValues.water_depth ?? defaultValues.waterDepth);
+            setAddFoundations(initialValues.add_foundations ?? defaultValues.addFoundations);
+            setPlateau(initialValues.plateau ?? defaultValues.plateau);
+            setCeiling(initialValues.ceiling ?? defaultValues.ceiling);
+        }
+    }, [initialValues]);
 
     const expanderSummary = `Blur radius: ${blurRadius} │ Water depth: ${waterDepth}${addFoundationsSummary}`;
 

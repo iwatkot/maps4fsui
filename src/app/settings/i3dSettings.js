@@ -1,22 +1,34 @@
 import Expander from '@/components/Expander';
 import NumberInput from '@/components/NumberInput';
 import Switch from '@/components/Switch';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { 
     defaultValues,
     constraints
 } from '@/config/validation';
 
-export default function I3dSettingsContent(showAll = false, onPublic = false){
-    const [addTrees, setAddTrees] = useState(defaultValues.addTrees);
+export default function I3dSettingsContent(showAll = false, onPublic = false, initialValues = {}){
+    const [addTrees, setAddTrees] = useState(initialValues.add_trees ?? defaultValues.addTrees);
     const addTreesSummary = addTrees ? " │ Add trees" : "";
-    const [forestDensity, setForestDensity] = useState(defaultValues.forestDensity);
+    const [forestDensity, setForestDensity] = useState(initialValues.forest_density ?? defaultValues.forestDensity);
     const forestDensitySummary = ` │ Forest density: ${forestDensity}`;
-    const [treeLimit, setTreeLimit] = useState(defaultValues.treeLimit);
+    const [treeLimit, setTreeLimit] = useState(initialValues.tree_limit ?? defaultValues.treeLimit);
     const treeLimitSummary = ` │ Tree limit: ${treeLimit}`;
 
-    const [treesRelativeShift, setTreesRelativeShift] = useState(defaultValues.treesRelativeShift);
-    const [splineDensity, setSplineDensity] = useState(defaultValues.splineDensity);
+    const [treesRelativeShift, setTreesRelativeShift] = useState(initialValues.trees_relative_shift ?? defaultValues.treesRelativeShift);
+    const [splineDensity, setSplineDensity] = useState(initialValues.spline_density ?? defaultValues.splineDensity);
+
+    // Update state when initialValues change (for duplication feature)
+    useEffect(() => {
+        if (Object.keys(initialValues).length > 0) {
+            console.log('I3D Settings: Applying initial values', initialValues);
+            setAddTrees(initialValues.add_trees ?? defaultValues.addTrees);
+            setForestDensity(initialValues.forest_density ?? defaultValues.forestDensity);
+            setTreeLimit(initialValues.tree_limit ?? defaultValues.treeLimit);
+            setTreesRelativeShift(initialValues.trees_relative_shift ?? defaultValues.treesRelativeShift);
+            setSplineDensity(initialValues.spline_density ?? defaultValues.splineDensity);
+        }
+    }, [initialValues]);
 
     const expanderSummary = `${addTreesSummary}${forestDensitySummary}${treeLimitSummary}`.replace(/^ \│ /, '');
 
