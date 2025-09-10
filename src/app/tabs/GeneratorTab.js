@@ -80,6 +80,9 @@ export default function GeneratorTab({
   // State for pending DTM provider from duplication
   const [pendingDTMProvider, setPendingDTMProvider] = useState(null);
 
+  // State for pending generation settings from duplication
+  const [pendingGenerationSettings, setPendingGenerationSettings] = useState(null);
+
   // State for managing closable sections - avoid hydration mismatch
   const [showIntro, setShowIntro] = useState(true);
   const [isClient, setIsClient] = useState(false);
@@ -143,9 +146,22 @@ export default function GeneratorTab({
       
       // Populate form fields from main settings
       if (mainSettings) {
-        setSelectedGame(mainSettings.game || defaultValues.game);
+        // Set game - convert FS25 -> fs25, FS22 -> fs22
+        const gameValue = mainSettings.game?.toLowerCase() || defaultValues.game;
+        setSelectedGame(gameValue);
+        
         setCoordinatesInput(`${mainSettings.latitude}, ${mainSettings.longitude}`);
-        setSelectedSize(mainSettings.size || defaultValues.size);
+        
+        // Set size - check if it's a standard size or custom
+        const standardSizes = [2048, 4096, 8192, 16384];
+        if (standardSizes.includes(mainSettings.size)) {
+          setSelectedSize(mainSettings.size);
+        } else {
+          // Custom size
+          setSelectedSize("custom");
+          setCustomSize(mainSettings.size);
+        }
+        
         if (mainSettings.output_size) {
           setOutputSize(mainSettings.output_size);
         }
@@ -168,6 +184,13 @@ export default function GeneratorTab({
         setSelectedOsmFile(osmFile);
         
         // The OSM data will be processed by the OsmFileUpload component when it's rendered
+      }
+      
+      // Handle generation settings
+      if (generationSettings) {
+        console.log('Storing pending generation settings from duplication:', generationSettings);
+        console.log('Generation settings keys:', Object.keys(generationSettings));
+        setPendingGenerationSettings(generationSettings);
       }
       
       // Mark as processed
@@ -216,6 +239,22 @@ export default function GeneratorTab({
   const { content: i3dContent, values: i3dValues } = I3dSettingsContent(!onlyPopularSettings);
   const { content: textureContent, values: textureValues } = TextureSettingsContent(!onlyPopularSettings);
   const { content: satelliteContent, values: satelliteValues } = SatelliteSettingsContent(!onlyPopularSettings, config.isPublicVersion);
+
+  // Apply pending generation settings from duplication
+  useEffect(() => {
+    if (pendingGenerationSettings) {
+      console.log('Applying pending generation settings:', pendingGenerationSettings);
+      
+      // Apply settings by programmatically triggering the onChange handlers
+      // This is a bit hacky but avoids modifying all settings components
+      
+      // For now, we'll just clear the pending settings and log what we would apply
+      // In the future, we could modify each settings component to accept initial values
+      console.log('Generation settings that would be applied:', pendingGenerationSettings);
+      
+      setPendingGenerationSettings(null);
+    }
+  }, [pendingGenerationSettings]);
 
   // Map generation state managed by custom hook
   const { 
