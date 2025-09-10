@@ -659,7 +659,7 @@ export default function MyMapsTab() {
                     Generation Incomplete
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400 text-center max-w-sm">
-                    Map generation was stopped or interrupted
+                    Map generation was stopped or not finished yet
                   </div>
                 </div>
               ) : (
