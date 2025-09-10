@@ -11,6 +11,9 @@ export default function MyMapsTab() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [previewPage, setPreviewPage] = useState(0);
+  const [editingName, setEditingName] = useState(false);
+  const [editedName, setEditedName] = useState('');
+  const [savingName, setSavingName] = useState(false);
 
   // Fetch maps from API
   const fetchMaps = async () => {
@@ -49,17 +52,78 @@ export default function MyMapsTab() {
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'completed': return '✓';
-      case 'generating': return '⏳';
-      case 'incomplete': return '⏸️';
-      case 'error': return '✗';
-      default: return '?';
+      case 'completed': return <i className="zmdi zmdi-check-circle"></i>;
+      case 'generating': return <i className="zmdi zmdi-refresh zmdi-hc-spin"></i>;
+      case 'incomplete': return <i className="zmdi zmdi-pause-circle"></i>;
+      case 'error': return <i className="zmdi zmdi-close-circle"></i>;
+      default: return <i className="zmdi zmdi-help-outline"></i>;
     }
   };
 
   const handleMapSelect = (map) => {
     setSelectedMap(map);
     setPreviewPage(0); // Reset preview page when switching maps
+    setEditingName(false); // Reset editing state
+    setEditedName('');
+  };
+
+  // Handle name editing
+  const handleNameEdit = () => {
+    setEditingName(true);
+    setEditedName(selectedMap.name);
+  };
+
+  const handleNameSave = async () => {
+    if (!editedName.trim() || editedName === selectedMap.name) {
+      setEditingName(false);
+      return;
+    }
+
+    setSavingName(true);
+    try {
+      const response = await fetch('/api/maps/rename', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          mapId: selectedMap.id,
+          newName: editedName.trim(),
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to rename map');
+      }
+
+      // Update the selected map and maps list
+      const updatedMap = { ...selectedMap, name: editedName.trim() };
+      setSelectedMap(updatedMap);
+      setMaps(prevMaps => 
+        prevMaps.map(map => 
+          map.id === selectedMap.id ? updatedMap : map
+        )
+      );
+      setEditingName(false);
+    } catch (err) {
+      console.error('Error renaming map:', err);
+      alert('Failed to rename map. Please try again.');
+    } finally {
+      setSavingName(false);
+    }
+  };
+
+  const handleNameCancel = () => {
+    setEditingName(false);
+    setEditedName(selectedMap.name);
+  };
+
+  const handleNameBlur = () => {
+    if (editedName.trim() && editedName !== selectedMap.name) {
+      handleNameSave();
+    } else {
+      handleNameCancel();
+    }
   };
 
   // Calculate total pages for preview navigation
@@ -129,7 +193,7 @@ export default function MyMapsTab() {
                       {map.name}
                     </h3>
                     <div className={`flex items-center space-x-1 ${getStatusColor(map.status)}`}>
-                      <span className="text-sm">{getStatusIcon(map.status)}</span>
+                      {getStatusIcon(map.status)}
                       <span className="text-xs font-medium capitalize">{map.status}</span>
                     </div>
                   </div>
@@ -158,7 +222,7 @@ export default function MyMapsTab() {
                         <span className="font-medium text-gray-900 dark:text-gray-100">{map.mainSettings.output_size}px</span>
                       </div>
                     )}
-                    {map.mainSettings?.rotation && map.mainSettings.rotation !== 0 && (
+                    {map.mainSettings?.rotation !== undefined && map.mainSettings?.rotation !== null && map.mainSettings.rotation !== 0 && (
                       <div className="flex justify-between items-center py-1">
                         <span className="flex items-center">
                           <i className="zmdi zmdi-rotate-right text-purple-500 w-5 mr-2 text-base flex-shrink-0"></i>
@@ -302,32 +366,41 @@ export default function MyMapsTab() {
         ) : (
           <div className="space-y-6">
             {/* Map Header */}
-            <div className="flex items-start justify-between">
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                  {selectedMap.name}
-                </h1>
-                <div className={`inline-flex items-center space-x-2 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(selectedMap.status)}`}>
-                  <span>{getStatusIcon(selectedMap.status)}</span>
-                  <span className="capitalize">{selectedMap.status}</span>
-                  {selectedMap.status === 'generating' && selectedMap.progress && (
-                    <span>({selectedMap.progress}%)</span>
-                  )}
-                </div>
+            <div className="flex items-center justify-between">
+              <div className="flex-1 mr-4">
+                {editingName ? (
+                  <input
+                    type="text"
+                    value={editedName}
+                    onChange={(e) => setEditedName(e.target.value)}
+                    onBlur={handleNameBlur}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') handleNameSave();
+                      if (e.key === 'Escape') handleNameCancel();
+                    }}
+                    className="w-full text-2xl font-bold bg-transparent border border-blue-500 outline-none text-gray-900 dark:text-gray-100 rounded px-2 py-1 transition-all"
+                    autoFocus
+                    disabled={savingName}
+                  />
+                ) : (
+                  <h1 
+                    className="text-2xl font-bold text-gray-900 dark:text-gray-100 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors border border-transparent rounded px-2 py-1"
+                    onClick={handleNameEdit}
+                    title="Click to edit name"
+                  >
+                    {selectedMap.name}
+                    {savingName && <i className="zmdi zmdi-refresh zmdi-hc-spin ml-2 text-blue-500"></i>}
+                  </h1>
+                )}
               </div>
               
-              {selectedMap.status === 'completed' && (
-                <div className="flex space-x-2">
-                  <button className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors">
-                    <i className="zmdi zmdi-download mr-2"></i>
-                    Download
-                  </button>
-                  <button className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors">
-                    <i className="zmdi zmdi-share mr-2"></i>
-                    Share
-                  </button>
-                </div>
-              )}
+              <div className={`inline-flex items-center space-x-2 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(selectedMap.status)}`}>
+                {getStatusIcon(selectedMap.status)}
+                <span className="capitalize">{selectedMap.status}</span>
+                {selectedMap.status === 'generating' && selectedMap.progress && (
+                  <span>({selectedMap.progress}%)</span>
+                )}
+              </div>
             </div>
             
             {/* Generation Settings Badges */}
@@ -492,7 +565,7 @@ export default function MyMapsTab() {
                       <span className="font-semibold text-gray-900 dark:text-gray-100 text-lg">{selectedMap.mainSettings.output_size}<span className="text-sm text-gray-500 ml-1">pixels</span></span>
                     </div>
                   )}
-                  {selectedMap.mainSettings?.rotation && selectedMap.mainSettings.rotation !== 0 && (
+                  {selectedMap.mainSettings?.rotation !== undefined && selectedMap.mainSettings?.rotation !== null && selectedMap.mainSettings.rotation !== 0 && (
                     <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
                       <span className="flex items-center text-gray-600 dark:text-gray-400">
                         <i className="zmdi zmdi-rotate-right text-purple-500 w-6 mr-3 text-lg flex-shrink-0"></i>

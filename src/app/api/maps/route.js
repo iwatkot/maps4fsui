@@ -39,8 +39,8 @@ export async function GET() {
           // Determine map status based on JSON data and file existence
           const status = determineMapStatus(mapDir, mainSettingsData);
           
-          // Find custom name (from name.txt if exists, otherwise use directory name)
-          const customName = findMapName(mapDir);
+          // Find custom name (from name.txt if exists, otherwise create it with directory name)
+          const customName = findMapName(mapDir, dir.name);
           
           // Create proper datetime from JSON fields
           const createdDateTime = `${mainSettingsData.date} ${mainSettingsData.time}`;
@@ -48,7 +48,7 @@ export async function GET() {
           // Create map object
           const mapData = {
             id: dir.name, // Use directory name as ID
-            name: customName || dir.name,
+            name: customName,
             directory: dir.name,
             coordinates: `${mainSettingsData.latitude}, ${mainSettingsData.longitude}`,
             size: mainSettingsData.size,
@@ -147,9 +147,9 @@ function determineMapStatus(mapPath, mainSettings) {
 }
 
 /**
- * Find custom map name from name.txt or return null
+ * Find custom map name from name.txt or create it with directory name
  */
-function findMapName(mapPath) {
+function findMapName(mapPath, directoryName) {
   const nameFile = path.join(mapPath, 'name.txt');
   if (fs.existsSync(nameFile)) {
     try {
@@ -157,8 +157,16 @@ function findMapName(mapPath) {
     } catch (error) {
       console.error('Error reading name file:', error);
     }
+  } else {
+    // Create name.txt with directory name if it doesn't exist
+    try {
+      fs.writeFileSync(nameFile, directoryName, 'utf8');
+      return directoryName;
+    } catch (error) {
+      console.error('Error creating name file:', error);
+    }
   }
-  return null;
+  return directoryName; // Fallback to directory name
 }
 
 /**
