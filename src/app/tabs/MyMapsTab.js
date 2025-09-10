@@ -182,19 +182,48 @@ export default function MyMapsTab() {
                 <div
                   key={map.id}
                   onClick={() => handleMapSelect(map)}
-                  className={`p-4 rounded-lg border cursor-pointer transition-all ${
+                  className={`relative p-4 rounded-lg border cursor-pointer transition-all overflow-hidden ${
                     selectedMap?.id === map.id
                       ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-md'
                       : 'border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-500 hover:shadow-sm'
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-2">
+                  {/* Subtle radial gradient from top-right corner */}
+                  <div 
+                    className="absolute top-0 right-0 w-32 h-32 opacity-25 pointer-events-none"
+                    style={{
+                      background: `radial-gradient(circle at top right, ${
+                        map.status === 'completed' ? 'rgb(34, 197, 94)' :  // green-500
+                        map.status === 'generating' ? 'rgb(59, 130, 246)' : // blue-500
+                        map.status === 'error' ? 'rgb(239, 68, 68)' :       // red-500
+                        'rgb(234, 179, 8)'                                   // yellow-500
+                      } 0%, ${
+                        map.status === 'completed' ? 'rgba(34, 197, 94, 0.6)' :
+                        map.status === 'generating' ? 'rgba(59, 130, 246, 0.6)' :
+                        map.status === 'error' ? 'rgba(239, 68, 68, 0.6)' :
+                        'rgba(234, 179, 8, 0.6)'
+                      } 25%, transparent 65%)`
+                    }}
+                  ></div>
+                  
+                  {/* Status indicator aligned with content */}
+                  <div className="relative flex items-center justify-between mb-2">
                     <h3 className="font-medium text-gray-900 dark:text-gray-100 truncate">
                       {map.name}
                     </h3>
-                    <div className={`flex items-center space-x-1 ${getStatusColor(map.status)}`}>
-                      {getStatusIcon(map.status)}
-                      <span className="text-xs font-medium capitalize">{map.status}</span>
+                    
+                    <div className="flex items-center space-x-2">
+                      {/* Progress for generating maps */}
+                      {map.status === 'generating' && map.progress && (
+                        <div className="text-xs text-gray-600 dark:text-gray-400">
+                          {map.progress}%
+                        </div>
+                      )}
+                      
+                      {/* Status icon */}
+                      <div className={`flex items-center justify-center w-6 h-6 rounded-full ${getStatusColor(map.status)} bg-opacity-20`}>
+                        {getStatusIcon(map.status)}
+                      </div>
                     </div>
                   </div>
                   
@@ -204,7 +233,7 @@ export default function MyMapsTab() {
                         <i className="zmdi zmdi-pin text-blue-500 w-5 mr-2 text-base flex-shrink-0"></i>
                         Coordinates:
                       </span>
-                      <span className="font-mono text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-gray-900 dark:text-gray-100">{map.coordinates}</span>
+                      <span className="font-mono text-xs text-gray-900 dark:text-gray-100">{map.coordinates}</span>
                     </div>
                     <div className="flex justify-between items-center py-1">
                       <span className="flex items-center">
@@ -367,40 +396,46 @@ export default function MyMapsTab() {
           <div className="space-y-6">
             {/* Map Header */}
             <div className="flex items-center justify-between">
-              <div className="flex-1 mr-4">
-                {editingName ? (
-                  <input
-                    type="text"
-                    value={editedName}
-                    onChange={(e) => setEditedName(e.target.value)}
-                    onBlur={handleNameBlur}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') handleNameSave();
-                      if (e.key === 'Escape') handleNameCancel();
-                    }}
-                    className="w-full text-2xl font-bold bg-transparent border border-blue-500 outline-none text-gray-900 dark:text-gray-100 rounded px-2 py-1 transition-all"
-                    autoFocus
-                    disabled={savingName}
-                  />
-                ) : (
-                  <h1 
-                    className="text-2xl font-bold text-gray-900 dark:text-gray-100 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors border border-transparent rounded px-2 py-1"
-                    onClick={handleNameEdit}
-                    title="Click to edit name"
-                  >
-                    {selectedMap.name}
-                    {savingName && <i className="zmdi zmdi-refresh zmdi-hc-spin ml-2 text-blue-500"></i>}
-                  </h1>
-                )}
+              <div className="flex items-center space-x-3 flex-1">
+                {/* Status icon on the left */}
+                <div className={`flex items-center justify-center w-8 h-8 rounded-full ${getStatusColor(selectedMap.status)} bg-opacity-10`}>
+                  {getStatusIcon(selectedMap.status)}
+                </div>
+                
+                <div className="relative group flex-1">
+                  {editingName ? (
+                    <input
+                      type="text"
+                      value={editedName}
+                      onChange={(e) => setEditedName(e.target.value)}
+                      onBlur={handleNameBlur}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') handleNameSave();
+                        if (e.key === 'Escape') handleNameCancel();
+                      }}
+                      className="w-full text-2xl font-bold bg-transparent border border-blue-500 outline-none text-gray-900 dark:text-gray-100 rounded px-2 py-1 transition-all"
+                      autoFocus
+                      disabled={savingName}
+                    />
+                  ) : (
+                    <h1 
+                      className="text-2xl font-bold text-gray-900 dark:text-gray-100 cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 border border-transparent rounded px-2 py-1 hover:bg-gray-50 dark:hover:bg-gray-800"
+                      onClick={handleNameEdit}
+                      title="Click to edit name"
+                    >
+                      {selectedMap.name}
+                      {savingName && <i className="zmdi zmdi-refresh zmdi-hc-spin ml-2 text-blue-500"></i>}
+                    </h1>
+                  )}
+                </div>
               </div>
               
-              <div className={`inline-flex items-center space-x-2 px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(selectedMap.status)}`}>
-                {getStatusIcon(selectedMap.status)}
-                <span className="capitalize">{selectedMap.status}</span>
-                {selectedMap.status === 'generating' && selectedMap.progress && (
-                  <span>({selectedMap.progress}%)</span>
-                )}
-              </div>
+              {/* Progress indicator for generating status */}
+              {selectedMap.status === 'generating' && selectedMap.progress && (
+                <div className="text-sm text-gray-600 dark:text-gray-400 ml-4">
+                  {selectedMap.progress}%
+                </div>
+              )}
             </div>
             
             {/* Generation Settings Badges */}
@@ -547,7 +582,7 @@ export default function MyMapsTab() {
                       <i className="zmdi zmdi-pin text-blue-500 w-6 mr-3 text-lg flex-shrink-0"></i>
                       Coordinates:
                     </span>
-                    <span className="font-mono text-sm bg-gray-50 dark:bg-gray-800 px-3 py-1 rounded-md text-gray-900 dark:text-gray-100 border">{selectedMap.coordinates}</span>
+                    <span className="font-mono text-sm text-gray-900 dark:text-gray-100">{selectedMap.coordinates}</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
                     <span className="flex items-center text-gray-600 dark:text-gray-400">
