@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import MixedPreviewGallery from '@/components/MixedPreviewGallery';
 import SlideNavigator from '@/components/SlideNavigator';
+import JSONEditorModal from '@/components/JSONEditorModal';
 import { separateFilesByType } from '@/utils/fileTypeUtils';
 
 export default function MyMapsTab() {
@@ -14,6 +15,9 @@ export default function MyMapsTab() {
   const [editingName, setEditingName] = useState(false);
   const [editedName, setEditedName] = useState('');
   const [savingName, setSavingName] = useState(false);
+  const [showJSONModal, setShowJSONModal] = useState(false);
+  const [jsonData, setJsonData] = useState(null);
+  const [jsonType, setJsonType] = useState('');
 
   // Fetch maps from API
   const fetchMaps = async () => {
@@ -124,6 +128,18 @@ export default function MyMapsTab() {
     } else {
       handleNameCancel();
     }
+  };
+
+  // Handle JSON modal
+  const handleShowJSON = (type) => {
+    if (type === 'generation_settings') {
+      setJsonData(selectedMap.generationSettings);
+      setJsonType('Generation Settings');
+    } else if (type === 'generation_info') {
+      setJsonData(selectedMap.mainSettings);
+      setJsonType('Generation Info');
+    }
+    setShowJSONModal(true);
   };
 
   // Calculate total pages for preview navigation
@@ -572,19 +588,20 @@ export default function MyMapsTab() {
               )}
             </div>
 
-            {/* Map Information */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-3">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Map Information</h3>
+            {/* Map Information and Actions */}
+            <div className="grid grid-cols-2 gap-6 items-start">
+              {/* Map Information - Left Column */}
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 h-full">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Map Information</h3>
                 <div className="space-y-3 text-sm">
-                  <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
+                  <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-600">
                     <span className="flex items-center text-gray-600 dark:text-gray-400">
                       <i className="zmdi zmdi-pin text-blue-500 w-6 mr-3 text-lg flex-shrink-0"></i>
                       Coordinates:
                     </span>
                     <span className="font-mono text-sm text-gray-900 dark:text-gray-100">{selectedMap.coordinates}</span>
                   </div>
-                  <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
+                  <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-600">
                     <span className="flex items-center text-gray-600 dark:text-gray-400">
                       <i className="zmdi zmdi-crop-landscape text-green-500 w-6 mr-3 text-lg flex-shrink-0"></i>
                       Size:
@@ -592,7 +609,7 @@ export default function MyMapsTab() {
                     <span className="font-semibold text-gray-900 dark:text-gray-100 text-lg">{selectedMap.size}<span className="text-sm text-gray-500 ml-1">meters</span></span>
                   </div>
                   {selectedMap.mainSettings?.output_size && (
-                    <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
+                    <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-600">
                       <span className="flex items-center text-gray-600 dark:text-gray-400">
                         <i className="zmdi zmdi-aspect-ratio text-orange-500 w-6 mr-3 text-lg flex-shrink-0"></i>
                         Output Size:
@@ -601,7 +618,7 @@ export default function MyMapsTab() {
                     </div>
                   )}
                   {selectedMap.mainSettings?.rotation !== undefined && selectedMap.mainSettings?.rotation !== null && selectedMap.mainSettings.rotation !== 0 && (
-                    <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
+                    <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-600">
                       <span className="flex items-center text-gray-600 dark:text-gray-400">
                         <i className="zmdi zmdi-rotate-right text-purple-500 w-6 mr-3 text-lg flex-shrink-0"></i>
                         Rotation:
@@ -609,7 +626,7 @@ export default function MyMapsTab() {
                       <span className="font-semibold text-gray-900 dark:text-gray-100 text-lg">{selectedMap.mainSettings.rotation}<span className="text-sm text-gray-500 ml-1">degrees</span></span>
                     </div>
                   )}
-                  <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
+                  <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-600">
                     <span className="flex items-center text-gray-600 dark:text-gray-400">
                       <i className="zmdi zmdi-gamepad text-indigo-500 w-6 mr-3 text-lg flex-shrink-0"></i>
                       Game:
@@ -626,28 +643,48 @@ export default function MyMapsTab() {
                 </div>
               </div>
 
-              <div className="space-y-3">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Actions</h3>
-                <div className="space-y-2">
+              {/* Actions - Right Column */}
+              <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 h-full flex flex-col">
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Actions</h3>
+                <div className="space-y-3 flex-1 flex flex-col justify-start">
+                  {/* Status-specific actions first */}
                   {selectedMap.status === 'completed' && (
-                    <>
-                      <button className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors text-left">
-                        <i className="zmdi zmdi-download mr-2"></i>
-                        Download Map Files
-                      </button>
-                      <button className="w-full px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors text-left">
-                        <i className="zmdi zmdi-copy mr-2"></i>
-                        Duplicate Map
-                      </button>
-                    </>
+                    <button className="w-full px-4 py-3 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center">
+                      <i className="zmdi zmdi-download mr-2"></i>
+                      Download Map
+                    </button>
+                  )}
+                  
+                  {/* JSON Viewer Actions */}
+                  <button 
+                    onClick={() => handleShowJSON('generation_settings')}
+                    className="w-full px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
+                  >
+                    <i className="zmdi zmdi-code mr-2"></i>
+                    Generation Settings
+                  </button>
+                  <button 
+                    onClick={() => handleShowJSON('generation_info')}
+                    className="w-full px-4 py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
+                  >
+                    <i className="zmdi zmdi-info mr-2"></i>
+                    Generation Info
+                  </button>
+                  
+                  {/* Other status-specific actions */}
+                  {selectedMap.status === 'completed' && (
+                    <button className="w-full px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center">
+                      <i className="zmdi zmdi-copy mr-2"></i>
+                      Duplicate Map
+                    </button>
                   )}
                   {(selectedMap.status === 'error' || selectedMap.status === 'incomplete') && (
-                    <button className="w-full px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg transition-colors text-left">
+                    <button className="w-full px-4 py-3 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center">
                       <i className="zmdi zmdi-refresh mr-2"></i>
                       Retry Generation
                     </button>
                   )}
-                  <button className="w-full px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors text-left">
+                  <button className="w-full px-4 py-3 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center">
                     <i className="zmdi zmdi-delete mr-2"></i>
                     Delete Map
                   </button>
@@ -665,6 +702,14 @@ export default function MyMapsTab() {
           </div>
         )}
       </div>
+      
+      {/* JSON Editor Modal */}
+      <JSONEditorModal
+        isOpen={showJSONModal}
+        onClose={() => setShowJSONModal(false)}
+        jsonData={jsonData}
+        title={jsonType}
+      />
     </div>
   );
 }
