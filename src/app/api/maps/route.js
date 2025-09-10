@@ -67,7 +67,6 @@ export async function GET() {
             game: getGameFromSettings(mainSettingsData),
             createdAt: createdDateTime,
             status: status,
-            error: status === 'error' ? mainSettingsData.error : null, // Include error message for failed maps
             country: mainSettingsData.country,
             rotation: mainSettingsData.rotation,
             dtmProvider: mainSettingsData.dtm_provider,

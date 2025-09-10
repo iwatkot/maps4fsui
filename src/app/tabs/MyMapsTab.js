@@ -23,26 +23,6 @@ export default function MyMapsTab({ onDuplicateMap }) {
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  // Helper function to format coordinates with reasonable precision
-  const formatCoordinates = (coordinatesString) => {
-    if (!coordinatesString) return '';
-    
-    try {
-      const parts = coordinatesString.split(',').map(coord => coord.trim());
-      if (parts.length !== 2) return coordinatesString;
-      
-      const lat = parseFloat(parts[0]);
-      const lng = parseFloat(parts[1]);
-      
-      if (isNaN(lat) || isNaN(lng)) return coordinatesString;
-      
-      // Format to 6 decimal places (about 0.1 meter precision)
-      return `${lat.toFixed(6)}, ${lng.toFixed(6)}`;
-    } catch (error) {
-      return coordinatesString; // Fallback to original if parsing fails
-    }
-  };
-
   // Fetch maps from API
   const fetchMaps = async () => {
     try {
@@ -277,37 +257,6 @@ export default function MyMapsTab({ onDuplicateMap }) {
     } catch (error) {
       console.error('Error duplicating map:', error);
       showToast(`Failed to duplicate map: ${error.message}`, 'error');
-    }
-  };
-
-  // Handle retry generation (reuses duplication logic)
-  const handleRetryGeneration = async () => {
-    if (!selectedMap || !onDuplicateMap) return;
-    
-    try {
-      showToast('Preparing to retry generation...', 'info');
-      
-      // Check for custom OSM file
-      const osmResponse = await fetch(`/api/maps/osm?mapId=${selectedMap.id}`);
-      const osmData = await osmResponse.json();
-      
-      // Prepare duplication data (same as duplicate logic)
-      const duplicateData = {
-        mainSettings: selectedMap.mainSettings,
-        generationSettings: selectedMap.generationSettings,
-        customOsm: osmData.hasCustomOsm ? {
-          content: osmData.osmContent,
-          fileName: osmData.fileName
-        } : null
-      };
-      
-      // Call the parent handler to switch tabs and populate data
-      onDuplicateMap(duplicateData);
-      showToast('Map settings loaded in Generator! Ready to retry generation.', 'success');
-      
-    } catch (error) {
-      console.error('Error preparing retry generation:', error);
-      showToast(`Failed to prepare retry: ${error.message}`, 'error');
     }
   };
 
@@ -675,25 +624,6 @@ export default function MyMapsTab({ onDuplicateMap }) {
               )}
             </div>
 
-            {/* Error Message Display for Failed Maps */}
-            {selectedMap.status === 'error' && selectedMap.error && (
-              <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                <div className="flex items-start space-x-3">
-                  <div className="text-red-500 dark:text-red-400 mt-0.5">
-                    <i className="zmdi zmdi-alert-triangle text-lg"></i>
-                  </div>
-                  <div className="flex-1">
-                    <div className="text-sm font-medium text-red-800 dark:text-red-200 mb-1">
-                      Generation Error
-                    </div>
-                    <div className="text-sm text-red-700 dark:text-red-300 break-words">
-                      {selectedMap.error}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {/* Map Preview */}
             <div className="aspect-video bg-gray-100 dark:bg-gray-700 rounded-xl border border-gray-200 dark:border-gray-600 overflow-hidden relative">
               {selectedMap.previews && selectedMap.previews.length > 0 ? (
@@ -747,6 +677,11 @@ export default function MyMapsTab({ onDuplicateMap }) {
                   <div className="text-lg font-medium text-red-600 dark:text-red-400">
                     Generation Failed
                   </div>
+                  {selectedMap.error && (
+                    <div className="text-sm text-gray-600 dark:text-gray-400 text-center max-w-sm">
+                      {selectedMap.error}
+                    </div>
+                  )}
                 </div>
               ) : selectedMap.status === 'incomplete' ? (
                 <div className="w-full h-full flex flex-col items-center justify-center space-y-2">
@@ -782,9 +717,7 @@ export default function MyMapsTab({ onDuplicateMap }) {
                       <i className="zmdi zmdi-pin text-blue-500 w-6 mr-3 text-lg flex-shrink-0"></i>
                       Coordinates:
                     </span>
-                    <span className="font-mono text-sm text-gray-900 dark:text-gray-100" title={selectedMap.coordinates}>
-                      {formatCoordinates(selectedMap.coordinates)}
-                    </span>
+                    <span className="font-mono text-sm text-gray-900 dark:text-gray-100">{selectedMap.coordinates}</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-600">
                     <span className="flex items-center text-gray-600 dark:text-gray-400">
@@ -886,10 +819,7 @@ export default function MyMapsTab({ onDuplicateMap }) {
                   
                   {/* Other status-specific actions */}
                   {(selectedMap.status === 'error' || selectedMap.status === 'incomplete') && (
-                    <button 
-                      onClick={handleRetryGeneration}
-                      className="w-full px-4 py-3 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
-                    >
+                    <button className="w-full px-4 py-3 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center">
                       <i className="zmdi zmdi-refresh mr-2"></i>
                       Retry Generation
                     </button>
@@ -918,6 +848,14 @@ export default function MyMapsTab({ onDuplicateMap }) {
                 </div>
               </div>
             </div>
+
+            {/* Error Details */}
+            {selectedMap.status === 'error' && selectedMap.error && (
+              <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                <h4 className="font-medium text-red-800 dark:text-red-300 mb-2">Error Details</h4>
+                <p className="text-sm text-red-700 dark:text-red-300">{selectedMap.error}</p>
+              </div>
+            )}
           </div>
         )}
       </div>
