@@ -135,33 +135,51 @@ export default function MyMapsTab() {
                   </div>
                   
                   <div className="space-y-1 text-sm text-gray-600 dark:text-gray-400">
-                    <div className="flex justify-between">
-                      <span>Coordinates:</span>
-                      <span className="font-mono text-xs">{map.coordinates}</span>
+                    <div className="flex justify-between items-center py-1">
+                      <span className="flex items-center">
+                        <i className="zmdi zmdi-pin text-blue-500 w-5 mr-2 text-base flex-shrink-0"></i>
+                        Coordinates:
+                      </span>
+                      <span className="font-mono text-xs bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded text-gray-900 dark:text-gray-100">{map.coordinates}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span>Size:</span>
-                      <span>{map.size}</span>
+                    <div className="flex justify-between items-center py-1">
+                      <span className="flex items-center">
+                        <i className="zmdi zmdi-crop-landscape text-green-500 w-5 mr-2 text-base flex-shrink-0"></i>
+                        Size:
+                      </span>
+                      <span className="font-medium text-gray-900 dark:text-gray-100">{map.size}m</span>
                     </div>
                     {map.mainSettings?.output_size && (
-                      <div className="flex justify-between">
-                        <span>Output Size:</span>
-                        <span>{map.mainSettings.output_size}</span>
+                      <div className="flex justify-between items-center py-1">
+                        <span className="flex items-center">
+                          <i className="zmdi zmdi-aspect-ratio text-orange-500 w-5 mr-2 text-base flex-shrink-0"></i>
+                          Output Size:
+                        </span>
+                        <span className="font-medium text-gray-900 dark:text-gray-100">{map.mainSettings.output_size}px</span>
                       </div>
                     )}
                     {map.mainSettings?.rotation && map.mainSettings.rotation !== 0 && (
-                      <div className="flex justify-between">
-                        <span>Rotation:</span>
-                        <span>{map.mainSettings.rotation}°</span>
+                      <div className="flex justify-between items-center py-1">
+                        <span className="flex items-center">
+                          <i className="zmdi zmdi-rotate-right text-purple-500 w-5 mr-2 text-base flex-shrink-0"></i>
+                          Rotation:
+                        </span>
+                        <span className="font-medium text-gray-900 dark:text-gray-100">{map.mainSettings.rotation}°</span>
                       </div>
                     )}
-                    <div className="flex justify-between">
-                      <span>Game:</span>
-                      <span className="truncate ml-2">{map.game}</span>
+                    <div className="flex justify-between items-center py-1">
+                      <span className="flex items-center">
+                        <i className="zmdi zmdi-videogame text-indigo-500 w-5 mr-2 text-base flex-shrink-0"></i>
+                        Game:
+                      </span>
+                      <span className="font-medium text-gray-900 dark:text-gray-100 truncate ml-2">{map.game}</span>
                     </div>
-                    <div className="flex justify-between">
-                      <span>Created:</span>
-                      <span>{map.createdAt}</span>
+                    <div className="flex justify-between items-center py-1">
+                      <span className="flex items-center">
+                        <i className="zmdi zmdi-time text-gray-500 w-5 mr-2 text-base flex-shrink-0"></i>
+                        Created:
+                      </span>
+                      <span className="font-medium text-gray-900 dark:text-gray-100">{map.createdAt}</span>
                     </div>
                   </div>
 
@@ -450,34 +468,52 @@ export default function MyMapsTab() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-3">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Map Information</h3>
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Coordinates:</span>
-                    <span className="font-mono text-gray-900 dark:text-gray-100">{selectedMap.coordinates}</span>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
+                    <span className="flex items-center text-gray-600 dark:text-gray-400">
+                      <i className="zmdi zmdi-pin text-blue-500 w-6 mr-3 text-lg flex-shrink-0"></i>
+                      Coordinates:
+                    </span>
+                    <span className="font-mono text-sm bg-gray-50 dark:bg-gray-800 px-3 py-1 rounded-md text-gray-900 dark:text-gray-100 border">{selectedMap.coordinates}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Size:</span>
-                    <span className="text-gray-900 dark:text-gray-100">{selectedMap.size}</span>
+                  <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
+                    <span className="flex items-center text-gray-600 dark:text-gray-400">
+                      <i className="zmdi zmdi-crop-landscape text-green-500 w-6 mr-3 text-lg flex-shrink-0"></i>
+                      Size:
+                    </span>
+                    <span className="font-semibold text-gray-900 dark:text-gray-100 text-lg">{selectedMap.size}<span className="text-sm text-gray-500 ml-1">meters</span></span>
                   </div>
                   {selectedMap.mainSettings?.output_size && (
-                    <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-400">Output Size:</span>
-                      <span className="text-gray-900 dark:text-gray-100">{selectedMap.mainSettings.output_size}</span>
+                    <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
+                      <span className="flex items-center text-gray-600 dark:text-gray-400">
+                        <i className="zmdi zmdi-aspect-ratio text-orange-500 w-6 mr-3 text-lg flex-shrink-0"></i>
+                        Output Size:
+                      </span>
+                      <span className="font-semibold text-gray-900 dark:text-gray-100 text-lg">{selectedMap.mainSettings.output_size}<span className="text-sm text-gray-500 ml-1">pixels</span></span>
                     </div>
                   )}
                   {selectedMap.mainSettings?.rotation && selectedMap.mainSettings.rotation !== 0 && (
-                    <div className="flex justify-between">
-                      <span className="text-gray-600 dark:text-gray-400">Rotation:</span>
-                      <span className="text-gray-900 dark:text-gray-100">{selectedMap.mainSettings.rotation}°</span>
+                    <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
+                      <span className="flex items-center text-gray-600 dark:text-gray-400">
+                        <i className="zmdi zmdi-rotate-right text-purple-500 w-6 mr-3 text-lg flex-shrink-0"></i>
+                        Rotation:
+                      </span>
+                      <span className="font-semibold text-gray-900 dark:text-gray-100 text-lg">{selectedMap.mainSettings.rotation}<span className="text-sm text-gray-500 ml-1">degrees</span></span>
                     </div>
                   )}
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Game:</span>
-                    <span className="text-gray-900 dark:text-gray-100">{selectedMap.game}</span>
+                  <div className="flex justify-between items-center py-2 border-b border-gray-100 dark:border-gray-700">
+                    <span className="flex items-center text-gray-600 dark:text-gray-400">
+                      <i className="zmdi zmdi-videogame text-indigo-500 w-6 mr-3 text-lg flex-shrink-0"></i>
+                      Game:
+                    </span>
+                    <span className="font-semibold text-gray-900 dark:text-gray-100">{selectedMap.game}</span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="text-gray-600 dark:text-gray-400">Created:</span>
-                    <span className="text-gray-900 dark:text-gray-100">{selectedMap.createdAt}</span>
+                  <div className="flex justify-between items-center py-2">
+                    <span className="flex items-center text-gray-600 dark:text-gray-400">
+                      <i className="zmdi zmdi-time text-gray-500 w-6 mr-3 text-lg flex-shrink-0"></i>
+                      Created:
+                    </span>
+                    <span className="font-semibold text-gray-900 dark:text-gray-100">{selectedMap.createdAt}</span>
                   </div>
                 </div>
               </div>
