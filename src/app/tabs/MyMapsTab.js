@@ -136,7 +136,7 @@ export default function MyMapsTab() {
       setJsonData(selectedMap.generationSettings);
       setJsonType('Generation Settings');
     } else if (type === 'generation_info') {
-      setJsonData(selectedMap.mainSettings);
+      setJsonData(selectedMap.generationInfo);
       setJsonType('Generation Info');
     }
     setShowJSONModal(true);

@@ -25,6 +25,7 @@ export async function GET() {
       const mapDir = path.join(mfsMapDir, dir.name);
       const mainSettingsPath = path.join(mapDir, 'main_settings.json');
       const generationSettingsPath = path.join(mapDir, 'generation_settings.json');
+      const generationInfoPath = path.join(mapDir, 'generation_info.json');
       
       // Check if both required JSON files exist
       if (fs.existsSync(mainSettingsPath) && fs.existsSync(generationSettingsPath)) {
@@ -32,6 +33,16 @@ export async function GET() {
           // Read and parse JSON files
           const mainSettingsData = JSON.parse(fs.readFileSync(mainSettingsPath, 'utf8'));
           const generationSettingsData = JSON.parse(fs.readFileSync(generationSettingsPath, 'utf8'));
+          
+          // Try to read generation_info.json if it exists
+          let generationInfoData = null;
+          if (fs.existsSync(generationInfoPath)) {
+            try {
+              generationInfoData = JSON.parse(fs.readFileSync(generationInfoPath, 'utf8'));
+            } catch (error) {
+              console.error(`Error reading generation_info.json for ${dir.name}:`, error);
+            }
+          }
           
           // Get directory stats for creation date
           const stats = fs.statSync(mapDir);
@@ -63,6 +74,7 @@ export async function GET() {
             time: mainSettingsData.time,
             mainSettings: mainSettingsData,
             generationSettings: generationSettingsData,
+            generationInfo: generationInfoData,
             previews: getPreviewFiles(mapDir)
           };
 
