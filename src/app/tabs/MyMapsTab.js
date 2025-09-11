@@ -44,7 +44,6 @@ export default function MyMapsTab({ onDuplicateMap }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilters, setStatusFilters] = useState({
     completed: true,
-    generating: true,
     incomplete: true,
     error: false // Default off for error maps as requested
   });
@@ -451,7 +450,6 @@ export default function MyMapsTab({ onDuplicateMap }) {
                   <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Map Status</div>
                   {[
                     { key: 'completed', label: 'Completed', icon: 'check-circle', colorClass: 'text-green-500' },
-                    { key: 'generating', label: 'Generating', icon: 'refresh', colorClass: 'text-blue-500' },
                     { key: 'incomplete', label: 'Incomplete', icon: 'pause-circle', colorClass: 'text-yellow-500' },
                     { key: 'error', label: 'Error', icon: 'close-circle', colorClass: 'text-red-500' }
                   ].map(({ key, label, icon, colorClass }) => (
@@ -474,7 +472,7 @@ export default function MyMapsTab({ onDuplicateMap }) {
             <button 
               onClick={fetchMaps}
               disabled={loading}
-              className="p-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-lg transition-colors"
+              className="w-10 h-10 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-lg transition-colors flex items-center justify-center"
               title="Refresh maps"
             >
               <i className={`zmdi zmdi-refresh ${loading ? 'animate-spin' : ''}`}></i>
@@ -483,7 +481,6 @@ export default function MyMapsTab({ onDuplicateMap }) {
 
           {/* Line 2: Asset filters */}
           <div className="flex flex-wrap gap-2">
-            <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mr-2 flex items-center">Assets:</div>
             {[
               { 
                 key: 'background', 
