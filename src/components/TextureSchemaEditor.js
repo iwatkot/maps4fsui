@@ -116,11 +116,13 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
   });
 
   const handleEditTexture = (texture) => {
+    console.log('Editing texture:', texture);
     setEditingTexture(texture);
     setShowJsonModal(true);
   };
 
   const handleJsonSave = (updatedJson) => {
+    console.log('Saving texture:', updatedJson);
     if (editingTexture) {
       const updatedTextures = textures.map(texture => 
         texture.name === editingTexture.name ? updatedJson : texture
@@ -257,51 +259,52 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
         {/* Texture Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
           {filteredTextures.map((texture, index) => (
-          <div key={index} className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow">
-            {/* Texture Preview */}
+          <div 
+            key={index} 
+            className="group bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-600 transition-all cursor-pointer"
+            onClick={() => handleEditTexture(texture)}
+          >
+            {/* Texture Preview with Overlay */}
             <div className="aspect-square bg-gray-100 dark:bg-gray-700 relative">
-              {TEXTURE_URLS[texture.name] ? (
+              {TEXTURE_URLS[texture.name] && (
                 <img 
                   src={TEXTURE_URLS[texture.name]} 
                   alt={texture.name}
                   className="w-full h-full object-cover"
-                  onError={(e) => {
-                    e.target.style.display = 'none';
-                    e.target.nextSibling.style.display = 'flex';
-                  }}
                 />
-              ) : null}
-              <div className="absolute inset-0 bg-gray-200 dark:bg-gray-600 flex items-center justify-center" style={{display: TEXTURE_URLS[texture.name] ? 'none' : 'flex'}}>
-                <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
-            </div>
-
-            {/* Texture Info */}
-            <div className="p-4">
-              <h3 className="font-medium text-gray-900 dark:text-gray-100 mb-2">
-                {texture.name}
-              </h3>
+              )}
+              {!TEXTURE_URLS[texture.name] && (
+                <div className="absolute inset-0 bg-gray-200 dark:bg-gray-600 flex items-center justify-center">
+                  <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 002 2z" />
+                  </svg>
+                </div>
+              )}
               
-              {/* JSON Preview */}
-              <div className="bg-gray-50 dark:bg-gray-700 rounded p-3 mb-3">
-                <pre className="text-xs text-gray-600 dark:text-gray-300 overflow-hidden">
-                  {JSON.stringify(texture, null, 2).slice(0, 150)}
-                  {JSON.stringify(texture, null, 2).length > 150 ? '...' : ''}
-                </pre>
+              {/* Info Overlay - appears on hover */}
+              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-60 transition-all duration-300 flex flex-col justify-end p-4 opacity-0 group-hover:opacity-100">
+                <div className="text-white">
+                  <h3 className="font-medium text-lg mb-2">
+                    {texture.name}
+                  </h3>
+                  
+                  {/* JSON Preview */}
+                  <div className="bg-black bg-opacity-50 rounded p-2 mb-3">
+                    <pre className="text-xs text-gray-200 overflow-hidden">
+                      {JSON.stringify(texture, null, 2).slice(0, 100)}
+                      {JSON.stringify(texture, null, 2).length > 100 ? '...' : ''}
+                    </pre>
+                  </div>
+                  
+                  {/* Click to Edit Hint */}
+                  <div className="text-sm text-blue-300 flex items-center">
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Click to edit properties
+                  </div>
+                </div>
               </div>
-
-              {/* Edit Button */}
-              <button
-                onClick={() => handleEditTexture(texture)}
-                className="w-full px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors text-sm flex items-center justify-center gap-2"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                </svg>
-                Edit JSON
-              </button>
             </div>
           </div>
         ))}
@@ -315,8 +318,7 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
             setShowJsonModal(false);
             setEditingTexture(null);
           }}
-          onSave={handleJsonSave}
-          initialData={editingTexture}
+          jsonData={editingTexture}
           title={`Edit ${editingTexture.name} Properties`}
         />
       )}
