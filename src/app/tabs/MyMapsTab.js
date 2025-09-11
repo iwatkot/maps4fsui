@@ -55,6 +55,10 @@ export default function MyMapsTab({ onDuplicateMap }) {
     dissolved: false,
     satelliteImages: false
   });
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const mapsPerPage = 10;
 
   // Fetch maps from API
   const fetchMaps = async () => {
@@ -164,6 +168,16 @@ export default function MyMapsTab({ onDuplicateMap }) {
 
     return filtered;
   }, [maps, searchQuery, statusFilters, assetFilters]);
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredMaps.length / mapsPerPage);
+  const startIndex = (currentPage - 1) * mapsPerPage;
+  const paginatedMaps = filteredMaps.slice(startIndex, startIndex + mapsPerPage);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, statusFilters, assetFilters]);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -534,13 +548,48 @@ export default function MyMapsTab({ onDuplicateMap }) {
             ))}
           </div>
           
-          {/* Results info */}
-          {(searchQuery || Object.values(statusFilters).some(v => v === false) || Object.values(assetFilters).some(v => v === true)) && (
-            <div className="text-sm text-gray-600 dark:text-gray-400">
-              Showing {filteredMaps.length} of {maps.length} maps
-              {searchQuery && <span> • Search: "{searchQuery}"</span>}
+          {/* Results info with pagination - always present to prevent layout shift */}
+          <div className="flex items-center justify-between text-sm h-8">
+            <div className="text-gray-600 dark:text-gray-400 flex items-center">
+              {(searchQuery || Object.values(statusFilters).some(v => v === false) || Object.values(assetFilters).some(v => v === true) || totalPages > 1) ? (
+                <>
+                  Showing {startIndex + 1}-{Math.min(startIndex + mapsPerPage, filteredMaps.length)} of {filteredMaps.length} maps
+                  {searchQuery && <span> • Search: "{searchQuery}"</span>}
+                </>
+              ) : (
+                <span>&nbsp;</span> // Invisible placeholder to maintain height
+              )}
             </div>
-          )}
+            
+            {/* Pagination controls - always reserve space */}
+            <div className="flex items-center space-x-2 min-w-[120px] justify-end h-8">
+              {totalPages > 1 ? (
+                <>
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    disabled={currentPage === 1}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <i className="zmdi zmdi-chevron-left text-sm"></i>
+                  </button>
+                  
+                  <span className="text-gray-600 dark:text-gray-400 font-medium min-w-[60px] text-center flex items-center justify-center h-8">
+                    {currentPage} / {totalPages}
+                  </span>
+                  
+                  <button
+                    onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+                    disabled={currentPage === totalPages}
+                    className="w-8 h-8 flex items-center justify-center rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <i className="zmdi zmdi-chevron-right text-sm"></i>
+                  </button>
+                </>
+              ) : (
+                <span>&nbsp;</span> // Invisible placeholder to maintain space
+              )}
+            </div>
+          </div>
           
           {error ? (
             <div className="text-center py-12 text-red-500 dark:text-red-400">
@@ -574,7 +623,7 @@ export default function MyMapsTab({ onDuplicateMap }) {
             </div>
           ) : (
             <div className="space-y-3">
-              {filteredMaps.map((map) => (
+              {paginatedMaps.map((map) => (
                 <div
                   key={map.id}
                   onClick={() => handleMapSelect(map)}
