@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import JSONEditorModal from '@/components/JSONEditorModal';
 
-// Hardcoded tree data
+// Hardcoded tree data (keep this for images)
 const TREE_DATA = {
   "americanElm_stage01": "https://github.com/user-attachments/assets/eb1857dd-47b7-4883-83fa-385fefad101c",
   "americanElm_stage02": "https://github.com/user-attachments/assets/7688fd89-a006-4023-8c56-c3e4291d5357",
@@ -89,432 +89,48 @@ const TREE_DATA = {
   "treesRavaged": "https://github.com/user-attachments/assets/5718f33d-2893-48bb-9029-c011dd8ef241"
 };
 
-// Hardcoded tree schema
-const TREE_SCHEMA = [
-  {
-    "name": "americanElm_stage01",
-    "reference_id": 1001,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "americanElm_stage02",
-    "reference_id": 1002,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "americanElm_stage03",
-    "reference_id": 1003,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "americanElm_stage04",
-    "reference_id": 1004,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "americanElm_stage05",
-    "reference_id": 1005,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "apple_stage03",
-    "reference_id": 1006,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "aspen_stage01",
-    "reference_id": 1007,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "aspen_stage02",
-    "reference_id": 1008,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "aspen_stage03",
-    "reference_id": 1009,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "aspen_stage04",
-    "reference_id": 1010,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "aspen_stage05",
-    "reference_id": 1011,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "aspen_stage06_var01",
-    "reference_id": 1012,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "aspen_stage06_var02",
-    "reference_id": 1013,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "beech_stage01",
-    "reference_id": 1014,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "beech_stage02",
-    "reference_id": 1015,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "beech_stage02_var02",
-    "reference_id": 1016,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "beech_stage02_var03",
-    "reference_id": 1017,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "beech_stage03",
-    "reference_id": 1018,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "beech_stage04",
-    "reference_id": 1019,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "beech_stage05",
-    "reference_id": 1020,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "beech_stage06_var01",
-    "reference_id": 1021,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "beech_stage06_var02",
-    "reference_id": 1022,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "betulaErmanii_stage01",
-    "reference_id": 1023,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "betulaErmanii_stage02",
-    "reference_id": 1024,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "betulaErmanii_stage03",
-    "reference_id": 1025,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "betulaErmanii_stage04",
-    "reference_id": 1026,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "boxelder_stage01",
-    "reference_id": 1027,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "boxelder_stage02",
-    "reference_id": 1028,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "boxelder_stage03",
-    "reference_id": 1029,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "cherry_stage01",
-    "reference_id": 1030,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "cherry_stage02",
-    "reference_id": 1031,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "cherry_stage03",
-    "reference_id": 1032,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "cherry_stage04",
-    "reference_id": 1033,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "chineseElm_stage01",
-    "reference_id": 1034,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "chineseElm_stage02",
-    "reference_id": 1035,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "chineseElm_stage03",
-    "reference_id": 1036,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "chineseElm_stage04",
-    "reference_id": 1037,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "deadwood",
-    "reference_id": 1038
-  },
-  {
-    "name": "downyServiceBerry_stage01",
-    "reference_id": 1039,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "downyServiceBerry_stage02",
-    "reference_id": 1040,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "downyServiceBerry_stage03",
-    "reference_id": 1041,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "goldenRain_stage01",
-    "reference_id": 1042,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "goldenRain_stage02",
-    "reference_id": 1043,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "goldenRain_stage03",
-    "reference_id": 1044,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "goldenRain_stage04",
-    "reference_id": 1045,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "japaneseZelkova_stage01",
-    "reference_id": 1046,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "japaneseZelkova_stage02",
-    "reference_id": 1047,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "japaneseZelkova_stage03",
-    "reference_id": 1048,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "japaneseZelkova_stage04",
-    "reference_id": 1049,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "lodgepolePine_stage01",
-    "reference_id": 1050,
-    "leaf_type": "needleleaved"
-  },
-  {
-    "name": "lodgepolePine_stage02",
-    "reference_id": 1051,
-    "leaf_type": "needleleaved"
-  },
-  {
-    "name": "lodgepolePine_stage02Var2",
-    "reference_id": 1052,
-    "leaf_type": "needleleaved"
-  },
-  {
-    "name": "lodgepolePine_stage03",
-    "reference_id": 1053,
-    "leaf_type": "needleleaved"
-  },
-  {
-    "name": "lodgepolePine_stage03Var2",
-    "reference_id": 1054,
-    "leaf_type": "needleleaved"
-  },
-  {
-    "name": "northernCatalpa_stage01",
-    "reference_id": 1055,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "northernCatalpa_stage02",
-    "reference_id": 1056,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "northernCatalpa_stage03",
-    "reference_id": 1057,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "northernCatalpa_stage04",
-    "reference_id": 1058,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "oak_stage01",
-    "reference_id": 1059,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "oak_stage02",
-    "reference_id": 1060,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "oak_stage03",
-    "reference_id": 1061,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "oak_stage04",
-    "reference_id": 1062,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "oak_stage05",
-    "reference_id": 1063,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "pinusSylvestris_stage01",
-    "reference_id": 1064,
-    "leaf_type": "needleleaved"
-  },
-  {
-    "name": "pinusSylvestris_stage02",
-    "reference_id": 1065,
-    "leaf_type": "needleleaved"
-  },
-  {
-    "name": "pinusSylvestris_stage03",
-    "reference_id": 1066,
-    "leaf_type": "needleleaved"
-  },
-  {
-    "name": "pinusSylvestris_stage04",
-    "reference_id": 1067,
-    "leaf_type": "needleleaved"
-  },
-  {
-    "name": "pinusSylvestris_stage05",
-    "reference_id": 1068,
-    "leaf_type": "needleleaved"
-  },
-  {
-    "name": "pinusTabuliformis_stage01",
-    "reference_id": 1069,
-    "leaf_type": "needleleaved"
-  },
-  {
-    "name": "pinusTabuliformis_stage02",
-    "reference_id": 1070,
-    "leaf_type": "needleleaved"
-  },
-  {
-    "name": "pinusTabuliformis_stage03",
-    "reference_id": 1071,
-    "leaf_type": "needleleaved"
-  },
-  {
-    "name": "pinusTabuliformis_stage04",
-    "reference_id": 1072,
-    "leaf_type": "needleleaved"
-  },
-  {
-    "name": "pinusTabuliformis_stage05",
-    "reference_id": 1073,
-    "leaf_type": "needleleaved"
-  },
-  {
-    "name": "shagbarkHickory_stage01",
-    "reference_id": 1074,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "shagbarkHickory_stage02",
-    "reference_id": 1075,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "shagbarkHickory_stage03",
-    "reference_id": 1076,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "shagbarkHickory_stage04",
-    "reference_id": 1077,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "tiliaAmurensis_stage01",
-    "reference_id": 1078,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "tiliaAmurensis_stage02",
-    "reference_id": 1079,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "tiliaAmurensis_stage03",
-    "reference_id": 1080,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "tiliaAmurensis_stage04",
-    "reference_id": 1081,
-    "leaf_type": "broadleaved"
-  },
-  {
-    "name": "treesRavaged",
-    "reference_id": 1083
-  }
-];
-
-const TreeSchemaEditor = () => {
+const TreeSchemaEditor = ({ onSchemaTypeChange }) => {
   const [selectedTrees, setSelectedTrees] = useState(new Set());
   const [showJSONModal, setShowJSONModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all'); // 'all', 'broadleaved', 'needleleaved', 'other'
+  const [treeSchema, setTreeSchema] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Initialize with all trees selected
-  useEffect(() => {
-    const allTreeNames = new Set(TREE_SCHEMA.map(tree => tree.name));
-    setSelectedTrees(allTreeNames);
+  // Fetch tree schema from API
+  const fetchTreeSchema = useCallback(async (version = 'fs25') => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch(`/api/schemas?type=tree&version=${version}`);
+      const result = await response.json();
+      
+      if (result.success) {
+        setTreeSchema(result.data);
+        // Initialize with all trees selected
+        const allTreeNames = new Set(result.data.map(tree => tree.name));
+        setSelectedTrees(allTreeNames);
+      } else {
+        setError(result.error || 'Failed to fetch tree schema');
+        setTreeSchema([]);
+      }
+    } catch (err) {
+      setError('Network error: ' + err.message);
+      setTreeSchema([]);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
+  // Initialize with FS25 tree schema
+  useEffect(() => {
+    fetchTreeSchema('fs25');
+  }, [fetchTreeSchema]);
+
   // Filter trees based on search and type
-  const filteredTrees = TREE_SCHEMA.filter(tree => {
+  const filteredTrees = treeSchema.filter(tree => {
     const matchesSearch = tree.name.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType = filterType === 'all' || 
                        (filterType === 'other' && !tree.leaf_type) ||
@@ -545,17 +161,17 @@ const TreeSchemaEditor = () => {
   }, []);
 
   const selectAll = useCallback(() => {
-    const allTreeNames = new Set(TREE_SCHEMA.map(tree => tree.name));
+    const allTreeNames = new Set(treeSchema.map(tree => tree.name));
     setSelectedTrees(allTreeNames);
-  }, []);
+  }, [treeSchema]);
 
   const deselectAll = useCallback(() => {
     setSelectedTrees(new Set());
   }, []);
 
   const generateSchema = useCallback(() => {
-    return TREE_SCHEMA.filter(tree => selectedTrees.has(tree.name));
-  }, [selectedTrees]);
+    return treeSchema.filter(tree => selectedTrees.has(tree.name));
+  }, [selectedTrees, treeSchema]);
 
   const handleShowJSON = () => {
     setShowJSONModal(true);
@@ -582,11 +198,26 @@ const TreeSchemaEditor = () => {
   };
 
   return (
-    <div className="h-full bg-gray-50 dark:bg-gray-900 flex flex-col">
+    <div className="h-full flex flex-col">
       {/* Controls */}
       <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
-        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+            {/* Schema Type Selector */}
+            <div className="flex items-center">
+              <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mr-3">
+                Schema Type:
+              </label>
+              <select
+                value="tree"
+                onChange={(e) => onSchemaTypeChange && onSchemaTypeChange(e.target.value)}
+                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+              >
+                <option value="tree">🌳 Trees</option>
+                <option value="texture" disabled>🖼️ Textures (Coming Soon)</option>
+              </select>
+            </div>
+
             {/* Search */}
             <div className="relative">
               <input
@@ -613,7 +244,7 @@ const TreeSchemaEditor = () => {
 
             {/* Selection info */}
             <div className="text-sm text-gray-600 dark:text-gray-400">
-              {selectedTrees.size} / {TREE_SCHEMA.length} trees selected
+              {selectedTrees.size} / {treeSchema.length} trees selected
             </div>
           </div>
 
@@ -645,11 +276,39 @@ const TreeSchemaEditor = () => {
       </div>
 
       {/* Tree Grid */}
-      <div className="flex-1 overflow-auto p-6">
-        <div className="max-w-7xl mx-auto">
-          {Object.entries(groupedTrees).map(([baseName, trees]) => (
-            <div key={baseName} className="mb-8">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center">
+      <div className="flex-1 overflow-auto px-6 py-4 bg-gray-50 dark:bg-gray-900">
+        {loading && (
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <p className="text-gray-600 dark:text-gray-400">Loading tree schema...</p>
+            </div>
+          </div>
+        )}
+
+        {error && (
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-6 mb-6">
+            <div className="flex items-start">
+              <i className="zmdi zmdi-alert-triangle text-red-500 mr-3 mt-1"></i>
+              <div>
+                <h3 className="text-red-800 dark:text-red-300 font-medium mb-2">
+                  Failed to load tree schema
+                </h3>
+                <p className="text-red-700 dark:text-red-400 text-sm mb-3">{error}</p>
+                <button
+                  onClick={() => fetchTreeSchema('fs25')}
+                  className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors"
+                >
+                  Try Again
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {!loading && !error && Object.entries(groupedTrees).map(([baseName, trees]) => (
+            <div key={baseName} className="mb-6">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center">
                 {getLeafTypeIcon(trees[0].leaf_type)}
                 <span className="ml-2">{formatTreeName(baseName)}</span>
                 <span className={`ml-2 text-sm ${getLeafTypeColor(trees[0].leaf_type)}`}>
@@ -716,18 +375,17 @@ const TreeSchemaEditor = () => {
             </div>
           ))}
 
-          {Object.keys(groupedTrees).length === 0 && (
-            <div className="text-center py-12">
-              <span className="text-6xl block mb-4">🔍</span>
-              <h3 className="text-xl font-medium text-gray-900 dark:text-gray-100 mb-2">
-                No trees found
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                Try adjusting your search criteria or filter settings.
-              </p>
-            </div>
-          )}
-        </div>
+        {!loading && !error && Object.keys(groupedTrees).length === 0 && (
+          <div className="text-center py-12">
+            <span className="text-6xl block mb-4">🔍</span>
+            <h3 className="text-xl font-medium text-gray-900 dark:text-gray-100 mb-2">
+              No trees found
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400">
+              Try adjusting your search criteria or filter settings.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* JSON Modal */}
