@@ -57,6 +57,8 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
   const [error, setError] = useState(null);
   const [showJsonModal, setShowJsonModal] = useState(false);
   const [editingTexture, setEditingTexture] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterCategory, setFilterCategory] = useState('all');
 
   useEffect(() => {
     loadTextureSchema();
@@ -82,6 +84,35 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
       setLoading(false);
     }
   };
+
+  // Filter textures based on search and category
+  const filteredTextures = textures.filter(texture => {
+    const matchesSearch = texture.name.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    if (filterCategory === 'all') return matchesSearch;
+    
+    // Filter by category based on texture name patterns
+    switch (filterCategory) {
+      case 'asphalt':
+        return matchesSearch && texture.name.startsWith('asphalt');
+      case 'concrete':
+        return matchesSearch && texture.name.startsWith('concrete');
+      case 'grass':
+        return matchesSearch && texture.name.startsWith('grass');
+      case 'forest':
+        return matchesSearch && texture.name.startsWith('forest');
+      case 'gravel':
+        return matchesSearch && texture.name.startsWith('gravel');
+      case 'mud':
+        return matchesSearch && texture.name.startsWith('mud');
+      case 'rock':
+        return matchesSearch && texture.name.startsWith('rock');
+      case 'sand':
+        return matchesSearch && texture.name.startsWith('sand');
+      default:
+        return matchesSearch;
+    }
+  });
 
   const handleEditTexture = (texture) => {
     setEditingTexture(texture);
@@ -149,42 +180,76 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
   }
 
   return (
-    <div className="p-6 space-y-6">
-      {/* Header with schema type selector and actions */}
-      <div className="flex justify-between items-start">
-        <div className="flex items-center gap-4">
-          {/* Schema Type Selector */}
-          <SelectorCompact
-            options={[
-              { value: 'tree', label: '🌳 Trees' },
-              { value: 'texture', label: '🖼️ Textures' }
-            ]}
-            value={activeSchemaType}
-            onChange={(value) => onSchemaTypeChange && onSchemaTypeChange(value)}
-            className="min-w-[140px]"
-          />
-          
-          <div className="border-l border-gray-300 dark:border-gray-600 h-8"></div>
-          
-          <p className="text-gray-600 dark:text-gray-400">
-            Edit JSON properties for each texture type. All textures will be included in the final schema.
-          </p>
+    <div className="h-full flex flex-col">
+      {/* Controls */}
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+        <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+            {/* Schema Type Selector */}
+            <SelectorCompact
+              options={[
+                { value: 'tree', label: '🌳 Trees' },
+                { value: 'texture', label: '🖼️ Textures' }
+              ]}
+              value={activeSchemaType}
+              onChange={(value) => onSchemaTypeChange && onSchemaTypeChange(value)}
+              className="min-w-[140px]"
+            />
+
+            {/* Search */}
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search textures..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-64 px-4 py-2 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+              <i className="zmdi zmdi-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            </div>
+
+            {/* Filter by category */}
+            <SelectorCompact
+              options={[
+                { value: 'all', label: 'All Categories' },
+                { value: 'asphalt', label: '🛣️ Asphalt' },
+                { value: 'concrete', label: '🏢 Concrete' },
+                { value: 'grass', label: '🌱 Grass' },
+                { value: 'forest', label: '🌲 Forest' },
+                { value: 'gravel', label: '🪨 Gravel' },
+                { value: 'mud', label: '🟤 Mud' },
+                { value: 'rock', label: '🗿 Rock' },
+                { value: 'sand', label: '🏖️ Sand' }
+              ]}
+              value={filterCategory}
+              onChange={setFilterCategory}
+              className="min-w-[160px]"
+            />
+
+            {/* Texture count info */}
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              {filteredTextures.length} / {textures.length} textures shown
+            </div>
+          </div>
+
+          {/* Action button */}
+          <div className="flex gap-3">
+            <button
+              onClick={generateFinalSchema}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center"
+            >
+              <i className="zmdi zmdi-code mr-2"></i>
+              Show Schema
+            </button>
+          </div>
         </div>
-        
-        <button
-          onClick={generateFinalSchema}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-medium transition-colors flex items-center gap-2"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-          Show Updated Schema
-        </button>
       </div>
 
-      {/* Texture Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
-        {textures.map((texture, index) => (
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 p-6">
+        {/* Texture Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+          {filteredTextures.map((texture, index) => (
           <div key={index} className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-lg transition-shadow">
             {/* Texture Preview */}
             <div className="aspect-square bg-gray-100 dark:bg-gray-700 relative">
@@ -248,6 +313,7 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
           title={`Edit ${editingTexture.name} Properties`}
         />
       )}
+      </div>
     </div>
   );
 }
