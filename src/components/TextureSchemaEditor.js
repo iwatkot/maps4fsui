@@ -56,6 +56,7 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showJsonModal, setShowJsonModal] = useState(false);
+  const [showSchemaModal, setShowSchemaModal] = useState(false);
   const [editingTexture, setEditingTexture] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
@@ -131,6 +132,12 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
   };
 
   const generateFinalSchema = () => {
+    console.log('Textures array:', textures);
+    console.log('Textures length:', textures.length);
+    setShowSchemaModal(true);
+  };
+
+  const downloadSchema = () => {
     const schemaData = {
       textures: textures,
       metadata: {
@@ -300,7 +307,7 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
         ))}
       </div>
 
-      {/* JSON Editor Modal */}
+      {/* Individual Texture JSON Editor Modal */}
       {showJsonModal && editingTexture && (
         <JSONEditorModal
           isOpen={showJsonModal}
@@ -311,6 +318,16 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
           onSave={handleJsonSave}
           initialData={editingTexture}
           title={`Edit ${editingTexture.name} Properties`}
+        />
+      )}
+
+      {/* Full Schema JSON Modal */}
+      {showSchemaModal && (
+        <JSONEditorModal
+          isOpen={showSchemaModal}
+          onClose={() => setShowSchemaModal(false)}
+          jsonData={textures}
+          title="FS25 Texture Schema"
         />
       )}
       </div>
