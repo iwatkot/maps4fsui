@@ -101,7 +101,7 @@ export default function StlViewer({ url, filename, size, isLocal = false, onErro
         revokeBlobUrl(stlBlobUrl);
       }
     };
-  }, [url, isLocal, onError]);
+  }, [url, isLocal, onError, stlBlobUrl]);
 
   const formatFileSize = (bytes) => {
     if (bytes < 1024) return `${bytes} B`;
