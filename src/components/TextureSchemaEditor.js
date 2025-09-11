@@ -298,10 +298,38 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
               </div>
 
               {/* JSON Preview overlay - appears on hover, lighter overlay */}
-              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex flex-col pt-6 p-4 opacity-0 group-hover:opacity-100">
-                <div className="bg-black bg-opacity-80 rounded p-3 flex-1 overflow-y-auto">
+              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex flex-col pt-6 p-4 opacity-0 group-hover:opacity-100">
+                <div className="bg-black bg-opacity-20 rounded p-3 flex-1 overflow-y-auto">
                   <pre className="text-xs text-gray-200 whitespace-pre-wrap">
-                    {JSON.stringify(texture, null, 2)}
+                    {(() => {
+                      // Custom JSON formatting to make arrays more compact
+                      const formatCompactJSON = (obj, indent = 0) => {
+                        const spaces = '  '.repeat(indent);
+                        if (Array.isArray(obj)) {
+                          // Format arrays on single line if they're simple values
+                          const isSimpleArray = obj.every(item => 
+                            typeof item === 'string' || 
+                            typeof item === 'number' || 
+                            typeof item === 'boolean'
+                          );
+                          if (isSimpleArray && obj.length <= 5) {
+                            return `[${obj.map(item => JSON.stringify(item)).join(', ')}]`;
+                          } else {
+                            return `[\n${obj.map(item => 
+                              spaces + '  ' + formatCompactJSON(item, indent + 1)
+                            ).join(',\n')}\n${spaces}]`;
+                          }
+                        } else if (obj && typeof obj === 'object') {
+                          const entries = Object.entries(obj);
+                          return `{\n${entries.map(([key, value]) => 
+                            `${spaces}  "${key}": ${formatCompactJSON(value, indent + 1)}`
+                          ).join(',\n')}\n${spaces}}`;
+                        } else {
+                          return JSON.stringify(obj);
+                        }
+                      };
+                      return formatCompactJSON(texture);
+                    })()}
                   </pre>
                 </div>
               </div>
