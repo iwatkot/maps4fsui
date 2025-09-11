@@ -554,7 +554,7 @@ export default function MyMapsTab({ onDuplicateMap }) {
               {(searchQuery || Object.values(statusFilters).some(v => v === false) || Object.values(assetFilters).some(v => v === true) || totalPages > 1) ? (
                 <>
                   Showing {startIndex + 1}-{Math.min(startIndex + mapsPerPage, filteredMaps.length)} of {filteredMaps.length} maps
-                  {searchQuery && <span> • Search: "{searchQuery}"</span>}
+                  {searchQuery && <span> • Search: &ldquo;{searchQuery}&rdquo;</span>}
                 </>
               ) : (
                 <span>&nbsp;</span> // Invisible placeholder to maintain height
@@ -1198,7 +1198,7 @@ export default function MyMapsTab({ onDuplicateMap }) {
             
             <div className="mb-6">
               <p className="text-gray-600 dark:text-gray-300">
-                Are you sure you want to delete <span className="font-semibold">"{selectedMap?.name}"</span>?
+                Are you sure you want to delete <span className="font-semibold">&ldquo;{selectedMap?.name}&rdquo;</span>?
               </p>
               <p className="text-sm text-red-600 dark:text-red-400 mt-2">
                 This action cannot be undone. The entire map directory will be permanently removed.
