@@ -6,6 +6,23 @@ import SlideNavigator from '@/components/SlideNavigator';
 import JSONEditorModal from '@/components/JSONEditorModal';
 import { separateFilesByType } from '@/utils/fileTypeUtils';
 
+// Helper function to format coordinates for display
+const formatCoordinates = (coordinates) => {
+  if (!coordinates) return '';
+  
+  // Try to parse and format coordinates with fewer decimal places
+  try {
+    // Handle different coordinate formats
+    if (coordinates.includes(',')) {
+      const [lat, lon] = coordinates.split(',').map(coord => parseFloat(coord.trim()));
+      return `${lat.toFixed(8)}, ${lon.toFixed(8)}`;
+    }
+    return coordinates;
+  } catch {
+    return coordinates;
+  }
+};
+
 export default function MyMapsTab({ onDuplicateMap }) {
   const [selectedMap, setSelectedMap] = useState(null);
   const [maps, setMaps] = useState([]);
@@ -229,6 +246,37 @@ export default function MyMapsTab({ onDuplicateMap }) {
     }
   };
 
+  // Handle map retry (same as duplicate but for failed maps)
+  const handleRetryMapClick = async () => {
+    if (!selectedMap || !onDuplicateMap) return;
+    
+    try {
+      showToast('Preparing map retry...', 'info');
+      
+      // Check for custom OSM file
+      const osmResponse = await fetch(`/api/maps/osm?mapId=${selectedMap.id}`);
+      const osmData = await osmResponse.json();
+      
+      // Prepare duplication data
+      const duplicateData = {
+        mainSettings: selectedMap.mainSettings,
+        generationSettings: selectedMap.generationSettings,
+        customOsm: osmData.hasCustomOsm ? {
+          content: osmData.osmContent,
+          fileName: osmData.fileName
+        } : null
+      };
+      
+      // Call the parent handler to switch tabs and populate data
+      onDuplicateMap(duplicateData);
+      showToast('Map settings loaded in Generator for retry!', 'success');
+      
+    } catch (error) {
+      console.error('Error retrying map:', error);
+      showToast(`Failed to retry map: ${error.message}`, 'error');
+    }
+  };
+
   // Handle map duplication
   const handleDuplicateMapClick = async () => {
     if (!selectedMap || !onDuplicateMap) return;
@@ -367,7 +415,7 @@ export default function MyMapsTab({ onDuplicateMap }) {
                         <i className="zmdi zmdi-pin text-blue-500 w-5 mr-2 text-base flex-shrink-0"></i>
                         Coordinates:
                       </span>
-                      <span className="font-mono text-xs text-gray-900 dark:text-gray-100">{map.coordinates}</span>
+                      <span className="font-mono text-xs text-gray-900 dark:text-gray-100 text-right">{map.coordinates}</span>
                     </div>
                     <div className="flex justify-between items-center py-1">
                       <span className="flex items-center">
@@ -717,7 +765,7 @@ export default function MyMapsTab({ onDuplicateMap }) {
                       <i className="zmdi zmdi-pin text-blue-500 w-6 mr-3 text-lg flex-shrink-0"></i>
                       Coordinates:
                     </span>
-                    <span className="font-mono text-sm text-gray-900 dark:text-gray-100">{selectedMap.coordinates}</span>
+                    <span className="font-mono text-xs text-gray-900 dark:text-gray-100 text-right">{formatCoordinates(selectedMap.coordinates)}</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-600">
                     <span className="flex items-center text-gray-600 dark:text-gray-400">
@@ -819,7 +867,10 @@ export default function MyMapsTab({ onDuplicateMap }) {
                   
                   {/* Other status-specific actions */}
                   {(selectedMap.status === 'error' || selectedMap.status === 'incomplete') && (
-                    <button className="w-full px-4 py-3 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center">
+                    <button 
+                      onClick={handleRetryMapClick}
+                      className="w-full px-4 py-3 bg-orange-600 hover:bg-orange-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
+                    >
                       <i className="zmdi zmdi-refresh mr-2"></i>
                       Retry Generation
                     </button>
