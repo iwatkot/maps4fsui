@@ -1,6 +1,7 @@
 // Simple config with environment variables
 const appEnv = process.env.NEXT_PUBLIC_APP_ENV || '';
 const mfsRootDir = process.env.NEXT_PUBLIC_MFS_ROOT_DIR || '/usr/src/app/mfsrootdir';
+const mfsTemplatesDir = process.env.NEXT_PUBLIC_MFS_TEMPLATES_DIR || '/usr/src/app/templates';
 
 const config = {
   // Access environment variables like this:
@@ -10,6 +11,7 @@ const config = {
   bearerToken: process.env.NEXT_PUBLIC_BEARER_TOKEN || null,
   mfsRootDir: mfsRootDir,
   mfsMapDir: `${mfsRootDir}/maps`,
+  mfsTemplatesDir: mfsTemplatesDir,
 };
 
 export default config;

@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import MainTabs from '@/components/MainTabs';
 import GeneratorTab from '@/app/tabs/GeneratorTab';
 import MyMapsTab from '@/app/tabs/MyMapsTab';
+import SchemasTab from '@/app/tabs/SchemasTab';
 import SlideOutPromo from '@/components/SlideOutPromo';
 import { useBackendVersion } from '@/hooks/useBackendVersion';
 import config from '@/app/config';
@@ -69,6 +70,11 @@ export default function Home() {
       id: 'generator',
       label: 'Map Generator',
       icon: <i className="zmdi zmdi-landscape"></i>
+    },
+    {
+      id: 'schemas',
+      label: 'Schemas Editor',
+      icon: <i className="zmdi zmdi-folder-outline"></i>
     },
     // Only show My Maps tab in non-public version
     ...(!isPublicVersion ? [{
@@ -151,6 +157,11 @@ export default function Home() {
               duplicateMapData={duplicateMapData}
               onDuplicateDataProcessed={() => setDuplicateMapData(null)}
             />
+          </div>
+        )}
+        {activeTab === 'schemas' && (
+          <div className="absolute inset-0 animate-fade-in">
+            <SchemasTab />
           </div>
         )}
         {activeTab === 'my-maps' && (
