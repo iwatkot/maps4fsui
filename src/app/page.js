@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import MainTabs from '@/components/MainTabs';
 import GeneratorTab from '@/app/tabs/GeneratorTab';
 import MyMapsTab from '@/app/tabs/MyMapsTab';
+import SchemasTab from '@/app/tabs/SchemasTab';
 import SlideOutPromo from '@/components/SlideOutPromo';
 import { useBackendVersion } from '@/hooks/useBackendVersion';
 import config from '@/app/config';
@@ -76,7 +77,12 @@ export default function Home() {
       label: 'My Maps',
       icon: <i className="zmdi zmdi-collection-folder-image"></i>,
       // disabled: true // Disabled for now
-    }] : [])
+    }] : []),
+        {
+      id: 'schemas',
+      label: 'Schemas Editor',
+      icon: <i className="zmdi zmdi-folder-outline"></i>
+    }
   ];
 
   // Define right navigation links
@@ -151,6 +157,11 @@ export default function Home() {
               duplicateMapData={duplicateMapData}
               onDuplicateDataProcessed={() => setDuplicateMapData(null)}
             />
+          </div>
+        )}
+        {activeTab === 'schemas' && (
+          <div className="absolute inset-0 animate-fade-in">
+            <SchemasTab />
           </div>
         )}
         {activeTab === 'my-maps' && (

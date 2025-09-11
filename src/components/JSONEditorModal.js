@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 
-export default function JSONEditorModal({ isOpen, onClose, jsonData, title }) {
+export default function JSONEditorModal({ isOpen, onClose, onSave, jsonData, title, hideSaveButton = false }) {
   const [editedJson, setEditedJson] = useState('');
   const [isValid, setIsValid] = useState(true);
   const [error, setError] = useState('');
@@ -78,6 +78,19 @@ export default function JSONEditorModal({ isOpen, onClose, jsonData, title }) {
     }
   };
 
+  const handleClose = () => {
+    // Auto-save if onSave is provided and JSON is valid
+    if (onSave && isValid) {
+      try {
+        const parsedJson = JSON.parse(editedJson);
+        onSave(parsedJson);
+      } catch (err) {
+        console.error('Failed to parse JSON on close:', err);
+      }
+    }
+    onClose();
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -85,7 +98,7 @@ export default function JSONEditorModal({ isOpen, onClose, jsonData, title }) {
       {/* Backdrop */}
       <div 
         className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
-        onClick={onClose}
+        onClick={handleClose}
       ></div>
       
       {/* Modal */}
@@ -105,7 +118,7 @@ export default function JSONEditorModal({ isOpen, onClose, jsonData, title }) {
               {title} - JSON Editor
             </h2>
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
             >
               <i className="zmdi zmdi-close text-2xl"></i>
@@ -173,17 +186,19 @@ export default function JSONEditorModal({ isOpen, onClose, jsonData, title }) {
                   Copy
                 </button>
                 
-                <button
-                  onClick={handleSaveToFile}
-                  disabled={!isValid}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white text-sm font-medium rounded-lg transition-colors flex items-center"
-                >
-                  <i className="zmdi zmdi-download mr-2"></i>
-                  Save
-                </button>
+                {!hideSaveButton && (
+                  <button
+                    onClick={handleSaveToFile}
+                    disabled={!isValid}
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white text-sm font-medium rounded-lg transition-colors flex items-center"
+                  >
+                    <i className="zmdi zmdi-download mr-2"></i>
+                    Save
+                  </button>
+                )}
                 
                 <button
-                  onClick={onClose}
+                  onClick={handleClose}
                   className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors"
                 >
                   Close
