@@ -24,7 +24,6 @@ export default function SelectorCompact({
       {/* Dropdown Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        onBlur={() => setIsOpen(false)}
         className="w-full px-4 py-2 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg text-left flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500/50 transition-colors text-sm font-medium min-w-[140px]"
       >
         <span className="text-gray-900 dark:text-gray-100">

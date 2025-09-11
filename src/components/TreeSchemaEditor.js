@@ -90,7 +90,7 @@ const TREE_DATA = {
   "treesRavaged": "https://github.com/user-attachments/assets/5718f33d-2893-48bb-9029-c011dd8ef241"
 };
 
-const TreeSchemaEditor = ({ onSchemaTypeChange }) => {
+const TreeSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
   const [selectedTrees, setSelectedTrees] = useState(new Set());
   const [showJSONModal, setShowJSONModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -208,9 +208,9 @@ const TreeSchemaEditor = ({ onSchemaTypeChange }) => {
             <SelectorCompact
               options={[
                 { value: 'tree', label: '🌳 Trees' },
-                { value: 'texture', label: '🖼️ Textures', disabled: true }
+                { value: 'texture', label: '🖼️ Textures' }
               ]}
-              value="tree"
+              value={activeSchemaType}
               onChange={(value) => onSchemaTypeChange && onSchemaTypeChange(value)}
               className="min-w-[140px]"
             />
