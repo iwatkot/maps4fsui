@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import JSONEditorModal from '@/components/JSONEditorModal';
 import SelectorCompact from '@/components/SelectorCompact';
+import { getTreeSchema } from '../api/schemas';
 
 // Hardcoded tree data (keep this for images)
 const TREE_DATA = {
@@ -105,20 +106,13 @@ const TreeSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
     setError(null);
     
     try {
-      const response = await fetch(`/api/schemas?type=tree&version=${version}`);
-      const result = await response.json();
-      
-      if (result.success) {
-        setTreeSchema(result.data);
-        // Initialize with all trees selected
-        const allTreeNames = new Set(result.data.map(tree => tree.name));
-        setSelectedTrees(allTreeNames);
-      } else {
-        setError(result.error || 'Failed to fetch tree schema');
-        setTreeSchema([]);
-      }
+      const trees = await getTreeSchema(version);
+      setTreeSchema(trees);
+      // Initialize with all trees selected
+      const allTreeNames = new Set(trees.map(tree => tree.name));
+      setSelectedTrees(allTreeNames);
     } catch (err) {
-      setError('Network error: ' + err.message);
+      setError('Failed to load tree schema: ' + err.message);
       setTreeSchema([]);
     } finally {
       setLoading(false);

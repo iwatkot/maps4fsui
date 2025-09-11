@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import JSONEditorModal from './JSONEditorModal';
 import SelectorCompact from './SelectorCompact';
+import { getTextureSchema } from '../api/schemas';
 
 // Hardcoded texture URLs for preview images
 const TEXTURE_URLS = {
@@ -70,14 +71,8 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
       setLoading(true);
       setError(null);
       
-      const response = await fetch('/api/schemas?type=texture&version=fs25');
-      const result = await response.json();
-      
-      if (result.success) {
-        setTextures(result.data || []);
-      } else {
-        setError(result.error || 'Failed to load texture schema');
-      }
+      const textures = await getTextureSchema('fs25');
+      setTextures(textures || []);
     } catch (err) {
       console.error('Error loading texture schema:', err);
       setError('Failed to load texture schema');
