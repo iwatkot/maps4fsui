@@ -281,15 +281,15 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
                 </div>
               )}
               
-              {/* Name always visible at top */}
-              <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black via-black/70 to-transparent p-3">
+              {/* Name always visible at top with gradient shadow */}
+              <div className="absolute top-0 left-0 right-0 bg-gradient-to-b from-black/60 via-black/30 to-transparent p-3 z-20">
                 <h3 className="font-medium text-white text-sm">
                   {texture.name}
                 </h3>
               </div>
 
               {/* Edit icon in top-right corner - visible on hover, above overlay */}
-              <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+              <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-30">
                 <div className="bg-blue-600 hover:bg-blue-700 rounded-full p-2 shadow-lg">
                   <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -298,8 +298,18 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
               </div>
 
               {/* JSON Preview overlay - appears on hover, lighter overlay */}
-              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300 flex flex-col pt-6 p-4 opacity-0 group-hover:opacity-100">
-                <div className="bg-black bg-opacity-20 rounded p-3 flex-1 overflow-y-auto">
+              <div 
+                className="absolute inset-0 transition-all duration-300 opacity-0 group-hover:opacity-100"
+                style={{
+                  backgroundColor: 'rgba(0, 0, 0, 0.5)'
+                }}
+              >
+                <div 
+                  className="h-full w-full p-3 pt-12 overflow-y-auto border-0"
+                  style={{
+                    border: 'none'
+                  }}
+                >
                   <pre className="text-xs text-gray-200 whitespace-pre-wrap">
                     {(() => {
                       // Custom JSON formatting to make arrays more compact
@@ -346,6 +356,7 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
             setShowJsonModal(false);
             setEditingTexture(null);
           }}
+          onSave={handleJsonSave}
           jsonData={editingTexture}
           title={`Edit ${editingTexture.name} Properties`}
         />
