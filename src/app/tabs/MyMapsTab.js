@@ -39,6 +39,23 @@ export default function MyMapsTab({ onDuplicateMap }) {
   const [deleting, setDeleting] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  
+  // Search and filter states
+  const [searchQuery, setSearchQuery] = useState('');
+  const [statusFilters, setStatusFilters] = useState({
+    completed: true,
+    generating: true,
+    incomplete: true,
+    error: false // Default off for error maps as requested
+  });
+  const [assetFilters, setAssetFilters] = useState({
+    background: false,
+    water: false,
+    flattenedRoads: false,
+    forests: false,
+    dissolved: false,
+    satelliteImages: false
+  });
 
   // Fetch maps from API
   const fetchMaps = async () => {
@@ -65,6 +82,21 @@ export default function MyMapsTab({ onDuplicateMap }) {
     fetchMaps();
   }, []);
 
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      const dropdown = document.getElementById('status-dropdown');
+      if (dropdown && !dropdown.contains(event.target) && !event.target.closest('button[data-dropdown-toggle]')) {
+        dropdown.classList.add('hidden');
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   // Show toast notification
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type });
@@ -72,6 +104,67 @@ export default function MyMapsTab({ onDuplicateMap }) {
       setToast({ show: false, message: '', type: 'success' });
     }, 3000);
   };
+
+  // Filter and search maps
+  const filteredMaps = useMemo(() => {
+    let filtered = maps;
+
+    // Apply search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(map => {
+        // Search by name
+        if (map.name.toLowerCase().includes(query)) return true;
+        
+        // Search by coordinates (support both comma-separated and space-separated)
+        const coords = formatCoordinates(map.coordinates).toLowerCase();
+        if (coords.includes(query)) return true;
+        
+        // Try to match individual coordinate numbers
+        const coordNumbers = coords.match(/[-]?\d+\.?\d*/g) || [];
+        return coordNumbers.some(num => num.includes(query));
+      });
+    }
+
+    // Apply status filters (OR logic)
+    const activeStatusFilters = Object.entries(statusFilters)
+      .filter(([_, enabled]) => enabled)
+      .map(([status, _]) => status);
+    
+    if (activeStatusFilters.length > 0) {
+      filtered = filtered.filter(map => activeStatusFilters.includes(map.status));
+    }
+
+    // Apply asset filters (AND logic)
+    const activeAssetFilters = Object.entries(assetFilters)
+      .filter(([_, enabled]) => enabled)
+      .map(([asset, _]) => asset);
+    
+    if (activeAssetFilters.length > 0) {
+      filtered = filtered.filter(map => {
+        return activeAssetFilters.every(asset => {
+          switch (asset) {
+            case 'background':
+              return map.generationSettings?.BackgroundSettings?.generate_background;
+            case 'water':
+              return map.generationSettings?.BackgroundSettings?.generate_water;
+            case 'flattenedRoads':
+              return map.generationSettings?.BackgroundSettings?.flatten_roads;
+            case 'forests':
+              return map.generationSettings?.I3DSettings?.add_trees;
+            case 'dissolved':
+              return map.generationSettings?.TextureSettings?.dissolve;
+            case 'satelliteImages':
+              return map.generationSettings?.SatelliteSettings?.download_images;
+            default:
+              return true;
+          }
+        });
+      });
+    }
+
+    return filtered;
+  }, [maps, searchQuery, statusFilters, assetFilters]);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -326,17 +419,131 @@ export default function MyMapsTab({ onDuplicateMap }) {
       {/* Left Panel - Map List */}
       <div className="w-1/2 p-8 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 overflow-y-auto max-h-full">
         <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">My Maps</h2>
+          {/* Line 1: Search field, map status filter, small refresh */}
+          <div className="flex items-center space-x-3">
+            {/* Search field */}
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                placeholder="Search by name or coordinates"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-3 py-2 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <i className="zmdi zmdi-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+            </div>
+
+            {/* Status filter dropdown */}
+            <div className="relative">
+              <button
+                data-dropdown-toggle
+                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+                onClick={() => {
+                  const dropdown = document.getElementById('status-dropdown');
+                  dropdown.classList.toggle('hidden');
+                }}
+              >
+                <i className="zmdi zmdi-filter-list mr-2"></i>
+                Status
+              </button>
+              <div id="status-dropdown" className="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-10">
+                <div className="p-3 space-y-2">
+                  <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-2">Map Status</div>
+                  {[
+                    { key: 'completed', label: 'Completed', icon: 'check-circle', colorClass: 'text-green-500' },
+                    { key: 'generating', label: 'Generating', icon: 'refresh', colorClass: 'text-blue-500' },
+                    { key: 'incomplete', label: 'Incomplete', icon: 'pause-circle', colorClass: 'text-yellow-500' },
+                    { key: 'error', label: 'Error', icon: 'close-circle', colorClass: 'text-red-500' }
+                  ].map(({ key, label, icon, colorClass }) => (
+                    <label key={key} className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={statusFilters[key]}
+                        onChange={(e) => setStatusFilters(prev => ({ ...prev, [key]: e.target.checked }))}
+                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      />
+                      <i className={`zmdi zmdi-${icon} ${colorClass}`}></i>
+                      <span className="text-sm text-gray-700 dark:text-gray-300">{label}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Small refresh button */}
             <button 
               onClick={fetchMaps}
               disabled={loading}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white text-sm font-medium rounded-lg transition-colors"
+              className="p-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-lg transition-colors"
+              title="Refresh maps"
             >
-              <i className={`zmdi zmdi-refresh mr-2 ${loading ? 'animate-spin' : ''}`}></i>
-              {loading ? 'Loading...' : 'Refresh'}
+              <i className={`zmdi zmdi-refresh ${loading ? 'animate-spin' : ''}`}></i>
             </button>
           </div>
+
+          {/* Line 2: Asset filters */}
+          <div className="flex flex-wrap gap-2">
+            <div className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide mr-2 flex items-center">Assets:</div>
+            {[
+              { 
+                key: 'background', 
+                label: 'Background', 
+                icon: 'landscape', 
+                activeClasses: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-300 ring-2 ring-emerald-300'
+              },
+              { 
+                key: 'water', 
+                label: 'Water', 
+                icon: 'water-drop', 
+                activeClasses: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300 ring-2 ring-cyan-300'
+              },
+              { 
+                key: 'flattenedRoads', 
+                label: 'Flattened Roads', 
+                icon: 'settings', 
+                activeClasses: 'bg-slate-100 text-slate-800 dark:bg-slate-900/30 dark:text-slate-300 ring-2 ring-slate-300'
+              },
+              { 
+                key: 'forests', 
+                label: 'Forests', 
+                icon: 'nature', 
+                activeClasses: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300 ring-2 ring-green-300'
+              },
+              { 
+                key: 'dissolved', 
+                label: 'Dissolved', 
+                icon: 'blur', 
+                activeClasses: 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300 ring-2 ring-pink-300'
+              },
+              { 
+                key: 'satelliteImages', 
+                label: 'Satellite Images', 
+                icon: 'satellite', 
+                activeClasses: 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900/30 dark:text-indigo-300 ring-2 ring-indigo-300'
+              }
+            ].map(({ key, label, icon, activeClasses }) => (
+              <button
+                key={key}
+                onClick={() => setAssetFilters(prev => ({ ...prev, [key]: !prev[key] }))}
+                className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium transition-colors ${
+                  assetFilters[key]
+                    ? activeClasses
+                    : 'bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                }`}
+              >
+                <i className={`zmdi zmdi-${icon} mr-1 text-xs`}></i>
+                {label}
+              </button>
+            ))}
+          </div>
+          
+          {/* Results info */}
+          {(searchQuery || Object.values(statusFilters).some(v => v === false) || Object.values(assetFilters).some(v => v === true)) && (
+            <div className="text-sm text-gray-600 dark:text-gray-400">
+              Showing {filteredMaps.length} of {maps.length} maps
+              {searchQuery && <span> • Search: "{searchQuery}"</span>}
+            </div>
+          )}
           
           {error ? (
             <div className="text-center py-12 text-red-500 dark:text-red-400">
@@ -362,9 +569,15 @@ export default function MyMapsTab({ onDuplicateMap }) {
               <div className="text-lg font-medium mb-2">No maps yet</div>
               <div className="text-sm">Generate your first map using the Generator tab!</div>
             </div>
+          ) : filteredMaps.length === 0 ? (
+            <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+              <div className="text-4xl mb-4">🔍</div>
+              <div className="text-lg font-medium mb-2">No maps match your filters</div>
+              <div className="text-sm">Try adjusting your search or filter criteria</div>
+            </div>
           ) : (
             <div className="space-y-3">
-              {maps.map((map) => (
+              {filteredMaps.map((map) => (
                 <div
                   key={map.id}
                   onClick={() => handleMapSelect(map)}
