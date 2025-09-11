@@ -140,21 +140,25 @@ export default function Home() {
       />
 
       {/* Tab Content */}
-      <div className="flex-1 overflow-hidden">
+      <div className="flex-1 overflow-hidden relative">
         {activeTab === 'generator' && (
-          <GeneratorTab 
-            backendVersion={currentBackendVersion}
-            isBackendAvailable={isBackendAvailable}
-            backendError={backendError}
-            isPublicVersion={isPublicVersion}
-            duplicateMapData={duplicateMapData}
-            onDuplicateDataProcessed={() => setDuplicateMapData(null)}
-          />
+          <div className="absolute inset-0 animate-fade-in">
+            <GeneratorTab 
+              backendVersion={currentBackendVersion}
+              isBackendAvailable={isBackendAvailable}
+              backendError={backendError}
+              isPublicVersion={isPublicVersion}
+              duplicateMapData={duplicateMapData}
+              onDuplicateDataProcessed={() => setDuplicateMapData(null)}
+            />
+          </div>
         )}
         {activeTab === 'my-maps' && (
-          <MyMapsTab 
-            onDuplicateMap={handleDuplicateMap}
-          />
+          <div className="absolute inset-0 animate-fade-in">
+            <MyMapsTab 
+              onDuplicateMap={handleDuplicateMap}
+            />
+          </div>
         )}
       </div>
 

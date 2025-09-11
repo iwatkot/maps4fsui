@@ -267,9 +267,11 @@ export default function MyMapsTab({ onDuplicateMap }) {
         } : null
       };
       
-      // Call the parent handler to switch tabs and populate data
-      onDuplicateMap(duplicateData);
-      showToast('Map settings loaded in Generator for retry!', 'success');
+      // Wait 1.5 seconds so user can read the toast, then switch tabs
+      setTimeout(() => {
+        onDuplicateMap(duplicateData);
+        showToast('Map settings loaded in Generator for retry!', 'success');
+      }, 1500);
       
     } catch (error) {
       console.error('Error retrying map:', error);
@@ -298,9 +300,11 @@ export default function MyMapsTab({ onDuplicateMap }) {
         } : null
       };
       
-      // Call the parent handler to switch tabs and populate data
-      onDuplicateMap(duplicateData);
-      showToast('Map settings loaded in Generator!', 'success');
+      // Wait 1.5 seconds so user can read the toast, then switch tabs
+      setTimeout(() => {
+        onDuplicateMap(duplicateData);
+        showToast('Map settings loaded in Generator!', 'success');
+      }, 1500);
       
     } catch (error) {
       console.error('Error duplicating map:', error);
