@@ -71,18 +71,18 @@ export default function Home() {
       label: 'Map Generator',
       icon: <i className="zmdi zmdi-landscape"></i>
     },
-    {
-      id: 'schemas',
-      label: 'Schemas Editor',
-      icon: <i className="zmdi zmdi-folder-outline"></i>
-    },
     // Only show My Maps tab in non-public version
     ...(!isPublicVersion ? [{
       id: 'my-maps',
       label: 'My Maps',
       icon: <i className="zmdi zmdi-collection-folder-image"></i>,
       // disabled: true // Disabled for now
-    }] : [])
+    }] : []),
+        {
+      id: 'schemas',
+      label: 'Schemas Editor',
+      icon: <i className="zmdi zmdi-folder-outline"></i>
+    }
   ];
 
   // Define right navigation links

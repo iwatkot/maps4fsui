@@ -45,12 +45,12 @@ export default function SelectorCompact({
         <>
           {/* Backdrop to close dropdown */}
           <div 
-            className="fixed inset-0 z-10" 
+            className="fixed inset-0 z-[10000]" 
             onClick={() => setIsOpen(false)}
           />
           
           {/* Options Panel */}
-          <div className="absolute z-20 w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg overflow-hidden">
+          <div className="absolute z-[10001] w-full mt-1 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg overflow-hidden">
             {options.map((option) => (
               <button
                 key={option.value}
