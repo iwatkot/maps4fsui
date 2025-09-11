@@ -359,6 +359,7 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
           onSave={handleJsonSave}
           jsonData={editingTexture}
           title={`Edit ${editingTexture.name} Properties`}
+          hideSaveButton={true}
         />
       )}
 
