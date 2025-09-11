@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import JSONEditorModal from '@/components/JSONEditorModal';
+import SelectorCompact from '@/components/SelectorCompact';
 
 // Hardcoded tree data (keep this for images)
 const TREE_DATA = {
@@ -204,19 +205,15 @@ const TreeSchemaEditor = ({ onSchemaTypeChange }) => {
         <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
           <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
             {/* Schema Type Selector */}
-            <div className="flex items-center">
-              <label className="text-sm font-medium text-gray-700 dark:text-gray-300 mr-3">
-                Schema Type:
-              </label>
-              <select
-                value="tree"
-                onChange={(e) => onSchemaTypeChange && onSchemaTypeChange(e.target.value)}
-                className="px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-              >
-                <option value="tree">🌳 Trees</option>
-                <option value="texture" disabled>🖼️ Textures (Coming Soon)</option>
-              </select>
-            </div>
+            <SelectorCompact
+              options={[
+                { value: 'tree', label: '🌳 Trees' },
+                { value: 'texture', label: '🖼️ Textures', disabled: true }
+              ]}
+              value="tree"
+              onChange={(value) => onSchemaTypeChange && onSchemaTypeChange(value)}
+              className="min-w-[140px]"
+            />
 
             {/* Search */}
             <div className="relative">
@@ -231,16 +228,17 @@ const TreeSchemaEditor = ({ onSchemaTypeChange }) => {
             </div>
 
             {/* Filter by type */}
-            <select
+            <SelectorCompact
+              options={[
+                { value: 'all', label: 'All Types' },
+                { value: 'broadleaved', label: '🍃 Broadleaved' },
+                { value: 'needleleaved', label: '🌲 Needleleaved' },
+                { value: 'other', label: '🪵 Other' }
+              ]}
               value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
-              className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            >
-              <option value="all">All Types</option>
-              <option value="broadleaved">🍃 Broadleaved</option>
-              <option value="needleleaved">🌲 Needleleaved</option>
-              <option value="other">🪵 Other</option>
-            </select>
+              onChange={setFilterType}
+              className="min-w-[160px]"
+            />
 
             {/* Selection info */}
             <div className="text-sm text-gray-600 dark:text-gray-400">
