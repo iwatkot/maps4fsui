@@ -59,6 +59,7 @@ export default function MixedPreviewGallery({ previews, taskId, currentPage, onE
     // First page: PNG Gallery
     pageContent = (
       <PreviewGallery
+        key={taskId} // Force re-mount when taskId changes
         previews={pngPreviews}
         taskId={taskId}
         onError={onError}

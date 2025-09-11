@@ -940,6 +940,7 @@ export default function MyMapsTab({ onDuplicateMap }) {
               {selectedMap.previews && selectedMap.previews.length > 0 ? (
                 <>
                   <MixedPreviewGallery
+                    key={selectedMap.id} // Force re-render when map changes
                     previews={selectedMap.previews}
                     taskId={selectedMap.id}
                     currentPage={previewPage}
