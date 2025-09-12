@@ -6,7 +6,9 @@ import GeneratorTab from '@/app/tabs/GeneratorTab';
 import MyMapsTab from '@/app/tabs/MyMapsTab';
 import SchemasTab from '@/app/tabs/SchemasTab';
 import SlideOutPromo from '@/components/SlideOutPromo';
+import UpdateIndicator from '@/components/UpdateIndicator';
 import { useBackendVersion } from '@/hooks/useBackendVersion';
+import { useVersionStatus } from '@/hooks/useVersionStatus';
 import config from '@/app/config';
 import logger from '@/utils/logger';
 
@@ -55,6 +57,9 @@ export default function Home() {
     isBackendAvailable, 
     backendError 
   } = useBackendVersion();
+
+  // Version status for update checking
+  const { hasUpdateAvailable, versionStatus } = useVersionStatus();
 
   // Update the global backend version constant
   useEffect(() => {
@@ -124,7 +129,16 @@ export default function Home() {
       >
         <i className="zmdi zmdi-comments text-5xl" style={{fontSize: '1.2rem'}}></i>
       </a>
-            {/* Backend Version Badge */}
+      
+      {/* Update Indicator - only show if update is available */}
+      {hasUpdateAvailable && versionStatus && (
+        <UpdateIndicator 
+          currentVersion={versionStatus.currentVersion}
+          latestVersion={versionStatus.latestVersion}
+        />
+      )}
+      
+      {/* Backend Version Badge */}
       {currentBackendVersion && (
         <div className="flex items-center mr-4">
           <span className="text-xs text-gray-400 dark:text-gray-500 font-mono bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded border border-gray-200 dark:border-gray-700">
