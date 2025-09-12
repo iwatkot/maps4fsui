@@ -17,7 +17,22 @@ export default function UpdateIndicator({
     setShowTooltip(true);
   };
 
-  const handleMouseLeave = () => {
+  const handleMouseLeave = (e) => {
+    // Add a small delay before hiding to allow moving to tooltip
+    setTimeout(() => {
+      // Check if mouse is over the tooltip element
+      const tooltip = document.querySelector('.update-tooltip');
+      if (!tooltip || !tooltip.matches(':hover')) {
+        setShowTooltip(false);
+      }
+    }, 100);
+  };
+
+  const handleTooltipMouseEnter = () => {
+    setShowTooltip(true);
+  };
+
+  const handleTooltipMouseLeave = () => {
     setShowTooltip(false);
   };
 
@@ -44,11 +59,15 @@ export default function UpdateIndicator({
         
         {/* Tooltip */}
         {showTooltip && (
-          <div className="fixed z-[10000] bg-gray-900 dark:bg-gray-700 text-white text-xs rounded-lg px-3 py-2 shadow-lg whitespace-nowrap border border-gray-700 dark:border-gray-600"
-               style={{
-                 top: '60px', // Just below the header
-                 right: '120px', // Move further left so the full tooltip is visible
-               }}>
+          <div 
+            className="update-tooltip fixed z-[10000] bg-gray-900 dark:bg-gray-700 text-white text-xs rounded-lg px-3 py-2 shadow-lg whitespace-nowrap border border-gray-700 dark:border-gray-600"
+            style={{
+              top: '60px', // Just below the header
+              right: '120px', // Move further left so the full tooltip is visible
+            }}
+            onMouseEnter={handleTooltipMouseEnter}
+            onMouseLeave={handleTooltipMouseLeave}
+          >
             <div className="space-y-1">
               <div>Latest: <span className="font-mono">{latestVersion}</span></div>
               <div className="border-t border-gray-600 dark:border-gray-500 pt-1 mt-1">
