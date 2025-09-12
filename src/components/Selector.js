@@ -45,9 +45,9 @@ export default function Selector({
           </div>
           
           {/* Clickable Content Section */}
-          <div className="flex-1 px-4 py-3 flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <span className="text-gray-900 dark:text-white font-medium">
+          <div className="flex-1 px-4 py-3 flex items-center justify-between min-w-0">
+            <div className="flex items-center space-x-3 min-w-0">
+              <span className="text-gray-900 dark:text-white font-medium truncate">
                 {selectedOption ? selectedOption.label : placeholder}
               </span>
             </div>

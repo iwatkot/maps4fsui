@@ -150,7 +150,7 @@ export default function Home() {
   );
 
   return (
-    <div className="h-screen bg-white dark:bg-gray-900 flex flex-col overflow-hidden">
+    <div className="h-screen bg-white dark:bg-gray-900 flex flex-col overflow-hidden" style={{ minWidth: '1000px' }}>
       {/* Main Navigation Header */}
       <MainTabs 
         tabs={tabs}

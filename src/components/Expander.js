@@ -45,14 +45,14 @@ export default function Expander({
           </div>
           
           {/* Content Section (Summary) */}
-          <div className="flex-1 px-4 py-3 flex items-center justify-between">
-            <div className="flex items-center space-x-3">
+          <div className="flex-1 px-4 py-3 flex items-center justify-between min-w-0">
+            <div className="flex items-center space-x-3 min-w-0">
               {summary !== null && summary !== undefined ? (
-                <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                <span className="text-sm text-gray-500 dark:text-gray-400 font-medium truncate">
                   {summary}
                 </span>
               ) : (
-                <span className="text-sm text-gray-400 dark:text-gray-600">
+                <span className="text-sm text-gray-400 dark:text-gray-600 truncate">
                   {isExpanded ? 'Click to collapse' : 'Click to expand'}
                 </span>
               )}
