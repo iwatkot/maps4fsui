@@ -27,3 +27,28 @@ export async function getBackendVersion() {
     throw error;
   }
 }
+
+/**
+ * Get backend version status information
+ * @returns {Promise<object>} - Object with version status info
+ * 
+ * Example response:
+ * {
+ *   "current_version": "2.2.7",
+ *   "latest_version": "2.3.0", 
+ *   "is_latest": false
+ * }
+ */
+export async function getBackendVersionStatus() {
+  try {
+    logger.info('Checking backend version status');
+    
+    const response = await apiService.get('/info/status');
+    
+    logger.info(`Backend version status: current=${response.current_version}, latest=${response.latest_version}, is_latest=${response.is_latest}`);
+    return response;
+  } catch (error) {
+    logger.error('Failed to get backend version status:', error.message);
+    throw error;
+  }
+}
