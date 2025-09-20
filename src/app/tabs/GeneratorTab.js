@@ -559,7 +559,7 @@ export default function GeneratorTab({
           placeholder="Enter output size"
           labelWidth='w-40'
           tooltip="Output texture size in pixels. Higher values provide more detail but take longer to process."
-          min={1024}
+          min={1}
           max={100000}
           size="sm"
         />
