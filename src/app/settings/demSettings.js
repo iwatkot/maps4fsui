@@ -7,8 +7,8 @@ import {
   constraints 
 } from '../../config/validation';
 
-export default function DemSettingsContent(showAll = true, initialValues = {}){
-    const [blurRadius, setBlurRadius] = useState(initialValues.blur_radius ?? defaultValues.blurRadius);
+export default function DemSettingsContent(showAll = true, initialValues = {}, defaultBlurRadius = null) {
+    const [blurRadius, setBlurRadius] = useState(initialValues.blur_radius  ?? defaultBlurRadius ?? defaultValues.blurRadius);
     const [waterDepth, setWaterDepth] = useState(initialValues.water_depth ?? defaultValues.waterDepth);
     const [addFoundations, setAddFoundations] = useState(initialValues.add_foundations ?? defaultValues.addFoundations);
     const addFoundationsSummary = addFoundations ? " │ Add foundations" : "";

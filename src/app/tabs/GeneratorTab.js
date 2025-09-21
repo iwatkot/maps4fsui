@@ -254,7 +254,15 @@ export default function GeneratorTab({
   const textureSettings = pendingGenerationSettings?.TextureSettings || {};
   const satelliteSettings = pendingGenerationSettings?.SatelliteSettings || {};
 
-  const { content: demContent, values: demValues } = DemSettingsContent(!onlyPopularSettings, demSettings);
+  // If demSettings is empty, and the DTM Provider is SRTM30m, pass the default blurRadius of 35.
+  let defaultBlurRadius = null;
+  if (Object.keys(demSettings).length === 0 && selectedDTMProvider === 'srtm30') {
+    logger.info('Setting default blur radius of 35 for SRTM30m provider');
+    defaultBlurRadius = 35;
+  }
+  logger.info(`Default blur radius for DEM settings: ${defaultBlurRadius}`);
+
+  const { content: demContent, values: demValues } = DemSettingsContent(!onlyPopularSettings, demSettings, defaultBlurRadius);
   const { content: backgroundContent, values: backgroundValues } = BackgroundSettingsContent(!onlyPopularSettings, config.isPublicVersion, backgroundSettings);
   const { content: grleContent, values: grleValues } = GrleSettingsContent(!onlyPopularSettings, false, grleSettings);
   const { content: i3dContent, values: i3dValues } = I3dSettingsContent(!onlyPopularSettings, false, i3dSettings);
