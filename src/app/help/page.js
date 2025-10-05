@@ -212,7 +212,7 @@ ${formData.generationSettings}
           <div className="flex items-center">
             <div className="w-4 h-4 bg-green-500 rounded-full mr-4 flex-shrink-0"></div>
             <div>
-              <div className="font-semibold text-gray-900 dark:text-gray-100">Yes, it's working</div>
+              <div className="font-semibold text-gray-900 dark:text-gray-100">Yes, it&apos;s working</div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Tool loads and functions, but has issues with results</div>
             </div>
           </div>
@@ -233,11 +233,11 @@ ${formData.generationSettings}
           <div className="flex items-center">
             <div className="w-4 h-4 bg-red-500 rounded-full mr-4 flex-shrink-0"></div>
             <div>
-              <div className="font-semibold text-gray-900 dark:text-gray-100">No, it's not working</div>
+              <div className="font-semibold text-gray-900 dark:text-gray-100">No, it&apos;s not working</div>
               <div className="text-sm text-gray-600 dark:text-gray-400">
                 {isPublicVersion 
-                  ? 'Tool doesn\'t load or crashes immediately' 
-                  : 'Setup issues, crashes, or won\'t start'
+                  ? 'Tool doesn&apos;t load or crashes immediately' 
+                  : 'Setup issues, crashes, or won&apos;t start'
                 }
               </div>
             </div>
@@ -271,7 +271,7 @@ ${formData.generationSettings}
               Reports Not Accepted for Public App Issues
             </h3>
             <p className="text-yellow-700 dark:text-yellow-300 mb-4">
-              If the public app is not working (won't load, crashes immediately), I don't accept reports for these issues. 
+              If the public app is not working (won&apos;t load, crashes immediately), I don&apos;t accept reports for these issues. 
               This is typically due to server maintenance or temporary outages.
             </p>
             <div className="space-y-2">
