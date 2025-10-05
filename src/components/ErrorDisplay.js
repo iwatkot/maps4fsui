@@ -11,7 +11,11 @@ export default function ErrorDisplay({
   if (!error) return null;
 
   return (
-    <div className={`mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg ${className}`}>
+    <div 
+      role="alert"
+      aria-live="assertive"
+      className={`mb-6 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg ${className}`}
+    >
       <div className="p-3">
         <div className="flex items-start">
           <div className="flex-shrink-0">

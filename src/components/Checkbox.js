@@ -1,5 +1,7 @@
 'use client';
 
+import { useId } from 'react';
+
 export default function Checkbox({ 
   label, 
   checked, 
@@ -9,7 +11,8 @@ export default function Checkbox({
   id = null,
   className = ""
 }) {
-  const checkboxId = id || `checkbox-${Math.random().toString(36).substr(2, 9)}`;
+  const generatedId = useId();
+  const checkboxId = id || generatedId;
 
   const handleToggle = () => {
     if (!disabled) {
@@ -60,15 +63,7 @@ export default function Checkbox({
             }
             focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2
           `}
-          role="checkbox"
-          aria-checked={checked}
-          tabIndex={disabled ? -1 : 0}
-          onKeyDown={(e) => {
-            if ((e.key === ' ' || e.key === 'Enter') && !disabled) {
-              e.preventDefault();
-              handleToggle();
-            }
-          }}
+
         >
           {checked && (
             <i 

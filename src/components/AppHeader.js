@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import Link from 'next/link';
 import MainTabs from '@/components/MainTabs';
 import UpdateIndicator from '@/components/UpdateIndicator';
@@ -27,12 +27,8 @@ export default function AppHeader({
   // Version status for update checking
   const { hasUpdateAvailable, versionStatus } = useVersionStatus();
 
-  // Update the global backend version constant
-  useEffect(() => {
-    if (currentBackendVersion) {
-      config.backendVersion = currentBackendVersion;
-    }
-  }, [currentBackendVersion]);
+  // Note: Consider using context/provider for backend version instead of global mutation
+  // For now, consumers can use currentBackendVersion directly from the hook
 
   // Define tabs
   const tabs = [

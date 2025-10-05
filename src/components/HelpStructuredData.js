@@ -1,17 +1,19 @@
 'use client';
 
 export default function HelpStructuredData() {
+  const BASE_URL = 'https://maps4fs.xyz';
+  
   const structuredData = {
     "@context": "https://schema.org",
     "@graph": [
       {
         "@type": "Organization",
-        "@id": "https://maps4fs.xyz/#organization",
+        "@id": `${BASE_URL}/#organization`,
         "name": "Maps4FS",
-        "url": "https://maps4fs.xyz",
+        "url": BASE_URL,
         "logo": {
           "@type": "ImageObject",
-          "url": "https://maps4fs.xyz/og-image.png",
+          "url": `${BASE_URL}/og-image.png`,
           "width": 1200,
           "height": 630
         },
@@ -24,19 +26,19 @@ export default function HelpStructuredData() {
       },
       {
         "@type": "WebSite",
-        "@id": "https://maps4fs.xyz/#website",
-        "url": "https://maps4fs.xyz",
+        "@id": `${BASE_URL}/#website`,
+        "url": BASE_URL,
         "name": "Maps4FS",
         "description": "Generate realistic Farming Simulator maps from real places",
         "publisher": {
-          "@id": "https://maps4fs.xyz/#organization"
+          "@id": `${BASE_URL}/#organization`
         },
         "potentialAction": [
           {
             "@type": "SearchAction",
             "target": {
               "@type": "EntryPoint",
-              "urlTemplate": "https://maps4fs.xyz/help?q={search_term_string}"
+              "urlTemplate": `${BASE_URL}/help?q={search_term_string}`
             },
             "query-input": "required name=search_term_string"
           }
@@ -44,18 +46,18 @@ export default function HelpStructuredData() {
       },
       {
         "@type": "WebPage",
-        "@id": "https://maps4fs.xyz/help/#webpage",
-        "url": "https://maps4fs.xyz/help",
+        "@id": `${BASE_URL}/help/#webpage`,
+        "url": `${BASE_URL}/help`,
         "name": "Get Help - Maps4FS Support Center",
         "isPartOf": {
-          "@id": "https://maps4fs.xyz/#website"
+          "@id": `${BASE_URL}/#website`
         },
         "about": {
-          "@id": "https://maps4fs.xyz/#organization"
+          "@id": `${BASE_URL}/#organization`
         },
         "description": "Get help with Maps4FS map generation issues. Interactive support form to report bugs, troubleshoot problems, and get assistance with Farming Simulator map creation.",
         "breadcrumb": {
-          "@id": "https://maps4fs.xyz/help/#breadcrumb"
+          "@id": `${BASE_URL}/help/#breadcrumb`
         },
         "mainEntity": {
           "@type": "FAQPage",
@@ -89,25 +91,25 @@ export default function HelpStructuredData() {
       },
       {
         "@type": "BreadcrumbList",
-        "@id": "https://maps4fs.xyz/help/#breadcrumb",
+        "@id": `${BASE_URL}/help/#breadcrumb`,
         "itemListElement": [
           {
             "@type": "ListItem",
             "position": 1,
             "name": "Maps4FS",
-            "item": "https://maps4fs.xyz"
+            "item": BASE_URL
           },
           {
             "@type": "ListItem", 
             "position": 2,
             "name": "Get Help",
-            "item": "https://maps4fs.xyz/help"
+            "item": `${BASE_URL}/help`
           }
         ]
       },
       {
         "@type": "SoftwareApplication",
-        "@id": "https://maps4fs.xyz/#software",
+        "@id": `${BASE_URL}/#software`,
         "name": "Maps4FS",
         "applicationCategory": "GameApplication",
         "description": "Generate realistic Farming Simulator maps from real-world terrain data using OpenStreetMap and SRTM datasets",
@@ -122,7 +124,7 @@ export default function HelpStructuredData() {
           "name": "iwatkot",
           "url": "https://github.com/iwatkot"
         },
-        "supportUrl": "https://maps4fs.xyz/help",
+        "supportUrl": `${BASE_URL}/help`,
         "installUrl": "https://maps4fs.gitbook.io/docs/setup-and-installation/local_deployment"
       }
     ]
