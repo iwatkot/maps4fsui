@@ -1,6 +1,7 @@
 import apiService from '@/utils/apiService';
 import { preprocessMainSettings, objectToSnakeCase } from '@/api/preprocess';
 import logger from '@/utils/logger';
+import config from '@/app/config';
 
 /**
  * Start map generation process
@@ -25,6 +26,10 @@ export async function startMapGeneration(settings, osmData = null) {
       const processedSectionSettings = objectToSnakeCase(sectionSettings);
       payload[key] = processedSectionSettings;
     }
+
+    // Step 2.5: Add is_public flag from config
+    payload.is_public = config.isPublicVersion;
+    logger.debug(`Adding is_public flag: ${config.isPublicVersion}`);
 
     // Step 3: Add custom OSM XML if provided
     if (osmData && osmData.originalXml) {
