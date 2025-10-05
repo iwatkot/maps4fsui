@@ -96,7 +96,7 @@ export default function HelpPage() {
 **Tool Status:** ${toolStatus}
 ${dtmProvider ? `**DTM Provider:** ${dtmProvider}` : ''}
 
-## Pre-submission Checklist ✅
+## Pre-submission Checklist
 
 - [x] I have read the FAQ
 - [x] I understand that map data comes from OpenStreetMap
@@ -104,14 +104,14 @@ ${dtmProvider ? `**DTM Provider:** ${dtmProvider}` : ''}
 - [x] I understand what a texture schema is
 - [x] I have verified that my texture schema contains the OSM tags for the objects I'm missing (if texture-related)
 
-## Basic Information 📍
+## Basic Information
 
 - **Map coordinates:** ${formData.coordinates}
 - **Map size:** ${formData.mapSize}
 - **Game version:** ${formData.gameVersion}
 - **Maps4FS version:** ${formData.maps4fsVersion}
 
-## Technical Files 📁
+## Technical Files
 
 ### generation_info.json
 \`\`\`json
@@ -147,7 +147,7 @@ ${formData.generationSettings}
   const renderStep1 = () => (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-        🚀 Step 1: Which version are you using?
+        Step 1: Which version are you using?
       </h2>
       <div className="space-y-4">
         <button
@@ -158,7 +158,7 @@ ${formData.generationSettings}
           className="w-full p-4 text-left border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-blue-500 dark:hover:border-blue-400 transition-colors bg-white dark:bg-gray-800"
         >
           <div className="flex items-center">
-            <div className="text-2xl mr-4">🌐</div>
+            <div className="w-4 h-4 bg-blue-500 rounded-full mr-4 flex-shrink-0"></div>
             <div>
               <div className="font-semibold text-gray-900 dark:text-gray-100">Public App</div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Using the online version at maps4fs.xyz</div>
@@ -173,7 +173,7 @@ ${formData.generationSettings}
           className="w-full p-4 text-left border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-blue-500 dark:hover:border-blue-400 transition-colors bg-white dark:bg-gray-800"
         >
           <div className="flex items-center">
-            <div className="text-2xl mr-4">💻</div>
+            <div className="w-4 h-4 bg-gray-500 rounded-full mr-4 flex-shrink-0"></div>
             <div>
               <div className="font-semibold text-gray-900 dark:text-gray-100">Local Deployment</div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Running the tool on your own machine</div>
@@ -186,9 +186,18 @@ ${formData.generationSettings}
 
   const renderStep2 = () => (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-        Step 2: Is the tool working?
-      </h2>
+      <div className="flex items-center space-x-4">
+        <button
+          onClick={() => setCurrentStep(1)}
+          className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+          title="Go Back"
+        >
+          <i className="zmdi zmdi-arrow-left text-xl"></i>
+        </button>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          Step 2: Is the tool working?
+        </h2>
+      </div>
       <div className="space-y-4">
         <button
           onClick={() => {
@@ -198,7 +207,7 @@ ${formData.generationSettings}
           className="w-full p-4 text-left border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-green-500 dark:hover:border-green-400 transition-colors bg-white dark:bg-gray-800"
         >
           <div className="flex items-center">
-            <div className="text-2xl mr-4">✅</div>
+            <div className="w-4 h-4 bg-green-500 rounded-full mr-4 flex-shrink-0"></div>
             <div>
               <div className="font-semibold text-gray-900 dark:text-gray-100">Yes, it's working</div>
               <div className="text-sm text-gray-600 dark:text-gray-400">Tool loads and functions, but has issues with results</div>
@@ -219,7 +228,7 @@ ${formData.generationSettings}
           className="w-full p-4 text-left border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-red-500 dark:hover:border-red-400 transition-colors bg-white dark:bg-gray-800"
         >
           <div className="flex items-center">
-            <div className="text-2xl mr-4">❌</div>
+            <div className="w-4 h-4 bg-red-500 rounded-full mr-4 flex-shrink-0"></div>
             <div>
               <div className="font-semibold text-gray-900 dark:text-gray-100">No, it's not working</div>
               <div className="text-sm text-gray-600 dark:text-gray-400">
@@ -237,9 +246,18 @@ ${formData.generationSettings}
 
   const renderPublicNotWorking = () => (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-        ℹ️ Public App Issues
-      </h2>
+      <div className="flex items-center space-x-4">
+        <button
+          onClick={() => setCurrentStep(2)}
+          className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+          title="Go Back"
+        >
+          <i className="zmdi zmdi-arrow-left text-xl"></i>
+        </button>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          Public App Issues
+        </h2>
+      </div>
       <div className="p-6 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
         <div className="flex">
           <div className="text-yellow-600 dark:text-yellow-400 mr-3">
@@ -250,7 +268,7 @@ ${formData.generationSettings}
               Reports Not Accepted for Public App Issues
             </h3>
             <p className="text-yellow-700 dark:text-yellow-300 mb-4">
-              If the public app is not working (won't load, crashes immediately), we don't accept reports for these issues. 
+              If the public app is not working (won't load, crashes immediately), I don't accept reports for these issues. 
               This is typically due to server maintenance or temporary outages.
             </p>
             <div className="space-y-2">
@@ -291,21 +309,36 @@ ${formData.generationSettings}
 
   const renderStep3 = () => (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-        🗺️ Step 3: DTM Provider Check
-      </h2>
+      <div className="flex items-center space-x-4">
+        <button
+          onClick={() => setCurrentStep(2)}
+          className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+          title="Go Back"
+        >
+          <i className="zmdi zmdi-arrow-left text-xl"></i>
+        </button>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          Step 3: DTM Provider Check
+        </h2>
+      </div>
       <p className="text-gray-600 dark:text-gray-400">
-        Which DTM provider are you using for your map generation?
+        Please confirm which DTM provider you are using:
       </p>
-      <TextInput
-        label="DTM Provider"
-        value={dtmProvider}
-        onChange={setDtmProvider}
-        placeholder="e.g., SRTM30, ASTER, Copernicus..."
-        labelWidth="w-32"
-        size="sm"
-      />
-      {dtmProvider && dtmProvider.toLowerCase() !== 'srtm30' && (
+      <div className="space-y-4">
+        <div className="flex items-center space-x-3">
+          <input
+            type="checkbox"
+            id="srtm30-checkbox"
+            checked={dtmProvider === 'SRTM30'}
+            onChange={(e) => setDtmProvider(e.target.checked ? 'SRTM30' : '')}
+            className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+          />
+          <label htmlFor="srtm30-checkbox" className="text-gray-900 dark:text-gray-300 font-medium">
+            I am using SRTM30 DTM provider
+          </label>
+        </div>
+      </div>
+      {!dtmProvider && (
         <div className="p-6 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg">
           <div className="flex">
             <div className="text-orange-600 dark:text-orange-400 mr-3">
@@ -316,7 +349,7 @@ ${formData.generationSettings}
                 Unsupported DTM Provider
               </h3>
               <p className="text-orange-700 dark:text-orange-300 mb-4">
-                We only provide support for the <strong>SRTM30</strong> DTM provider. For issues with other providers like {dtmProvider}, 
+                I only provide support for the <strong>SRTM30</strong> DTM provider. For issues with other providers, 
                 please contact the authors of the pydtmdl library directly.
               </p>
               <a
@@ -332,7 +365,7 @@ ${formData.generationSettings}
           </div>
         </div>
       )}
-      {dtmProvider.toLowerCase() === 'srtm30' && (
+      {dtmProvider === 'SRTM30' && (
         <div className="flex justify-end">
           <button
             onClick={() => setCurrentStep(4)}
@@ -347,20 +380,29 @@ ${formData.generationSettings}
 
   const renderStep4 = () => (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-        ✅ Step 4: Pre-submission Checklist
-      </h2>
+      <div className="flex items-center space-x-4">
+        <button
+          onClick={() => setCurrentStep(3)}
+          className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+          title="Go Back"
+        >
+          <i className="zmdi zmdi-arrow-left text-xl"></i>
+        </button>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          Step 4: Pre-submission Checklist
+        </h2>
+      </div>
       <p className="text-gray-600 dark:text-gray-400">
         Before submitting your issue, you MUST confirm ALL of the following:
       </p>
       
       <div className="space-y-4">
         {[
-          { key: 'readFaq', label: '📚 I have read the FAQ', link: 'https://maps4fs.gitbook.io/docs/getting-started/faq' },
-          { key: 'understandOsm', label: '🗺️ I understand that map data comes from OpenStreetMap', link: 'https://www.openstreetmap.org/' },
-          { key: 'verifiedOsmData', label: '🔍 I have verified that the required data exists on OpenStreetMap for my area', link: null },
-          { key: 'understandTextureSchema', label: '🎨 I understand what a texture schema is', link: 'https://maps4fs.gitbook.io/docs/understanding-the-basics/texture_schema' },
-          { key: 'verifiedTextureSchema', label: '🏷️ I have verified that my texture schema contains the OSM tags for the objects I\'m missing (if texture-related)', link: null }
+          { key: 'readFaq', label: 'I have read the FAQ', link: 'https://maps4fs.gitbook.io/docs/getting-started/faq' },
+          { key: 'understandOsm', label: 'I understand that map data comes from OpenStreetMap', link: 'https://www.openstreetmap.org/' },
+          { key: 'verifiedOsmData', label: 'I have verified that the required data exists on OpenStreetMap for my area', link: null },
+          { key: 'understandTextureSchema', label: 'I understand what a texture schema is', link: 'https://maps4fs.gitbook.io/docs/understanding-the-basics/texture_schema' },
+          { key: 'verifiedTextureSchema', label: 'I have verified that my texture schema contains the OSM tags for the objects I\'m missing (if texture-related)', link: null }
         ].map(({ key, label, link }) => (
           <div key={key} className="flex items-center space-x-3">
             <input
@@ -402,13 +444,30 @@ ${formData.generationSettings}
 
   const renderStep5 = () => (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-        📋 Step 5: Information Collection
-      </h2>
+      <div className="flex items-center space-x-4">
+        <button
+          onClick={() => setCurrentStep(4)}
+          className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+          title="Go Back"
+        >
+          <i className="zmdi zmdi-arrow-left text-xl"></i>
+        </button>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          Step 5: Information Collection
+        </h2>
+      </div>
+      
+      {!isFormComplete && (
+        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+          <p className="text-blue-800 dark:text-blue-200 text-sm">
+            Please fill out all fields below to proceed with generating your help request.
+          </p>
+        </div>
+      )}
       
       <div className="space-y-6">
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">📍 Basic Information</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Basic Information</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <TextInput
               label="Map Coordinates"
@@ -446,49 +505,88 @@ ${formData.generationSettings}
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">📁 Required Files</h3>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Required Information</h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            Please locate these JSON files in your map generation output folder and copy their contents:
+          </p>
           <div className="space-y-4">
-            <div className="p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
+            <div className="p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800">
               <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100">generation_info.json</h4>
+                <div className="flex-1">
+                  <div className="flex items-center space-x-2">
+                    <h4 className="font-medium text-gray-900 dark:text-gray-100">generation_info.json</h4>
+                    {formData.generationInfo && (
+                      <span className="inline-flex items-center px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-xs font-medium rounded">
+                        <i className="zmdi zmdi-check-circle mr-1"></i>
+                        Added
+                      </span>
+                    )}
+                  </div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Contains technical details about your map</p>
                 </div>
                 <button
                   onClick={() => openJsonEditor('generationInfo', 'Generation Info')}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    formData.generationInfo 
+                      ? 'bg-gray-600 hover:bg-gray-700 text-white'
+                      : 'bg-blue-600 hover:bg-blue-700 text-white'
+                  }`}
                 >
-                  {formData.generationInfo ? 'Edit JSON' : 'Add JSON'}
+                  {formData.generationInfo ? 'Edit' : 'Add Content'}
                 </button>
               </div>
             </div>
 
-            <div className="p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
+            <div className="p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800">
               <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100">main_settings.json</h4>
+                <div className="flex-1">
+                  <div className="flex items-center space-x-2">
+                    <h4 className="font-medium text-gray-900 dark:text-gray-100">main_settings.json</h4>
+                    {formData.mainSettings && (
+                      <span className="inline-flex items-center px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-xs font-medium rounded">
+                        <i className="zmdi zmdi-check-circle mr-1"></i>
+                        Added
+                      </span>
+                    )}
+                  </div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Main configuration settings</p>
                 </div>
                 <button
                   onClick={() => openJsonEditor('mainSettings', 'Main Settings')}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    formData.mainSettings 
+                      ? 'bg-gray-600 hover:bg-gray-700 text-white'
+                      : 'bg-blue-600 hover:bg-blue-700 text-white'
+                  }`}
                 >
-                  {formData.mainSettings ? 'Edit JSON' : 'Add JSON'}
+                  {formData.mainSettings ? 'Edit' : 'Add Content'}
                 </button>
               </div>
             </div>
 
-            <div className="p-4 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg">
+            <div className="p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800">
               <div className="flex items-center justify-between">
-                <div>
-                  <h4 className="font-medium text-gray-900 dark:text-gray-100">generation_settings.json</h4>
+                <div className="flex-1">
+                  <div className="flex items-center space-x-2">
+                    <h4 className="font-medium text-gray-900 dark:text-gray-100">generation_settings.json</h4>
+                    {formData.generationSettings && (
+                      <span className="inline-flex items-center px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-xs font-medium rounded">
+                        <i className="zmdi zmdi-check-circle mr-1"></i>
+                        Added
+                      </span>
+                    )}
+                  </div>
                   <p className="text-sm text-gray-600 dark:text-gray-400">Your map generation settings</p>
                 </div>
                 <button
                   onClick={() => openJsonEditor('generationSettings', 'Generation Settings')}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
+                  className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    formData.generationSettings 
+                      ? 'bg-gray-600 hover:bg-gray-700 text-white'
+                      : 'bg-blue-600 hover:bg-blue-700 text-white'
+                  }`}
                 >
-                  {formData.generationSettings ? 'Edit JSON' : 'Add JSON'}
+                  {formData.generationSettings ? 'Edit' : 'Add Content'}
                 </button>
               </div>
             </div>
@@ -498,7 +596,7 @@ ${formData.generationSettings}
         {isFormComplete && (
           <div className="p-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
             <h3 className="text-lg font-semibold text-green-800 dark:text-green-200 mb-2">
-              🚀 Ready to Submit!
+              Ready to Submit!
             </h3>
             <p className="text-green-700 dark:text-green-300 mb-4">
               All information has been collected. Click the button below to generate a markdown report and get the Discord link.
