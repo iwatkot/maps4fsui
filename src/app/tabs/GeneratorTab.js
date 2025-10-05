@@ -551,18 +551,20 @@ export default function GeneratorTab({
           />
         )}
 
-        {/* Output Size */}
-        <NumberInput
-          label="Output Size"
-          value={outputSize}
-          onChange={setOutputSize}
-          placeholder="Enter output size"
-          labelWidth='w-40'
-          tooltip="Output texture size in pixels. Higher values provide more detail but take longer to process."
-          min={1}
-          max={100000}
-          size="sm"
-        />
+        {/* Output Size (only if custom size selected) */}
+        {selectedSize === "custom" && (
+          <NumberInput
+            label="Output Size"
+            value={outputSize}
+            onChange={setOutputSize}
+            placeholder="Enter output size"
+            labelWidth='w-40'
+            tooltip="Output size in pixels. Note that when downgrading the map size, some details may be lost."
+            min={1}
+            max={100000}
+            size="sm"
+          />
+        )}
 
         {/* Rotation Slider */}
         <Slider
@@ -608,8 +610,12 @@ export default function GeneratorTab({
                 dtmCode: selectedDTMProvider,
                 size: selectedSize === "custom" ? customSize : selectedSize,
                 rotation: rotation,
-                outputSize: outputSize, // Use the actual outputSize state variable
               };
+
+              // Only include outputSize when custom size is selected
+              if (selectedSize === "custom") {
+                mainSettings.outputSize = outputSize;
+              }
 
               // Add DTM settings if provider requires them
               if (providerInfo && providerInfo.settings_required) {
