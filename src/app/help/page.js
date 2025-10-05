@@ -599,7 +599,7 @@ ${formData.generationSettings}
               Ready to Submit!
             </h3>
             <p className="text-green-700 dark:text-green-300 mb-4">
-              All information has been collected. Click the button below to generate a markdown report and get the Discord link.
+              All information has been collected. Generate your help report below and share it in Discord when asking for assistance.
             </p>
             <div className="flex space-x-3">
               <button
