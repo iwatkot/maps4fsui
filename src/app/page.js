@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
 import MainTabs from '@/components/MainTabs';
 import GeneratorTab from '@/app/tabs/GeneratorTab';
 import MyMapsTab from '@/app/tabs/MyMapsTab';
@@ -93,6 +94,13 @@ export default function Home() {
   // Define right navigation links
   const rightNavLinks = (
     <>
+      <Link
+        href="/help"
+        className="text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
+        title="Get Help"
+      >
+        <i className="zmdi zmdi-help text-5xl" style={{fontSize: '1.2rem'}}></i>
+      </Link>
       <a
         href="https://maps4fs.gitbook.io/docs/"
         target="_blank"
