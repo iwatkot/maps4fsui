@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import TextInput from '@/components/TextInput';
+import Checkbox from '@/components/Checkbox';
 import JSONEditorModal from '@/components/JSONEditorModal';
 import config from '@/app/config';
 
@@ -325,18 +326,12 @@ ${formData.generationSettings}
         Please confirm which DTM provider you are using:
       </p>
       <div className="space-y-4">
-        <div className="flex items-center space-x-3">
-          <input
-            type="checkbox"
-            id="srtm30-checkbox"
-            checked={dtmProvider === 'SRTM30'}
-            onChange={(e) => setDtmProvider(e.target.checked ? 'SRTM30' : '')}
-            className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-          />
-          <label htmlFor="srtm30-checkbox" className="text-gray-900 dark:text-gray-300 font-medium">
-            I am using SRTM30 DTM provider
-          </label>
-        </div>
+        <Checkbox
+          label="I am using SRTM30 DTM provider"
+          checked={dtmProvider === 'SRTM30'}
+          onChange={(checked) => setDtmProvider(checked ? 'SRTM30' : '')}
+          size="md"
+        />
       </div>
       {!dtmProvider && (
         <div className="p-6 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-lg">
@@ -404,28 +399,30 @@ ${formData.generationSettings}
           { key: 'understandTextureSchema', label: 'I understand what a texture schema is', link: 'https://maps4fs.gitbook.io/docs/understanding-the-basics/texture_schema' },
           { key: 'verifiedTextureSchema', label: 'I have verified that my texture schema contains the OSM tags for the objects I\'m missing (if texture-related)', link: null }
         ].map(({ key, label, link }) => (
-          <div key={key} className="flex items-center space-x-3">
-            <input
-              type="checkbox"
-              id={key}
-              checked={checklist[key]}
-              onChange={() => handleChecklistChange(key)}
-              className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-            />
-            <label htmlFor={key} className="flex-1 text-sm font-medium text-gray-900 dark:text-gray-300">
-              {label}
-              {link && (
-                <a
-                  href={link}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="ml-2 text-blue-600 dark:text-blue-400 hover:underline"
-                >
-                  <i className="zmdi zmdi-link text-xs"></i>
-                </a>
-              )}
-            </label>
-          </div>
+          <Checkbox
+            key={key}
+            id={key}
+            label={(
+              <span>
+                {label}
+                {link && (
+                  <a
+                    href={link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ml-2 text-blue-600 dark:text-blue-400 hover:underline"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <i className="zmdi zmdi-link text-xs"></i>
+                  </a>
+                )}
+              </span>
+            )}
+            checked={checklist[key]}
+            onChange={(checked) => handleChecklistChange(key)}
+            size="md"
+            className="mb-4"
+          />
         ))}
       </div>
 
