@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import AppHeader from '@/components/AppHeader';
 import TextInput from '@/components/TextInput';
 import Checkbox from '@/components/Checkbox';
 import JSONEditorModal from '@/components/JSONEditorModal';
@@ -623,36 +624,25 @@ ${formData.generationSettings}
   );
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-4xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => router.back()}
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
-                title="Go Back"
-              >
-                <i className="zmdi zmdi-arrow-left text-xl"></i>
-              </button>
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                Maps4FS - Get Help
-              </h1>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="h-screen bg-white dark:bg-gray-900 flex flex-col overflow-hidden" style={{ minWidth: '1000px' }}>
+      {/* Shared App Header */}
+      <AppHeader 
+        showTabs={false}
+        customTitle="Get Help"
+        onBackClick={() => router.back()}
+      />
 
       {/* Content */}
-      <div className="max-w-4xl mx-auto px-6 py-8">
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8">
-          {currentStep === 1 && renderStep1()}
-          {currentStep === 2 && renderStep2()}
-          {currentStep === 'public-not-working' && renderPublicNotWorking()}
-          {currentStep === 3 && renderStep3()}
-          {currentStep === 4 && renderStep4()}
-          {currentStep === 5 && renderStep5()}
+      <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
+        <div className="max-w-4xl mx-auto px-6 py-8">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8">
+            {currentStep === 1 && renderStep1()}
+            {currentStep === 2 && renderStep2()}
+            {currentStep === 'public-not-working' && renderPublicNotWorking()}
+            {currentStep === 3 && renderStep3()}
+            {currentStep === 4 && renderStep4()}
+            {currentStep === 5 && renderStep5()}
+          </div>
         </div>
       </div>
 
