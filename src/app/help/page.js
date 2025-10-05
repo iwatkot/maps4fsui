@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AppHeader from '@/components/AppHeader';
+import HelpStructuredData from '@/components/HelpStructuredData';
 import TextInput from '@/components/TextInput';
 import Checkbox from '@/components/Checkbox';
 import JSONEditorModal from '@/components/JSONEditorModal';
@@ -624,13 +625,15 @@ ${formData.generationSettings}
   );
 
   return (
-    <div className="h-screen bg-white dark:bg-gray-900 flex flex-col overflow-hidden" style={{ minWidth: '1000px' }}>
-      {/* Shared App Header */}
-      <AppHeader 
-        showTabs={false}
-        customTitle="Get Help"
-        onBackClick={() => router.back()}
-      />
+    <>
+      <HelpStructuredData />
+      <div className="h-screen bg-white dark:bg-gray-900 flex flex-col overflow-hidden" style={{ minWidth: '1000px' }}>
+        {/* Shared App Header */}
+        <AppHeader 
+          showTabs={false}
+          customTitle="Get Help"
+          onBackClick={() => router.back()}
+        />
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
@@ -654,6 +657,7 @@ ${formData.generationSettings}
         jsonData={jsonModal.data}
         title={jsonModal.title}
       />
-    </div>
+      </div>
+    </>
   );
 }
