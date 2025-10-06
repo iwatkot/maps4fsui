@@ -43,6 +43,12 @@ export default function AppHeader({
       label: 'My Maps',
       icon: <i className="zmdi zmdi-collection-folder-image"></i>,
     }] : []),
+    // Only show Presets tab in non-public version
+    ...(!isPublicVersion ? [{
+      id: 'presets',
+      label: 'Presets',
+      icon: <i className="zmdi zmdi-storage"></i>
+    }] : []),
     {
       id: 'schemas',
       label: 'Schemas Editor',

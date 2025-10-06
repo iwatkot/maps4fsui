@@ -273,8 +273,96 @@ export default function MyMapsTab({ onDuplicateMap }) {
     } else if (type === 'generation_info') {
       setJsonData(selectedMap.generationInfo);
       setJsonType('Generation Info');
+    } else if (type === 'main_settings') {
+      setJsonData(selectedMap.mainSettings);
+      setJsonType('Main Settings');
     }
     setShowJSONModal(true);
+  };
+
+  // Handle saving settings to presets
+  const handleSaveToPresets = async (type, data, mapName) => {
+    if (!data || !mapName) return;
+    
+    try {
+      const response = await fetch('/api/presets/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: type,
+          data: data,
+          filename: `${mapName.replace(/[^a-zA-Z0-9_-]/g, '_')}.json`
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to save to presets');
+      }
+
+      showToast(`${type === 'mainSettings' ? 'Main Settings' : 'Generation Settings'} saved to presets successfully!`, 'success');
+    } catch (error) {
+      console.error('Error saving to presets:', error);
+      showToast(`Failed to save to presets: ${error.message}`, 'error');
+    }
+  };
+
+  // Handle saving custom OSM to presets
+  const handleSaveCustomOsm = async (mapId, mapName) => {
+    if (!mapId || !mapName) return;
+    
+    try {
+      const response = await fetch('/api/presets/save-osm', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          mapId: mapId,
+          filename: `${mapName.replace(/[^a-zA-Z0-9_-]/g, '_')}.osm`
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to save OSM to presets');
+      }
+
+      showToast('Custom OSM saved to presets successfully!', 'success');
+    } catch (error) {
+      console.error('Error saving OSM to presets:', error);
+      showToast(`Failed to save OSM to presets: ${error.message}`, 'error');
+    }
+  };
+
+  // Handle saving custom DEM to presets
+  const handleSaveCustomDem = async (mapId, mapName) => {
+    if (!mapId || !mapName) return;
+    
+    try {
+      const response = await fetch('/api/presets/save-dem', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          mapId: mapId,
+          filename: `${mapName.replace(/[^a-zA-Z0-9_-]/g, '_')}.png`
+        })
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Failed to save DEM to presets');
+      }
+
+      showToast('Custom DEM saved to presets successfully!', 'success');
+    } catch (error) {
+      console.error('Error saving DEM to presets:', error);
+      showToast(`Failed to save DEM to presets: ${error.message}`, 'error');
+    }
   };
 
   // Handle map deletion
@@ -747,6 +835,14 @@ export default function MyMapsTab({ onDuplicateMap }) {
                       </span>
                     )}
                     
+                    {/* Custom DEM */}
+                    {map.mainSettings?.custom_dem && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300">
+                        <i className="zmdi zmdi-landscape mr-1 text-xs"></i>
+                        Custom DEM
+                      </span>
+                    )}
+                    
                     {/* Generation Settings Pills */}
                     {map.generationSettings?.DEMSettings?.add_foundations && (
                       <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
@@ -1113,14 +1209,39 @@ export default function MyMapsTab({ onDuplicateMap }) {
                     </button>
                   )}
                   
-                  {/* JSON Viewer Actions - Positions 3 & 4 with grey */}
-                  <button 
-                    onClick={() => handleShowJSON('generation_settings')}
-                    className="w-full px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
-                  >
-                    <i className="zmdi zmdi-code mr-2"></i>
-                    Generation Settings
-                  </button>
+                  {/* JSON Viewer Actions - Positions 3, 4 & 5 with grey */}
+                  <div className="flex items-center space-x-2">
+                    <button 
+                      onClick={() => handleShowJSON('main_settings')}
+                      className="flex-1 px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
+                    >
+                      <i className="zmdi zmdi-settings mr-2"></i>
+                      Main Settings
+                    </button>
+                    <button
+                      onClick={() => handleSaveToPresets('mainSettings', selectedMap.mainSettings, selectedMap.name)}
+                      className="px-4 py-3 min-h-[44px] bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center justify-center"
+                      title="Save to Presets"
+                    >
+                      <i className="zmdi zmdi-bookmark"></i>
+                    </button>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <button 
+                      onClick={() => handleShowJSON('generation_settings')}
+                      className="flex-1 px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
+                    >
+                      <i className="zmdi zmdi-code mr-2"></i>
+                      Generation Settings
+                    </button>
+                    <button
+                      onClick={() => handleSaveToPresets('generationSettings', selectedMap.generationSettings, selectedMap.name)}
+                      className="px-4 py-3 min-h-[44px] bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center justify-center"
+                      title="Save to Presets"
+                    >
+                      <i className="zmdi zmdi-bookmark"></i>
+                    </button>
+                  </div>
                   <button 
                     onClick={() => handleShowJSON('generation_info')}
                     className="w-full px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
@@ -1128,6 +1249,27 @@ export default function MyMapsTab({ onDuplicateMap }) {
                     <i className="zmdi zmdi-info mr-2"></i>
                     Generation Info
                   </button>
+                  
+                  {/* Custom OSM and DEM Actions */}
+                  {selectedMap.mainSettings?.custom_osm && (
+                    <button 
+                      onClick={() => handleSaveCustomOsm(selectedMap.id, selectedMap.name)}
+                      className="w-full px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
+                    >
+                      <i className="zmdi zmdi-bookmark mr-2"></i>
+                      Save Custom OSM to Presets
+                    </button>
+                  )}
+                  
+                  {selectedMap.mainSettings?.custom_dem && (
+                    <button 
+                      onClick={() => handleSaveCustomDem(selectedMap.id, selectedMap.name)}
+                      className="w-full px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
+                    >
+                      <i className="zmdi zmdi-bookmark mr-2"></i>
+                      Save Custom DEM to Presets
+                    </button>
+                  )}
                   
                   {/* Other status-specific actions */}
                   {(selectedMap.status === 'error' || selectedMap.status === 'incomplete') && (

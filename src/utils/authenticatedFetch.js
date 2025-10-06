@@ -56,6 +56,33 @@ export async function getAuthenticatedStlUrl(url) {
 }
 
 /**
+ * Authenticated fetch for API calls
+ * @param {string} url - The URL (can be relative or absolute)
+ * @param {object} options - Fetch options
+ * @returns {Promise<Response>} - The fetch response
+ */
+export async function getAuthenticatedFetch(url, options = {}) {
+  try {
+    // For relative URLs (starting with /), make them relative to current origin
+    // For full URLs, use as-is
+    const fetchUrl = url.startsWith('/') ? url : url.startsWith('http') ? url : `${config.backendUrl}${url}`;
+    
+    const response = await fetch(fetchUrl, {
+      ...options,
+      headers: {
+        ...apiService.getHeaders(),
+        ...options.headers
+      }
+    });
+
+    return response;
+  } catch (error) {
+    console.error('Error in authenticated fetch:', error);
+    throw error;
+  }
+}
+
+/**
  * Cleanup blob URLs to prevent memory leaks
  * @param {string} blobUrl - The blob URL to revoke
  */
