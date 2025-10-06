@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import Tabs from '@/components/Tabs';
 import JSONEditorModal from '@/components/JSONEditorModal';
 import config from '@/app/config';
 import { getAuthenticatedFetch } from '@/utils/authenticatedFetch';
@@ -118,8 +117,14 @@ export default function PresetsTab() {
 
   const formatFileSize = (bytes) => {
     if (!bytes) return 'Unknown';
+    const kb = bytes / 1024;
     const mb = bytes / (1024 * 1024);
-    return `${mb.toFixed(2)} MB`;
+    
+    if (mb >= 1) {
+      return `${mb.toFixed(2)} MB`;
+    } else {
+      return `${kb.toFixed(1)} KB`;
+    }
   };
 
   const formatDate = (dateString) => {
@@ -408,11 +413,24 @@ export default function PresetsTab() {
 
       {/* Tab Navigation */}
       <div className="flex-shrink-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <Tabs
-          tabs={tabs}
-          activeTab={activeSection}
-          onTabChange={setActiveSection}
-        />
+        <div className="max-w-7xl mx-auto px-6">
+          <nav className="flex space-x-8" aria-label="Tabs">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveSection(tab.id)}
+                className={`whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors flex items-center ${
+                  activeSection === tab.id
+                    ? 'border-blue-500 text-blue-600 dark:text-blue-400'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:border-gray-600'
+                }`}
+              >
+                {tab.icon && <span className="mr-2">{tab.icon}</span>}
+                {tab.label}
+              </button>
+            ))}
+          </nav>
+        </div>
       </div>
 
       {/* Content Area */}
@@ -454,8 +472,14 @@ function FileRow({ file, onPreview, onRename, onSetAsDefault, onDelete }) {
 
   const formatFileSize = (bytes) => {
     if (!bytes) return 'Unknown';
+    const kb = bytes / 1024;
     const mb = bytes / (1024 * 1024);
-    return `${mb.toFixed(2)} MB`;
+    
+    if (mb >= 1) {
+      return `${mb.toFixed(2)} MB`;
+    } else {
+      return `${kb.toFixed(1)} KB`;
+    }
   };
 
   const formatDate = (dateString) => {
