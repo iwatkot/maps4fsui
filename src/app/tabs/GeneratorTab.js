@@ -98,7 +98,7 @@ export default function GeneratorTab({
   const [isQueueOverloaded, setIsQueueOverloaded] = useState(false);
   const [queueCheckError, setQueueCheckError] = useState(false);
   const [isCheckingQueue, setIsCheckingQueue] = useState(false);
-  const QUEUE_LIMIT = 1; // Hardcoded limit for public version
+  const QUEUE_LIMIT = 10; // Hardcoded limit for public version
 
   // State for managing closable sections - avoid hydration mismatch
   const [showIntro, setShowIntro] = useState(true);
