@@ -32,6 +32,7 @@ import GrleSettingsContent from '@/app/settings/grleSettings';
 import I3dSettingsContent from '@/app/settings/i3dSettings';
 import TextureSettingsContent from '@/app/settings/textureSettings';
 import SatelliteSettingsContent from '@/app/settings/satelliteSettings';
+import PresetSelector from '@/components/PresetSelector';
 
 const isPublicVersion = config.isPublicVersion;
 const backendUrl = config.backendUrl;
@@ -82,6 +83,10 @@ export default function GeneratorTab({
 
   // State for pending generation settings from duplication
   const [pendingGenerationSettings, setPendingGenerationSettings] = useState(null);
+
+  // State for preset management
+  const [presetsDisabled, setPresetsDisabled] = useState(false);
+  const [presetDisableReason, setPresetDisableReason] = useState('');
 
   // State for managing closable sections - avoid hydration mismatch
   const [showIntro, setShowIntro] = useState(true);
@@ -142,6 +147,10 @@ export default function GeneratorTab({
   // Handle map duplication data
   useEffect(() => {
     if (duplicateMapData && onDuplicateDataProcessed) {
+      // Disable presets when duplicate map is being processed
+      setPresetsDisabled(true);
+      setPresetDisableReason('Map duplication in progress - presets disabled');
+      
       const { mainSettings, generationSettings, customOsm } = duplicateMapData;
       
       // Populate form fields from main settings
@@ -211,6 +220,76 @@ export default function GeneratorTab({
       onDuplicateDataProcessed();
     }
   }, [duplicateMapData, onDuplicateDataProcessed, setSelectedDTMProvider]);
+
+  // Function to clear all presets (used when duplicating map)
+  const clearAllPresets = () => {
+    // Clear preset selections in PresetSelector components
+    // This will be handled by passing a reset flag to the components
+    console.log('Clearing all preset selections due to map duplication');
+  };
+
+  // Function to re-enable presets
+  const enablePresets = () => {
+    setPresetsDisabled(false);
+    setPresetDisableReason('');
+    console.log('Presets re-enabled');
+  };
+
+  // Function to apply main settings preset
+  const applyMainSettingsPreset = (presetData) => {
+    console.log('Applying main settings preset:', presetData);
+    
+    try {
+      // 1. Game Version - convert uppercase to lowercase (FS25 -> fs25, FS22 -> fs22)
+      if (presetData.game) {
+        const gameValue = presetData.game.toLowerCase();
+        setSelectedGame(gameValue);
+        console.log('Set game to:', gameValue);
+      }
+      
+      // 2. Coordinates - combine latitude and longitude into string format
+      if (presetData.latitude !== undefined && presetData.longitude !== undefined) {
+        const coordsString = `${presetData.latitude}, ${presetData.longitude}`;
+        setCoordinatesInput(coordsString);
+        console.log('Set coordinates to:', coordsString);
+      }
+      
+      // 3. Map Size - check if standard size or custom
+      if (presetData.size) {
+        const standardSizes = [2048, 4096, 8192, 16384];
+        if (standardSizes.includes(presetData.size)) {
+          setSelectedSize(presetData.size);
+          console.log('Set standard size to:', presetData.size);
+        } else {
+          // Custom size
+          setSelectedSize("custom");
+          setCustomSize(presetData.size);
+          console.log('Set custom size to:', presetData.size);
+        }
+      }
+      
+      // 4. Output Size
+      if (presetData.output_size) {
+        setOutputSize(presetData.output_size);
+        console.log('Set output size to:', presetData.output_size);
+      }
+      
+      // 5. Rotation
+      if (presetData.rotation !== undefined) {
+        setRotation(presetData.rotation);
+        console.log('Set rotation to:', presetData.rotation);
+      }
+      
+      // 6. DTM Provider - store for later application when options are loaded
+      if (presetData.dtm_provider) {
+        console.log('Storing pending DTM provider from preset:', presetData.dtm_provider);
+        setPendingDTMProvider(presetData.dtm_provider);
+      }
+      
+    } catch (error) {
+      console.error('Error applying main settings preset:', error);
+    }
+  };
 
   // Set pending DTM provider when options are loaded
   useEffect(() => {
@@ -414,6 +493,101 @@ export default function GeneratorTab({
             </a>
           </div>
         </div>
+        )}
+
+        {/* Preset Panel - Only show in non-public version */}
+        {!isPublicVersion && (
+          <div className={`border rounded-lg p-4 mb-6 ${
+            presetsDisabled 
+              ? 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800' 
+              : 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
+          }`}>
+            <div className="flex items-center mb-3">
+              <i className={`zmdi mr-2 ${
+                presetsDisabled 
+                  ? 'zmdi-alert-triangle text-yellow-600 dark:text-yellow-400' 
+                  : 'zmdi-storage text-blue-600 dark:text-blue-400'
+              }`}></i>
+              <h3 className={`text-sm font-medium ${
+                presetsDisabled 
+                  ? 'text-yellow-900 dark:text-yellow-100' 
+                  : 'text-blue-900 dark:text-blue-100'
+              }`}>
+                Quick Load Presets
+              </h3>
+            </div>
+            
+            {/* Disabled notification */}
+            {presetsDisabled && (
+              <div className="mb-3 p-2 bg-yellow-100 dark:bg-yellow-900/30 border border-yellow-300 dark:border-yellow-700 rounded">
+                <div className="flex items-center justify-between">
+                  <div className="text-sm text-yellow-800 dark:text-yellow-200">
+                    <i className="zmdi zmdi-info mr-1"></i>
+                    {presetDisableReason}
+                  </div>
+                  <button
+                    onClick={enablePresets}
+                    className="px-2 py-1 bg-yellow-200 hover:bg-yellow-300 dark:bg-yellow-800 dark:hover:bg-yellow-700 text-yellow-800 dark:text-yellow-200 text-xs rounded transition-colors"
+                  >
+                    Re-enable Presets
+                  </button>
+                </div>
+              </div>
+            )}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <PresetSelector
+                key={`mainSettings-${presetsDisabled}`}
+                type="mainSettings"
+                label="Main Settings"
+                icon={<i className="zmdi zmdi-settings"></i>}
+                disabled={presetsDisabled}
+                onPresetSelect={(preset) => {
+                  if (preset && !presetsDisabled) {
+                    applyMainSettingsPreset(preset);
+                  }
+                }}
+              />
+              <PresetSelector
+                key={`generationSettings-${presetsDisabled}`}
+                type="generationSettings"
+                label="Generation Settings"
+                icon={<i className="zmdi zmdi-tune"></i>}
+                disabled={presetsDisabled}
+                onPresetSelect={(preset) => {
+                  if (preset && !presetsDisabled) {
+                    // Apply generation settings preset  
+                    console.log('Apply generation settings preset:', preset);
+                  }
+                }}
+              />
+              <PresetSelector
+                key={`osm-${presetsDisabled}`}
+                type="osm"
+                label="Custom OSM"
+                icon={<i className="zmdi zmdi-map"></i>}
+                disabled={presetsDisabled}
+                onPresetSelect={(preset) => {
+                  if (preset && !presetsDisabled) {
+                    // Apply OSM preset
+                    console.log('Apply OSM preset:', preset);
+                  }
+                }}
+              />
+              <PresetSelector
+                key={`dem-${presetsDisabled}`}
+                type="dem"
+                label="Custom DEM"
+                icon={<i className="zmdi zmdi-landscape"></i>}
+                disabled={presetsDisabled}
+                onPresetSelect={(preset) => {
+                  if (preset && !presetsDisabled) {
+                    // Apply DEM preset
+                    console.log('Apply DEM preset:', preset);
+                  }
+                }}
+              />
+            </div>
+          </div>
         )}
 
         {/* Game Selector */}

@@ -9,12 +9,12 @@ import { getAuthenticatedFetch } from '@/utils/authenticatedFetch';
  * PresetsTab - Tab for managing presets (OSM, DEM, Main Settings, Generation Settings)
  */
 export default function PresetsTab() {
-  const [activeSection, setActiveSection] = useState('osm');
+  const [activeSection, setActiveSection] = useState('mainSettings');
   const [files, setFiles] = useState({
-    osm: [],
-    dem: [],
     mainSettings: [],
-    generationSettings: []
+    generationSettings: [],
+    osm: [],
+    dem: []
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -25,13 +25,30 @@ export default function PresetsTab() {
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [fileToDelete, setFileToDelete] = useState(null);
+  const [defaultPresets, setDefaultPresets] = useState({
+    mainSettings: null,
+    generationSettings: null,
+    osm: null,
+    dem: null
+  });
+
+  // Load default presets from localStorage
+  useEffect(() => {
+    const savedDefaults = {
+      mainSettings: localStorage.getItem('defaultPreset_mainSettings'),
+      generationSettings: localStorage.getItem('defaultPreset_generationSettings'),
+      osm: localStorage.getItem('defaultPreset_osm'),
+      dem: localStorage.getItem('defaultPreset_dem')
+    };
+    setDefaultPresets(savedDefaults);
+  }, []);
 
   // Tab configuration
   const tabs = [
-    { id: 'osm', label: 'OSM', icon: <i className="zmdi zmdi-map"></i> },
-    { id: 'dem', label: 'DEM', icon: <i className="zmdi zmdi-landscape"></i> },
     { id: 'mainSettings', label: 'Main Settings', icon: <i className="zmdi zmdi-settings"></i> },
-    { id: 'generationSettings', label: 'Generation Settings', icon: <i className="zmdi zmdi-tune"></i> }
+    { id: 'generationSettings', label: 'Generation Settings', icon: <i className="zmdi zmdi-tune"></i> },
+    { id: 'osm', label: 'OSM', icon: <i className="zmdi zmdi-map"></i> },
+    { id: 'dem', label: 'DEM', icon: <i className="zmdi zmdi-landscape"></i> }
   ];
 
   // Load files for all sections
@@ -45,17 +62,17 @@ export default function PresetsTab() {
     
     try {
       const results = await Promise.allSettled([
-        loadSectionFiles('osm'),
-        loadSectionFiles('dem'), 
         loadSectionFiles('mainSettings'),
-        loadSectionFiles('generationSettings')
+        loadSectionFiles('generationSettings'),
+        loadSectionFiles('osm'),
+        loadSectionFiles('dem')
       ]);
 
       const newFiles = {
-        osm: results[0].status === 'fulfilled' ? results[0].value : [],
-        dem: results[1].status === 'fulfilled' ? results[1].value : [],
-        mainSettings: results[2].status === 'fulfilled' ? results[2].value : [],
-        generationSettings: results[3].status === 'fulfilled' ? results[3].value : []
+        mainSettings: results[0].status === 'fulfilled' ? results[0].value : [],
+        generationSettings: results[1].status === 'fulfilled' ? results[1].value : [],
+        osm: results[2].status === 'fulfilled' ? results[2].value : [],
+        dem: results[3].status === 'fulfilled' ? results[3].value : []
       };
 
       setFiles(newFiles);
@@ -314,8 +331,23 @@ export default function PresetsTab() {
   };
 
   const handleSetAsDefault = (file) => {
-    // Placeholder for set as default logic
-    showToast(`Set "${file.name}" as default (functionality coming soon)`);
+    const key = `defaultPreset_${activeSection}`;
+    localStorage.setItem(key, file.name);
+    setDefaultPresets(prev => ({
+      ...prev,
+      [activeSection]: file.name
+    }));
+    showToast(`Set "${file.name}" as default ${tabs.find(t => t.id === activeSection)?.label} preset`);
+  };
+
+  const handleRemoveDefault = (section) => {
+    const key = `defaultPreset_${section}`;
+    localStorage.removeItem(key);
+    setDefaultPresets(prev => ({
+      ...prev,
+      [section]: null
+    }));
+    showToast(`Removed default ${tabs.find(t => t.id === section)?.label} preset`);
   };
 
   const handleDelete = (file) => {
@@ -433,41 +465,72 @@ export default function PresetsTab() {
       );
     }
 
+    // Sort files to show default first
+    const defaultPreset = defaultPresets[activeSection];
+    const sortedFiles = [...sectionFiles].sort((a, b) => {
+      if (a.name === defaultPreset) return -1;
+      if (b.name === defaultPreset) return 1;
+      return 0;
+    });
+
     return (
-      <div className="overflow-x-auto">
-        <table className="w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
-          <thead className="bg-gray-50 dark:bg-gray-700">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                Name
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                Size
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                Created
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                Modified
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                Actions
-              </th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-            {sectionFiles.map((file, index) => (
-              <FileRow
-                key={`${file.path}-${index}`}
-                file={file}
-                onPreview={handlePreview}
-                onRename={handleRename}
-                onSetAsDefault={handleSetAsDefault}
-                onDelete={handleDelete}
-              />
-            ))}
-          </tbody>
-        </table>
+      <div className="space-y-4">
+        {/* Default Preset Info */}
+        {defaultPreset && (
+          <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <i className="zmdi zmdi-star text-green-600 dark:text-green-400 mr-2"></i>
+                <span className="text-sm font-medium text-green-800 dark:text-green-200">
+                  Default: {defaultPreset}
+                </span>
+              </div>
+              <button
+                onClick={() => handleRemoveDefault(activeSection)}
+                className="px-3 py-1 bg-red-100 hover:bg-red-200 dark:bg-red-900/30 dark:hover:bg-red-800/50 text-red-700 dark:text-red-400 text-xs rounded transition-colors"
+              >
+                Remove Default
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className="overflow-x-auto">
+          <table className="w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
+            <thead className="bg-gray-50 dark:bg-gray-700">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  Name
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  Size
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  Created
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  Modified
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+              {sortedFiles.map((file, index) => (
+                <FileRow
+                  key={`${file.path}-${index}`}
+                  file={file}
+                  isDefault={file.name === defaultPreset}
+                  onPreview={handlePreview}
+                  onRename={handleRename}
+                  onSetAsDefault={handleSetAsDefault}
+                  onDelete={handleDelete}
+                />
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     );
   };
@@ -596,7 +659,7 @@ export default function PresetsTab() {
 /**
  * FileRow component for displaying individual file information
  */
-function FileRow({ file, onPreview, onRename, onSetAsDefault, onDelete }) {
+function FileRow({ file, isDefault, onPreview, onRename, onSetAsDefault, onDelete }) {
   const [isRenaming, setIsRenaming] = useState(false);
   const [newName, setNewName] = useState(file.name);
 
@@ -630,7 +693,7 @@ function FileRow({ file, onPreview, onRename, onSetAsDefault, onDelete }) {
   };
 
   return (
-    <tr className="hover:bg-gray-50 dark:hover:bg-gray-700">
+    <tr className={`hover:bg-gray-50 dark:hover:bg-gray-700 ${isDefault ? 'bg-green-50 dark:bg-green-900/20' : ''}`}>
       <td className="px-6 py-4 whitespace-nowrap">
         {isRenaming ? (
           <form onSubmit={handleRenameSubmit} className="flex items-center space-x-2">
@@ -661,8 +724,11 @@ function FileRow({ file, onPreview, onRename, onSetAsDefault, onDelete }) {
             </button>
           </form>
         ) : (
-          <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-            {file.name}
+          <div className="flex items-center">
+            {isDefault && <i className="zmdi zmdi-star text-green-600 dark:text-green-400 mr-2"></i>}
+            <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+              {file.name}
+            </div>
           </div>
         )}
       </td>

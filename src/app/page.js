@@ -86,7 +86,7 @@ export default function Home() {
             <SchemasTab />
           </div>
         )}
-        {activeTab === 'presets' && (
+        {activeTab === 'presets' && !isPublicVersion && (
           <div className="absolute inset-0 animate-fade-in">
             <PresetsTab />
           </div>
