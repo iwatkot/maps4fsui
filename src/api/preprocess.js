@@ -205,5 +205,14 @@ export const preprocessMainSettings = async (data) => {
     preprocessedMainSettings.dtmSettings = data.dtm_settings;
   }
 
+  // Add preset file paths if present
+  if (data.custom_osm_path) {
+    preprocessedMainSettings.customOsmPath = data.custom_osm_path;
+  }
+
+  if (data.custom_dem_path) {
+    preprocessedMainSettings.customDemPath = data.custom_dem_path;
+  }
+
   return preprocessedMainSettings;
 }

@@ -87,6 +87,10 @@ export default function GeneratorTab({
   // State for preset management
   const [presetsDisabled, setPresetsDisabled] = useState(false);
   const [presetDisableReason, setPresetDisableReason] = useState('');
+  
+  // State for selected preset files (OSM and DEM)
+  const [selectedOsmPreset, setSelectedOsmPreset] = useState(null);
+  const [selectedDemPreset, setSelectedDemPreset] = useState(null);
 
   // State for managing closable sections - avoid hydration mismatch
   const [showIntro, setShowIntro] = useState(true);
@@ -150,6 +154,10 @@ export default function GeneratorTab({
       // Disable presets when duplicate map is being processed
       setPresetsDisabled(true);
       setPresetDisableReason('Map duplication in progress - presets disabled');
+      
+      // Clear any selected preset files
+      setSelectedOsmPreset(null);
+      setSelectedDemPreset(null);
       
       const { mainSettings, generationSettings, customOsm } = duplicateMapData;
       
@@ -233,6 +241,7 @@ export default function GeneratorTab({
   const enablePresets = () => {
     setPresetsDisabled(false);
     setPresetDisableReason('');
+    // Don't clear preset selections when re-enabling, let user choose
     console.log('Presets re-enabled');
   };
 
@@ -252,6 +261,44 @@ export default function GeneratorTab({
       console.log('Generation settings preset applied, keys:', Object.keys(presetData));
     } catch (error) {
       console.error('Error applying generation settings preset:', error);
+    }
+  };
+
+  // Function to apply OSM preset
+  const applyOsmPreset = (presetFile) => {
+    console.log('Applying OSM preset:', presetFile);
+    
+    try {
+      // Check if presets are disabled (e.g., due to duplicate map processing)
+      if (presetsDisabled) {
+        console.log('Presets are disabled, skipping OSM preset application');
+        return;
+      }
+      
+      // Store the selected OSM preset file info
+      setSelectedOsmPreset(presetFile);
+      console.log('OSM preset selected:', presetFile.name);
+    } catch (error) {
+      console.error('Error applying OSM preset:', error);
+    }
+  };
+
+  // Function to apply DEM preset
+  const applyDemPreset = (presetFile) => {
+    console.log('Applying DEM preset:', presetFile);
+    
+    try {
+      // Check if presets are disabled (e.g., due to duplicate map processing)
+      if (presetsDisabled) {
+        console.log('Presets are disabled, skipping DEM preset application');
+        return;
+      }
+      
+      // Store the selected DEM preset file info
+      setSelectedDemPreset(presetFile);
+      console.log('DEM preset selected:', presetFile.name);
+    } catch (error) {
+      console.error('Error applying DEM preset:', error);
     }
   };
 
@@ -592,8 +639,10 @@ export default function GeneratorTab({
                 disabled={presetsDisabled}
                 onPresetSelect={(preset) => {
                   if (preset && !presetsDisabled) {
-                    // Apply OSM preset
-                    console.log('Apply OSM preset:', preset);
+                    applyOsmPreset(preset);
+                  } else if (!preset) {
+                    // Clear OSM preset selection
+                    setSelectedOsmPreset(null);
                   }
                 }}
               />
@@ -605,8 +654,10 @@ export default function GeneratorTab({
                 disabled={presetsDisabled}
                 onPresetSelect={(preset) => {
                   if (preset && !presetsDisabled) {
-                    // Apply DEM preset
-                    console.log('Apply DEM preset:', preset);
+                    applyDemPreset(preset);
+                  } else if (!preset) {
+                    // Clear DEM preset selection
+                    setSelectedDemPreset(null);
                   }
                 }}
               />
@@ -818,6 +869,17 @@ export default function GeneratorTab({
               // Add DTM settings if provider requires them
               if (providerInfo && providerInfo.settings_required) {
                 mainSettings.dtm_settings = dtmSettings;
+              }
+
+              // Add preset file paths if selected
+              if (selectedOsmPreset) {
+                mainSettings.custom_osm_path = selectedOsmPreset.name;
+                console.log('Including OSM preset in payload:', selectedOsmPreset.name);
+              }
+
+              if (selectedDemPreset) {
+                mainSettings.custom_dem_path = selectedDemPreset.name;
+                console.log('Including DEM preset in payload:', selectedDemPreset.name);
               }
 
               const settings = {
