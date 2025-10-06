@@ -23,6 +23,8 @@ export default function PresetsTab() {
   const [previewData, setPreviewData] = useState(null);
   const [previewType, setPreviewType] = useState('');
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [fileToDelete, setFileToDelete] = useState(null);
 
   // Tab configuration
   const tabs = [
@@ -316,10 +318,13 @@ export default function PresetsTab() {
     showToast(`Set "${file.name}" as default (functionality coming soon)`);
   };
 
-  const handleDelete = async (file) => {
-    if (!confirm(`Are you sure you want to delete "${file.name}"?`)) {
-      return;
-    }
+  const handleDelete = (file) => {
+    setFileToDelete(file);
+    setShowDeleteModal(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!fileToDelete) return;
 
     try {
       const response = await getAuthenticatedFetch('/api/files/delete', {
@@ -327,7 +332,7 @@ export default function PresetsTab() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ filePath: file.path })
+        body: JSON.stringify({ filePath: fileToDelete.path })
       });
 
       if (!response.ok) {
@@ -339,7 +344,15 @@ export default function PresetsTab() {
     } catch (err) {
       console.error('Failed to delete file:', err);
       showToast('Failed to delete file', 'error');
+    } finally {
+      setShowDeleteModal(false);
+      setFileToDelete(null);
     }
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false);
+    setFileToDelete(null);
   };
 
   const renderPreviewModal = () => {
@@ -538,6 +551,44 @@ export default function PresetsTab() {
 
       {/* Preview Modal */}
       {renderPreviewModal()}
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteModal && fileToDelete && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-gray-800 rounded-lg max-w-md w-full mx-4 p-6">
+            <div className="flex items-center mb-4">
+              <div className="flex-shrink-0 w-10 h-10 mx-auto bg-red-100 dark:bg-red-900 rounded-full flex items-center justify-center">
+                <i className="zmdi zmdi-alert-triangle text-red-600 dark:text-red-400 text-xl"></i>
+              </div>
+            </div>
+            
+            <div className="text-center">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+                Delete File
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                Are you sure you want to delete <span className="font-semibold">"{fileToDelete.name}"</span>? 
+                This action cannot be undone.
+              </p>
+              
+              <div className="flex justify-center space-x-4">
+                <button
+                  onClick={cancelDelete}
+                  className="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-400 dark:hover:bg-gray-500 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDelete}
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
