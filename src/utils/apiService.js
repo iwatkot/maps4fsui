@@ -297,6 +297,22 @@ class ApiService {
   }
 
   /**
+   * Get current queue size from backend (public version only)
+   * @returns {Promise<number>} - Current queue size
+   */
+  async getQueueSize() {
+    try {
+      logger.info('Checking queue size');
+      const response = await this.get('/info/queue_size');
+      logger.debug('Queue size response:', response);
+      return response.queue_size || 0;
+    } catch (error) {
+      logger.error('Failed to get queue size:', error.message);
+      return 0; // Return 0 if we can't get queue size (assume not overloaded)
+    }
+  }
+
+  /**
    * Get the full URL for an endpoint
    * @param {string} endpoint - API endpoint
    * @returns {string} - Full URL

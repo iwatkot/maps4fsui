@@ -33,6 +33,7 @@ import I3dSettingsContent from '@/app/settings/i3dSettings';
 import TextureSettingsContent from '@/app/settings/textureSettings';
 import SatelliteSettingsContent from '@/app/settings/satelliteSettings';
 import PresetSelector from '@/components/PresetSelector';
+import apiService from '@/utils/apiService';
 
 const isPublicVersion = config.isPublicVersion;
 const backendUrl = config.backendUrl;
@@ -92,6 +93,13 @@ export default function GeneratorTab({
   const [selectedOsmPreset, setSelectedOsmPreset] = useState(null);
   const [selectedDemPreset, setSelectedDemPreset] = useState(null);
 
+    // State for queue management (public version only)
+  const [queueSize, setQueueSize] = useState(0);
+  const [isQueueOverloaded, setIsQueueOverloaded] = useState(false);
+  const [queueCheckError, setQueueCheckError] = useState(false);
+  const [isCheckingQueue, setIsCheckingQueue] = useState(false);
+  const QUEUE_LIMIT = 1; // Hardcoded limit for public version
+
   // State for managing closable sections - avoid hydration mismatch
   const [showIntro, setShowIntro] = useState(true);
   const [isClient, setIsClient] = useState(false);
@@ -110,6 +118,52 @@ export default function GeneratorTab({
     setShowIntro(false);
     localStorage.setItem('maps4fs-intro-closed', 'true');
   };
+
+  // Function to check queue size (public version only)
+  const checkQueueSize = async () => {
+    if (!isPublicVersion || !isBackendAvailable) {
+      return;
+    }
+
+    setIsCheckingQueue(true);
+    try {
+      // Add minimum delay for smooth UX
+      const [queueResult] = await Promise.all([
+        apiService.getQueueSize(),
+        new Promise(resolve => setTimeout(resolve, 500)) // Minimum 500ms for smooth animation
+      ]);
+      
+      setQueueSize(queueResult);
+      setIsQueueOverloaded(queueResult >= QUEUE_LIMIT);
+      setQueueCheckError(false);
+      console.log(`Queue size: ${queueResult}/${QUEUE_LIMIT}`);
+    } catch (error) {
+      console.error('Failed to check queue size:', error);
+      setQueueCheckError(true);
+      // Don't block on error - assume not overloaded
+      setIsQueueOverloaded(false);
+      
+      // Add delay even for error case to prevent glitch
+      await new Promise(resolve => setTimeout(resolve, 500));
+    } finally {
+      setIsCheckingQueue(false);
+    }
+  };
+
+  // Check queue size periodically for public version
+  useEffect(() => {
+    if (!isPublicVersion || !isBackendAvailable) {
+      return;
+    }
+
+    // Initial check
+    checkQueueSize();
+
+    // Set up periodic checking every 30 seconds
+    const interval = setInterval(checkQueueSize, 30000);
+    
+    return () => clearInterval(interval);
+  }, [isPublicVersion, isBackendAvailable]);
 
   // OSM file handlers
   const handleDataSourceChange = (source) => {
@@ -479,7 +533,62 @@ export default function GeneratorTab({
   return (
     <div className="flex h-full">
       {/* Left Panel */}
-      <div className="w-1/2 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
+      <div className="w-1/2 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col relative">
+        
+        {/* Queue Overload Overlay - Only for public version */}
+        {isPublicVersion && isQueueOverloaded && (
+          <div className="absolute inset-0 bg-gray-900 bg-opacity-75 z-50 flex items-center justify-center">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md mx-4 text-center shadow-2xl border border-gray-200 dark:border-gray-600">
+              <div className="mb-4">
+                <i className="zmdi zmdi-time text-4xl text-orange-500"></i>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">
+                Server Overloaded
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-4">
+                The server is currently processing <span className="font-semibold text-orange-600">{queueSize}</span> maps. 
+                Please try again later or consider running locally for immediate processing.
+              </p>
+              <div className="space-y-3">
+                <button
+                  onClick={checkQueueSize}
+                  disabled={isCheckingQueue}
+                  className={`w-full px-4 py-2 text-white rounded-lg transition-all duration-300 ease-in-out flex items-center justify-center transform ${
+                    isCheckingQueue 
+                      ? 'bg-gray-400 cursor-not-allowed scale-95' 
+                      : 'bg-blue-600 hover:bg-blue-700 hover:scale-105 active:scale-95'
+                  }`}
+                >
+                  <div className={`flex items-center transition-all duration-300 ${isCheckingQueue ? 'opacity-100' : 'opacity-100'}`}>
+                    {isCheckingQueue ? (
+                      <>
+                        <div className="animate-spin mr-2 h-4 w-4 border-2 border-white border-t-transparent rounded-full transition-all duration-300"></div>
+                        <span className="transition-all duration-300">Checking...</span>
+                      </>
+                    ) : (
+                      <>
+                        <i className="zmdi zmdi-refresh mr-2 transition-all duration-300"></i>
+                        <span className="transition-all duration-300">Check Again</span>
+                      </>
+                    )}
+                  </div>
+                </button>
+                <a
+                  href="https://maps4fs.gitbook.io/docs/setup-and-installation/local_deployment"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center justify-center"
+                >
+                  <i className="zmdi zmdi-download mr-2"></i>
+                  Run Locally
+                </a>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  Queue limit: {QUEUE_LIMIT} • Current: {queueSize}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
         
         {/* Scrollable Settings Area */}
         <div className="flex-1 overflow-y-auto p-8">
@@ -664,6 +773,8 @@ export default function GeneratorTab({
             </div>
           </div>
         )}
+
+
 
         {/* Game Selector */}
         <Selector
