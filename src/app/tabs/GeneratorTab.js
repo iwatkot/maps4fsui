@@ -98,7 +98,8 @@ export default function GeneratorTab({
   const [isQueueOverloaded, setIsQueueOverloaded] = useState(false);
   const [queueCheckError, setQueueCheckError] = useState(false);
   const [isCheckingQueue, setIsCheckingQueue] = useState(false);
-  const QUEUE_LIMIT = 10; // Hardcoded limit for public version
+  const [isInitialQueueCheck, setIsInitialQueueCheck] = useState(true);
+  const QUEUE_LIMIT = 1; // Hardcoded limit for public version
 
   // State for managing closable sections - avoid hydration mismatch
   const [showIntro, setShowIntro] = useState(true);
@@ -112,6 +113,20 @@ export default function GeneratorTab({
       setShowIntro(false);
     }
   }, []);
+
+  // Manage initial queue check state based on props
+  useEffect(() => {
+    console.log('Managing initial queue check state:', { isPublicVersion, isBackendAvailable });
+    if (!isPublicVersion) {
+      // For local version, no need for overlay
+      console.log('Setting isInitialQueueCheck to false (local version)');
+      setIsInitialQueueCheck(false);
+    } else {
+      // For public version, show overlay immediately until queue check completes
+      console.log('Setting isInitialQueueCheck to true (public version)');
+      setIsInitialQueueCheck(true);
+    }
+  }, [isPublicVersion, isBackendAvailable]);
 
   // Handler to close intro and save to localStorage
   const handleCloseIntro = () => {
@@ -147,6 +162,8 @@ export default function GeneratorTab({
       await new Promise(resolve => setTimeout(resolve, 500));
     } finally {
       setIsCheckingQueue(false);
+      console.log('Queue check completed, setting isInitialQueueCheck to false');
+      setIsInitialQueueCheck(false); // Mark initial check as complete
     }
   }, [isPublicVersion, isBackendAvailable]);
 
@@ -535,6 +552,29 @@ export default function GeneratorTab({
       {/* Left Panel */}
       <div className="w-1/2 bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col relative">
         
+        {/* Initial Queue Check Overlay - Only for public version */}
+        {(() => {
+          const shouldShowOverlay = isPublicVersion && isInitialQueueCheck;
+          console.log('Overlay render check:', { isPublicVersion, isBackendAvailable, isInitialQueueCheck, shouldShowOverlay });
+          return shouldShowOverlay;
+        })() && (
+          <div className="absolute inset-0 bg-gray-900 bg-opacity-75 z-50 flex items-center justify-center">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md mx-4 text-center shadow-2xl border border-gray-200 dark:border-gray-600">
+              <div className="mb-4">
+                <div className="animate-spin h-12 w-12 border-4 border-blue-500 border-t-transparent rounded-full mx-auto"></div>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">
+                {isBackendAvailable ? 'Checking Server Queue' : 'Connecting to Server'}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                {isBackendAvailable 
+                  ? 'Checking server queue status...' 
+                  : 'Establishing connection to server...'}
+              </p>
+            </div>
+          </div>
+        )}
+
         {/* Queue Overload Overlay - Only for public version */}
         {isPublicVersion && isQueueOverloaded && (
           <div className="absolute inset-0 bg-gray-900 bg-opacity-75 z-50 flex items-center justify-center">
