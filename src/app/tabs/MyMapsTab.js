@@ -285,8 +285,6 @@ export default function MyMapsTab({ onDuplicateMap }) {
     if (!data || !mapName) return;
     
     try {
-      showToast('Saving to presets...', 'info');
-      
       const response = await fetch('/api/presets/save', {
         method: 'POST',
         headers: {
@@ -316,8 +314,6 @@ export default function MyMapsTab({ onDuplicateMap }) {
     if (!mapId || !mapName) return;
     
     try {
-      showToast('Saving custom OSM to presets...', 'info');
-      
       const response = await fetch('/api/presets/save-osm', {
         method: 'POST',
         headers: {
@@ -346,8 +342,6 @@ export default function MyMapsTab({ onDuplicateMap }) {
     if (!mapId || !mapName) return;
     
     try {
-      showToast('Saving custom DEM to presets...', 'info');
-      
       const response = await fetch('/api/presets/save-dem', {
         method: 'POST',
         headers: {
