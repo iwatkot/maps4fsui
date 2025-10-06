@@ -209,10 +209,11 @@ export default function GeneratorTab({
         processOsmData();
       }
       
-      // Handle generation settings
+      // Handle generation settings - duplicate map has highest priority
       if (generationSettings) {
         console.log('Storing pending generation settings from duplication:', generationSettings);
         console.log('Generation settings keys:', Object.keys(generationSettings));
+        // Clear any existing generation settings and apply from duplication
         setPendingGenerationSettings(generationSettings);
       }
       
@@ -235,11 +236,35 @@ export default function GeneratorTab({
     console.log('Presets re-enabled');
   };
 
+  // Function to apply generation settings preset
+  const applyGenerationSettingsPreset = (presetData) => {
+    console.log('Applying generation settings preset:', presetData);
+    
+    try {
+      // Check if presets are disabled (e.g., due to duplicate map processing)
+      if (presetsDisabled) {
+        console.log('Presets are disabled, skipping generation settings preset application');
+        return;
+      }
+      
+      // Store the generation settings - the existing logic will handle applying them
+      setPendingGenerationSettings(presetData);
+      console.log('Generation settings preset applied, keys:', Object.keys(presetData));
+    } catch (error) {
+      console.error('Error applying generation settings preset:', error);
+    }
+  };
+
   // Function to apply main settings preset
   const applyMainSettingsPreset = (presetData) => {
     console.log('Applying main settings preset:', presetData);
     
     try {
+      // Check if presets are disabled (e.g., due to duplicate map processing)
+      if (presetsDisabled) {
+        console.log('Presets are disabled, skipping main settings preset application');
+        return;
+      }
       // 1. Game Version - convert uppercase to lowercase (FS25 -> fs25, FS22 -> fs22)
       if (presetData.game) {
         const gameValue = presetData.game.toLowerCase();
@@ -555,8 +580,7 @@ export default function GeneratorTab({
                 disabled={presetsDisabled}
                 onPresetSelect={(preset) => {
                   if (preset && !presetsDisabled) {
-                    // Apply generation settings preset  
-                    console.log('Apply generation settings preset:', preset);
+                    applyGenerationSettingsPreset(preset);
                   }
                 }}
               />
