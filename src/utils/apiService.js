@@ -40,7 +40,7 @@ class ApiService {
     
     try {
       logger.info(`Making GET request to: ${url}`);
-
+      
       const response = await fetch(url, {
         method: 'GET',
         headers: this.getHeaders(options.headers),
@@ -50,15 +50,29 @@ class ApiService {
       logger.info(`Response status: ${response.status} ${response.statusText}`);
 
       if (!response.ok) {
-        const errorData = await response.text();
-        logger.error(`API Error: ${response.status} - ${errorData}`);
-        throw new ApiError(`HTTP ${response.status}: ${response.statusText}`, response.status, errorData);
+        let errorData;
+        let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        
+        try {
+          // Try to parse as JSON first to get the detail field
+          errorData = await response.json();
+          if (errorData.detail) {
+            errorMessage = errorData.detail;
+          }
+        } catch (jsonError) {
+          // If JSON parsing fails, fall back to text
+          errorData = await response.text();
+          if (errorData) {
+            errorMessage = errorData;
+          }
+        }
+        
+        logger.error(`API Error: ${response.status} - ${errorMessage}`);
+        throw new ApiError(errorMessage, response.status, errorData);
       }
 
       const responseData = await response.json();
-      logger.debug('Response data:', responseData);
-      
-      return responseData;
+      logger.debug('Response data:', responseData);      return responseData;
     } catch (error) {
       if (error instanceof ApiError) {
         throw error;
@@ -98,9 +112,25 @@ class ApiService {
       logger.info(`Response status: ${response.status} ${response.statusText}`);
 
       if (!response.ok) {
-        const errorData = await response.text();
-        logger.error(`API Error: ${response.status} - ${errorData}`);
-        throw new ApiError(`HTTP ${response.status}: ${response.statusText}`, response.status, errorData);
+        let errorData;
+        let errorMessage = `HTTP ${response.status}: ${response.statusText}`;
+        
+        try {
+          // Try to parse as JSON first to get the detail field
+          errorData = await response.json();
+          if (errorData.detail) {
+            errorMessage = errorData.detail;
+          }
+        } catch (jsonError) {
+          // If JSON parsing fails, fall back to text
+          errorData = await response.text();
+          if (errorData) {
+            errorMessage = errorData;
+          }
+        }
+        
+        logger.error(`API Error: ${response.status} - ${errorMessage}`);
+        throw new ApiError(errorMessage, response.status, errorData);
       }
 
       const responseData = await response.json();
