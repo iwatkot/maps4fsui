@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Selector from '@/components/Selector';
 import TextInput from '@/components/TextInput';
 import NumberInput from '@/components/NumberInput';
@@ -120,7 +120,7 @@ export default function GeneratorTab({
   };
 
   // Function to check queue size (public version only)
-  const checkQueueSize = async () => {
+  const checkQueueSize = useCallback(async () => {
     if (!isPublicVersion || !isBackendAvailable) {
       return;
     }
@@ -148,7 +148,7 @@ export default function GeneratorTab({
     } finally {
       setIsCheckingQueue(false);
     }
-  };
+  }, [isPublicVersion, isBackendAvailable]);
 
   // Check queue size periodically for public version
   useEffect(() => {
@@ -163,7 +163,7 @@ export default function GeneratorTab({
     const interval = setInterval(checkQueueSize, 30000);
     
     return () => clearInterval(interval);
-  }, [isPublicVersion, isBackendAvailable]);
+  }, [isPublicVersion, isBackendAvailable, checkQueueSize]);
 
   // OSM file handlers
   const handleDataSourceChange = (source) => {
