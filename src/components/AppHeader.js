@@ -44,6 +44,11 @@ export default function AppHeader({
       icon: <i className="zmdi zmdi-collection-folder-image"></i>,
     }] : []),
     {
+      id: 'presets',
+      label: 'Presets',
+      icon: <i className="zmdi zmdi-storage"></i>
+    },
+    {
       id: 'schemas',
       label: 'Schemas Editor',
       icon: <i className="zmdi zmdi-folder-outline"></i>

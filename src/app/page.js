@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import AppHeader from '@/components/AppHeader';
 import GeneratorTab from '@/app/tabs/GeneratorTab';
 import MyMapsTab from '@/app/tabs/MyMapsTab';
+import PresetsTab from '@/app/tabs/PresetsTab';
 import SchemasTab from '@/app/tabs/SchemasTab';
 import SlideOutPromo from '@/components/SlideOutPromo';
 import { useBackendVersion } from '@/hooks/useBackendVersion';
@@ -83,6 +84,11 @@ export default function Home() {
         {activeTab === 'schemas' && (
           <div className="absolute inset-0 animate-fade-in">
             <SchemasTab />
+          </div>
+        )}
+        {activeTab === 'presets' && (
+          <div className="absolute inset-0 animate-fade-in">
+            <PresetsTab />
           </div>
         )}
         {activeTab === 'my-maps' && (
