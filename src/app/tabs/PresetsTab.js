@@ -630,7 +630,7 @@ export default function PresetsTab() {
                 Delete File
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Are you sure you want to delete <span className="font-semibold">"{fileToDelete.name}"</span>? 
+                Are you sure you want to delete <span className="font-semibold">&quot;{fileToDelete.name}&quot;</span>? 
                 This action cannot be undone.
               </p>
               
