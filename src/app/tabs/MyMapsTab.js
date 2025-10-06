@@ -1218,10 +1218,10 @@ export default function MyMapsTab({ onDuplicateMap }) {
                     </button>
                     <button
                       onClick={() => handleSaveToPresets('mainSettings', selectedMap.mainSettings, selectedMap.name)}
-                      className="px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
+                      className="px-4 py-3 min-h-[44px] bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center justify-center"
                       title="Save to Presets"
                     >
-                      <i className="zmdi zmdi-bookmark mx-auto"></i>
+                      <i className="zmdi zmdi-bookmark"></i>
                     </button>
                   </div>
                   <div className="flex items-center space-x-2">
@@ -1234,10 +1234,10 @@ export default function MyMapsTab({ onDuplicateMap }) {
                     </button>
                     <button
                       onClick={() => handleSaveToPresets('generationSettings', selectedMap.generationSettings, selectedMap.name)}
-                      className="px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
+                      className="px-4 py-3 min-h-[44px] bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center justify-center"
                       title="Save to Presets"
                     >
-                      <i className="zmdi zmdi-bookmark mx-auto"></i>
+                      <i className="zmdi zmdi-bookmark"></i>
                     </button>
                   </div>
                   <button 
