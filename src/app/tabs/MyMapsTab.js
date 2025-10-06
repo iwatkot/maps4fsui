@@ -835,6 +835,14 @@ export default function MyMapsTab({ onDuplicateMap }) {
                       </span>
                     )}
                     
+                    {/* Custom DEM */}
+                    {map.mainSettings?.custom_dem && (
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300">
+                        <i className="zmdi zmdi-landscape mr-1 text-xs"></i>
+                        Custom DEM
+                      </span>
+                    )}
+                    
                     {/* Generation Settings Pills */}
                     {map.generationSettings?.DEMSettings?.add_foundations && (
                       <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300">
