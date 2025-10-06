@@ -115,6 +115,93 @@ export default function PresetsTab() {
     }
   };
 
+  const getSectionDescription = (section) => {
+    switch (section) {
+      case 'osm':
+        return (
+          <div>
+            <p className="mb-2">
+              OSM files contain OpenStreetMap data used to generate realistic map features including roads, buildings, 
+              forests, and water bodies. These files define the layout and structure of your map.
+            </p>
+            <p className="text-sm">
+              📖 Learn more: {' '}
+              <a 
+                href="https://maps4fs.gitbook.io/docs/advanced-topics/custom_osm" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                Custom OSM Documentation
+              </a>
+            </p>
+          </div>
+        );
+      case 'dem':
+        return (
+          <div>
+            <p className="mb-2">
+              DEM (Digital Elevation Model) files are PNG heightmaps that define the terrain elevation for both 
+              the playable area and background landscape. Proper preparation is essential for realistic terrain.
+            </p>
+            <p className="text-sm">
+              📖 Learn more: {' '}
+              <a 
+                href="https://maps4fs.gitbook.io/docs/advanced-topics/custom_dem" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                Custom DEM Documentation
+              </a>
+            </p>
+          </div>
+        );
+      case 'mainSettings':
+        return (
+          <div>
+            <p className="mb-2">
+              Main Settings define the core parameters for map generation including game version, coordinates, 
+              map size, rotation, and other fundamental properties that control the overall map structure.
+            </p>
+            <p className="text-sm">
+              📖 Learn more: {' '}
+              <a 
+                href="https://maps4fs.gitbook.io/docs/getting-started/step_by_step_guide#main-settings-overview" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                Main Settings Overview
+              </a>
+            </p>
+          </div>
+        );
+      case 'generationSettings':
+        return (
+          <div>
+            <p className="mb-2">
+              Generation Settings control various aspects of the map creation process including background terrain 
+              generation, water planes, field boundaries, forest density, and other detailed generation parameters.
+            </p>
+            <p className="text-sm">
+              📖 Learn more: {' '}
+              <a 
+                href="https://maps4fs.gitbook.io/docs/understanding-the-basics/generation_settings" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-blue-600 dark:text-blue-400 hover:underline"
+              >
+                Generation Settings Guide
+              </a>
+            </p>
+          </div>
+        );
+      default:
+        return <p>Manage your preset files</p>;
+    }
+  };
+
   const formatFileSize = (bytes) => {
     if (!bytes) return 'Unknown';
     const kb = bytes / 1024;
@@ -440,9 +527,9 @@ export default function PresetsTab() {
             <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
               {tabs.find(t => t.id === activeSection)?.label} Presets
             </h2>
-            <p className="text-gray-600 dark:text-gray-400">
-              Manage your {activeSection.toUpperCase()} preset files
-            </p>
+            <div className="text-gray-600 dark:text-gray-400">
+              {getSectionDescription(activeSection)}
+            </div>
           </div>
 
           {renderFileTable(files[activeSection])}
