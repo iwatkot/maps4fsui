@@ -113,7 +113,7 @@ export default function UpdateIndicator({
             disabled={isUpgradable !== true || isUpgrading}
             className={`ml-2 px-2 py-1 rounded text-xs font-medium transition-all duration-200 ${
               isUpgradable === true && !isUpgrading
-                ? 'bg-green-500 hover:bg-green-600 text-white shadow-sm hover:shadow-md'
+                ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-sm hover:shadow-md'
                 : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
             }`}
             title={getUpgradeButtonTooltip()}
@@ -234,7 +234,7 @@ export default function UpdateIndicator({
             </button>
             
             <div className="mb-4">
-              <div className="animate-spin h-12 w-12 border-4 border-green-500 border-t-transparent rounded-full mx-auto"></div>
+              <div className="animate-spin h-12 w-12 border-4 border-orange-500 border-t-transparent rounded-full mx-auto"></div>
             </div>
             <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">
               Upgrade Initiated
