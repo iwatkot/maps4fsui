@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
-import { createWriteStream } from 'fs';
+import { createWriteStream, createReadStream } from 'fs';
 import archiver from 'archiver';
 import config from '../../../config.js';
 
@@ -39,14 +39,15 @@ export async function GET(request) {
       await createZipArchive(mapDir, archivePath);
     }
     
-    // Serve the archive
-    const archiveBuffer = await fs.promises.readFile(archivePath);
+    // Serve the archive using streaming
+    const stat = await fs.promises.stat(archivePath);
+    const readStream = fs.createReadStream(archivePath);
     
-    return new NextResponse(archiveBuffer, {
+    return new NextResponse(readStream, {
       headers: {
         'Content-Type': 'application/zip',
         'Content-Disposition': `attachment; filename="${mapId}.zip"`,
-        'Content-Length': archiveBuffer.length.toString(),
+        'Content-Length': stat.size.toString(),
       },
     });
     
