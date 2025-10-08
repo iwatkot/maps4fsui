@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useServerUpgrade } from '@/hooks/useServerUpgrade';
 
 export default function UpdateIndicator({ 
@@ -41,11 +42,21 @@ export default function UpdateIndicator({
   // Auto-dismiss overlay after 30 seconds as a fallback
   useEffect(() => {
     if (showUpgradeOverlay) {
+      // Prevent body scrolling when overlay is shown
+      document.body.style.overflow = 'hidden';
+      
       const timer = setTimeout(() => {
         setShowUpgradeOverlay(false);
       }, 30000); // 30 seconds
 
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(timer);
+        // Restore body scrolling when overlay is hidden
+        document.body.style.overflow = 'unset';
+      };
+    } else {
+      // Also restore scrolling when overlay is hidden via state change
+      document.body.style.overflow = 'unset';
     }
   }, [showUpgradeOverlay]);
 
@@ -113,7 +124,7 @@ export default function UpdateIndicator({
             disabled={isUpgradable !== true || isUpgrading}
             className={`ml-2 px-2 py-1 rounded text-xs font-medium transition-all duration-200 ${
               isUpgradable === true && !isUpgrading
-                ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-sm hover:shadow-md'
+                ? 'bg-orange-500 hover:bg-orange-600 text-white shadow-sm hover:shadow-md cursor-pointer'
                 : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
             }`}
             title={getUpgradeButtonTooltip()}
@@ -221,9 +232,9 @@ export default function UpdateIndicator({
       )}
 
       {/* Full-screen Upgrade Overlay - Shows regardless of dismissed state */}
-      {showUpgradeOverlay && (
-        <div className="fixed inset-0 bg-gray-900 bg-opacity-75 z-[9999] flex items-center justify-center">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md mx-4 text-center shadow-2xl border border-gray-200 dark:border-gray-600 relative">
+      {showUpgradeOverlay && typeof document !== 'undefined' && createPortal(
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-75 z-[99999] flex items-center justify-center transition-all duration-300 ease-out">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md mx-4 text-center shadow-2xl border border-gray-200 dark:border-gray-600 relative transform transition-all duration-300 ease-out">
             {/* Close button */}
             <button
               onClick={() => setShowUpgradeOverlay(false)}
@@ -259,7 +270,8 @@ export default function UpdateIndicator({
               Continue in Background
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
