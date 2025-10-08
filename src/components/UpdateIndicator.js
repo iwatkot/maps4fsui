@@ -10,6 +10,7 @@ export default function UpdateIndicator({
 }) {
   const [isDismissed, setIsDismissed] = useState(false);
   const [showTooltip, setShowTooltip] = useState(false);
+  const [showUpgradeOverlay, setShowUpgradeOverlay] = useState(false);
   const badgeRef = useRef(null);
   
   const { 
@@ -27,6 +28,26 @@ export default function UpdateIndicator({
       checkUpgradable();
     }
   }, [checkUpgradable, isDismissed]);
+
+  // Show overlay when upgrade is successful
+  useEffect(() => {
+    if (upgradeSuccess) {
+      setShowUpgradeOverlay(true);
+      setShowTooltip(false); // Hide any open tooltip
+      // Note: We don't auto-dismiss the indicator since user might want to see it again
+    }
+  }, [upgradeSuccess]);
+
+  // Auto-dismiss overlay after 30 seconds as a fallback
+  useEffect(() => {
+    if (showUpgradeOverlay) {
+      const timer = setTimeout(() => {
+        setShowUpgradeOverlay(false);
+      }, 30000); // 30 seconds
+
+      return () => clearTimeout(timer);
+    }
+  }, [showUpgradeOverlay]);
 
   if (isDismissed) return null;
 
@@ -72,9 +93,11 @@ export default function UpdateIndicator({
   };
 
   return (
-    <div className={`flex items-center mr-4 ${className}`}>
-      {/* Update available indicator */}
-      <div className="relative">
+    <>
+      {!isDismissed && (
+        <div className={`flex items-center mr-4 ${className}`}>
+          {/* Update available indicator */}
+          <div className="relative">
         <div 
           ref={badgeRef}
           className="flex items-center space-x-2 bg-orange-100 dark:bg-orange-900/30 text-orange-800 dark:text-orange-300 px-2 py-1 rounded-md border border-orange-200 dark:border-orange-800 text-xs"
@@ -194,6 +217,50 @@ export default function UpdateIndicator({
           </div>
         )}
       </div>
-    </div>
+        </div>
+      )}
+
+      {/* Full-screen Upgrade Overlay - Shows regardless of dismissed state */}
+      {showUpgradeOverlay && (
+        <div className="fixed inset-0 bg-gray-900 bg-opacity-75 z-[9999] flex items-center justify-center">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md mx-4 text-center shadow-2xl border border-gray-200 dark:border-gray-600 relative">
+            {/* Close button */}
+            <button
+              onClick={() => setShowUpgradeOverlay(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              title="Dismiss overlay (upgrade continues in background)"
+            >
+              <i className="zmdi zmdi-close text-lg"></i>
+            </button>
+            
+            <div className="mb-4">
+              <div className="animate-spin h-12 w-12 border-4 border-green-500 border-t-transparent rounded-full mx-auto"></div>
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-3">
+              Upgrade Initiated
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              The server upgrade has been initiated and is running in the background. 
+              This process may take several minutes to complete.
+            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-500 mb-6">
+              The server may restart during the upgrade process. Please wait patiently 
+              and avoid refreshing the page.
+            </p>
+            <div className="text-xs text-gray-400 dark:text-gray-600 mb-4">
+              Upgrading to version {latestVersion}...
+            </div>
+            
+            {/* Dismiss button */}
+            <button
+              onClick={() => setShowUpgradeOverlay(false)}
+              className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors text-sm"
+            >
+              Continue in Background
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

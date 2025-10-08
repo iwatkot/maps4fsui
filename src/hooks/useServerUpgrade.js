@@ -38,7 +38,14 @@ export const useServerUpgrade = () => {
       const response = await triggerServerUpgrade();
       
       logger.info(`Server upgrade initiated: ${response.message}`);
-      setUpgradeSuccess(true);
+      
+      // Check if the response indicates success
+      if (response.success) {
+        setUpgradeSuccess(true);
+        logger.info('Server upgrade initiated successfully');
+      } else {
+        throw new Error(response.message || 'Upgrade failed');
+      }
       
       // After successful upgrade trigger, the server might restart
       // so we should handle this appropriately
@@ -46,6 +53,7 @@ export const useServerUpgrade = () => {
     } catch (error) {
       logger.error('Failed to perform upgrade:', error.message);
       setUpgradeError(error.message);
+      setUpgradeSuccess(false);
       throw error;
     } finally {
       setIsUpgrading(false);
