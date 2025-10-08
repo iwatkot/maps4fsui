@@ -52,3 +52,50 @@ export async function getBackendVersionStatus() {
     throw error;
   }
 }
+
+/**
+ * Check if server is upgradable
+ * @returns {Promise<object>} - Object with upgradable status
+ * 
+ * Example response:
+ * {
+ *   "upgradable": true
+ * }
+ */
+export async function getServerUpgradable() {
+  try {
+    logger.info('Checking if server is upgradable');
+    
+    const response = await apiService.get('/server/upgradable');
+    
+    logger.info(`Server upgradable status: ${response.upgradable}`);
+    return response;
+  } catch (error) {
+    logger.error('Failed to check server upgradable status:', error.message);
+    throw error;
+  }
+}
+
+/**
+ * Trigger server upgrade
+ * @returns {Promise<object>} - Object with upgrade result
+ * 
+ * Example response:
+ * {
+ *   "status": "success",
+ *   "message": "Upgrade initiated"
+ * }
+ */
+export async function triggerServerUpgrade() {
+  try {
+    logger.info('Triggering server upgrade');
+    
+    const response = await apiService.post('/server/upgrade');
+    
+    logger.info(`Server upgrade response: ${response.status} - ${response.message}`);
+    return response;
+  } catch (error) {
+    logger.error('Failed to trigger server upgrade:', error.message);
+    throw error;
+  }
+}
