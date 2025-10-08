@@ -103,8 +103,8 @@ export default function AppHeader({
         <i className="zmdi zmdi-comments text-5xl" style={{fontSize: '1.2rem'}}></i>
       </a>
       
-      {/* Update Indicator - only show if update is available */}
-      {hasUpdateAvailable && versionStatus && (
+      {/* Update Indicator - only show if update is available and not public version */}
+      {hasUpdateAvailable && versionStatus && !isPublicVersion && (
         <UpdateIndicator 
           currentVersion={versionStatus.currentVersion}
           latestVersion={versionStatus.latestVersion}
