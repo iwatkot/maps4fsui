@@ -224,8 +224,8 @@ ${formData.generationSettings}
               // Public version not working - show info about reports not being accepted
               setCurrentStep('public-not-working');
             } else {
-              // Local deployment not working - link to troubleshooting
-              window.open('https://maps4fs.gitbook.io/docs/setup-and-installation/local_deployment#troubleshooting', '_blank');
+              // Local deployment not working - show troubleshooting options
+              setCurrentStep('local-not-working');
             }
           }}
           className="w-full p-4 text-left border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-red-500 dark:hover:border-red-400 transition-colors bg-white dark:bg-gray-800"
@@ -241,6 +241,72 @@ ${formData.generationSettings}
                 }
               </div>
             </div>
+          </div>
+        </button>
+      </div>
+    </div>
+  );
+
+  const renderLocalNotWorking = () => (
+    <div className="space-y-6">
+      <div className="flex items-center space-x-4">
+        <button
+          onClick={() => setCurrentStep(2)}
+          className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+          title="Go Back"
+        >
+          <i className="zmdi zmdi-arrow-left text-xl"></i>
+        </button>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          Local Deployment Issues
+        </h2>
+      </div>
+      <div className="p-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+        <div className="flex">
+          <div className="text-blue-600 dark:text-blue-400 mr-3">
+            <i className="zmdi zmdi-info text-xl"></i>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-2">
+              Choose Your Troubleshooting Path
+            </h3>
+            <p className="text-blue-700 dark:text-blue-300 mb-4">
+              For local deployment issues, you have two options:
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div className="space-y-4">
+        <button
+          onClick={() => router.push('/help/troubleshooting')}
+          className="w-full p-4 text-left border-2 border-blue-300 dark:border-blue-600 rounded-lg hover:border-blue-500 dark:hover:border-blue-400 transition-colors bg-blue-50 dark:bg-blue-900/20"
+        >
+          <div className="flex items-center">
+            <div className="w-4 h-4 bg-blue-500 rounded-full mr-4 flex-shrink-0"></div>
+            <div>
+              <div className="font-semibold text-gray-900 dark:text-gray-100">Interactive Troubleshooting Helper</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Step-by-step guided troubleshooting with report generation (Recommended)
+              </div>
+            </div>
+            <i className="zmdi zmdi-arrow-right text-gray-400 ml-auto"></i>
+          </div>
+        </button>
+        
+        <button
+          onClick={() => window.open('https://maps4fs.gitbook.io/docs/setup-and-installation/local_deployment#troubleshooting', '_blank')}
+          className="w-full p-4 text-left border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-gray-500 dark:hover:border-gray-400 transition-colors bg-white dark:bg-gray-800"
+        >
+          <div className="flex items-center">
+            <div className="w-4 h-4 bg-gray-500 rounded-full mr-4 flex-shrink-0"></div>
+            <div>
+              <div className="font-semibold text-gray-900 dark:text-gray-100">Manual Troubleshooting Guide</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">
+                Read the documentation and troubleshoot manually
+              </div>
+            </div>
+            <i className="zmdi zmdi-open-in-new text-gray-400 ml-auto"></i>
           </div>
         </button>
       </div>
@@ -641,6 +707,7 @@ ${formData.generationSettings}
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-8">
             {currentStep === 1 && renderStep1()}
             {currentStep === 2 && renderStep2()}
+            {currentStep === 'local-not-working' && renderLocalNotWorking()}
             {currentStep === 'public-not-working' && renderPublicNotWorking()}
             {currentStep === 3 && renderStep3()}
             {currentStep === 4 && renderStep4()}
