@@ -7,6 +7,7 @@ import HelpStructuredData from '@/components/HelpStructuredData';
 import TextInput from '@/components/TextInput';
 import Checkbox from '@/components/Checkbox';
 import JSONEditorModal from '@/components/JSONEditorModal';
+import TextEditorModal from '@/components/TextEditorModal';
 import config from '@/app/config';
 
 export default function HelpPage() {
@@ -44,6 +45,39 @@ export default function HelpPage() {
     data: ''
   });
 
+  // Troubleshooting states
+  const [troubleshootingStep, setTroubleshootingStep] = useState(1);
+  const [troubleshootingChecklist, setTroubleshootingChecklist] = useState({
+    systemRequirements: false,
+    dockerVersion: false,
+    dockerProperlyInstalled: false,
+    containerStatus: false,
+    containerLogs: false,
+    resourceUsage: false,
+    dockerEvents: false,
+    accessibility: false
+  });
+  
+  const [troubleshootingData, setTroubleshootingData] = useState({
+    hardwareSpecs: '',
+    dockerVersionOutput: '',
+    containerStatusOutput: '',
+    apiContainerLogs: '',
+    uiContainerLogs: '',
+    dockerEventsLog: '',
+    apiAccessibilityCheck: '',
+    uiAccessibilityCheck: ''
+  });
+  
+  const [textModal, setTextModal] = useState({
+    isOpen: false,
+    title: '',
+    field: '',
+    data: ''
+  });
+
+  const [copySuccess, setCopySuccess] = useState(false);
+
   // Determine if we're on public version
   useEffect(() => {
     setIsPublicVersion(config.isPublicVersion);
@@ -58,6 +92,33 @@ export default function HelpPage() {
 
   const isChecklistComplete = Object.values(checklist).every(Boolean);
   const isFormComplete = Object.values(formData).every(value => value.trim() !== '');
+
+  // Troubleshooting helper functions
+  const handleTroubleshootingChecklistChange = (key, value) => {
+    setTroubleshootingChecklist(prev => ({
+      ...prev,
+      [key]: value
+    }));
+  };
+
+  const isTroubleshootingChecklistComplete = () => {
+    return Object.values(troubleshootingChecklist).every(Boolean);
+  };
+
+  const isTroubleshootingDataCollectionComplete = () => {
+    return Object.values(troubleshootingData).every(data => data && data.trim());
+  };
+
+  const isTroubleshootingFullyComplete = () => {
+    return isTroubleshootingChecklistComplete() && isTroubleshootingDataCollectionComplete();
+  };
+
+  const getTroubleshootingCompletionPercentage = () => {
+    const checklistCompleted = Object.values(troubleshootingChecklist).filter(Boolean).length;
+    const dataCompleted = Object.values(troubleshootingData).filter(data => data && data.trim()).length;
+    const totalItems = Object.keys(troubleshootingChecklist).length + Object.keys(troubleshootingData).length;
+    return Math.round(((checklistCompleted + dataCompleted) / totalItems) * 100);
+  };
 
   const openJsonEditor = (type, title) => {
     // Try to parse existing data as JSON, or use empty object if invalid/empty
@@ -85,6 +146,23 @@ export default function HelpPage() {
       [jsonModal.type]: jsonString
     }));
     setJsonModal({ isOpen: false, type: '', title: '', data: '' });
+  };
+
+  const openTextEditor = (field, title) => {
+    setTextModal({
+      isOpen: true,
+      title,
+      field,
+      data: troubleshootingData[field] || ''
+    });
+  };
+
+  const handleTextSave = (textData) => {
+    setTroubleshootingData(prev => ({
+      ...prev,
+      [textModal.field]: textData
+    }));
+    setTextModal({ isOpen: false, title: '', field: '', data: '' });
   };
 
   const generateMarkdownReport = () => {
@@ -145,6 +223,96 @@ ${formData.generationSettings}
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  };
+
+  const generateTroubleshootingReport = () => {
+    const timestamp = new Date().toISOString();
+    
+    let report = `# Maps4FS Troubleshooting Report\n\n`;
+    report += `**Generated on:** ${timestamp}\n`;
+    report += `**Completion:** ${getTroubleshootingCompletionPercentage()}%\n\n`;
+    
+    // Add checklist status
+    report += `## Troubleshooting Checklist Status\n\n`;
+    const reportChecklistItems = [
+      { key: 'systemRequirements', label: 'My machine meets the system requirements' },
+      { key: 'dockerVersion', label: 'I have checked the Docker version and run the hello-world container' },
+      { key: 'dockerProperlyInstalled', label: 'I have ensured that Docker is properly installed and configured' },
+      { key: 'containerStatus', label: 'I have checked the status of both containers (API and UI) and they are running' },
+      { key: 'containerLogs', label: 'I have checked the logs for both containers' },
+      { key: 'resourceUsage', label: 'I have checked the resource usage (CPU, RAM) during the container runtime' },
+      { key: 'dockerEvents', label: 'I have checked the Docker events for any relevant information' },
+      { key: 'accessibility', label: 'I have checked accessibility of both containers (API and UI)' }
+    ];
+    
+    reportChecklistItems.forEach(item => {
+      const status = troubleshootingChecklist[item.key] ? '✅' : '❌';
+      report += `- ${status} ${item.label}\n`;
+    });
+    
+    // Add collected data
+    report += `\n## System Information and Command Outputs\n\n`;
+    
+    if (troubleshootingData.hardwareSpecs) {
+      report += `### Hardware Specifications and OS Information\n\`\`\`\n${troubleshootingData.hardwareSpecs}\n\`\`\`\n\n`;
+    }
+    
+    if (troubleshootingData.dockerVersionOutput) {
+      report += `### Docker Version and Hello-World Test\n\`\`\`\n${troubleshootingData.dockerVersionOutput}\n\`\`\`\n\n`;
+    }
+    
+    if (troubleshootingData.containerStatusOutput) {
+      report += `### Container Status\n\`\`\`\n${troubleshootingData.containerStatusOutput}\n\`\`\`\n\n`;
+    }
+    
+    if (troubleshootingData.apiContainerLogs) {
+      report += `### API Container Logs\n\`\`\`\n${troubleshootingData.apiContainerLogs}\n\`\`\`\n\n`;
+    }
+    
+    if (troubleshootingData.uiContainerLogs) {
+      report += `### UI Container Logs\n\`\`\`\n${troubleshootingData.uiContainerLogs}\n\`\`\`\n\n`;
+    }
+    
+    if (troubleshootingData.dockerEventsLog) {
+      report += `### Docker Events Log\n\`\`\`\n${troubleshootingData.dockerEventsLog}\n\`\`\`\n\n`;
+    }
+    
+    if (troubleshootingData.apiAccessibilityCheck) {
+      report += `### API Accessibility Check\n\`\`\`\n${troubleshootingData.apiAccessibilityCheck}\n\`\`\`\n\n`;
+    }
+    
+    if (troubleshootingData.uiAccessibilityCheck) {
+      report += `### UI Accessibility Check\n\`\`\`\n${troubleshootingData.uiAccessibilityCheck}\n\`\`\`\n\n`;
+    }
+    
+    report += `---\n*This troubleshooting report was generated using the Maps4FS Docker Troubleshooting Helper.*\n`;
+    
+    return report;
+  };
+
+  const downloadTroubleshootingReport = () => {
+    const report = generateTroubleshootingReport();
+    const blob = new Blob([report], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `maps4fs_troubleshooting_report_${Date.now()}.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const copyTroubleshootingReportToClipboard = async () => {
+    try {
+      const report = generateTroubleshootingReport();
+      await navigator.clipboard.writeText(report);
+      setCopySuccess(true);
+      setTimeout(() => setCopySuccess(false), 3000);
+    } catch (error) {
+      console.error('Error copying report:', error);
+      // Instead of alert, we'll show an error message in the UI
+    }
   };
 
   const renderStep1 = () => (
@@ -247,6 +415,49 @@ ${formData.generationSettings}
     </div>
   );
 
+  const checklistItems = [
+    {
+      key: 'systemRequirements',
+      label: 'My machine meets the system requirements',
+      description: 'Ensure your hardware and OS meet minimum requirements'
+    },
+    {
+      key: 'dockerVersion',
+      label: 'I have checked the Docker version and run the hello-world container',
+      description: 'Run: docker --version && docker run --rm hello-world'
+    },
+    {
+      key: 'dockerProperlyInstalled',
+      label: 'I have ensured that Docker is properly installed and configured',
+      description: 'Docker should be running without issues'
+    },
+    {
+      key: 'containerStatus',
+      label: 'I have checked the status of both containers (API and UI) and they are running',
+      description: 'Run: docker ps --filter "name=maps4fs"'
+    },
+    {
+      key: 'containerLogs',
+      label: 'I have checked the logs for both containers',
+      description: 'Run: docker logs maps4fsapi && docker logs maps4fsui'
+    },
+    {
+      key: 'resourceUsage',
+      label: 'I have checked the resource usage (CPU, RAM) during the container runtime',
+      description: 'Monitor system resources during container operation'
+    },
+    {
+      key: 'dockerEvents',
+      label: 'I have checked the Docker events for any relevant information',
+      description: 'Run: docker events --since 24h'
+    },
+    {
+      key: 'accessibility',
+      label: 'I have checked accessibility of both containers (API and UI)',
+      description: 'Test API: curl http://localhost:8000/info/version and UI: curl http://localhost:3000'
+    }
+  ];
+
   const renderLocalNotWorking = () => (
     <div className="space-y-6">
       <div className="flex items-center space-x-4">
@@ -258,58 +469,250 @@ ${formData.generationSettings}
           <i className="zmdi zmdi-arrow-left text-xl"></i>
         </button>
         <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-          Local Deployment Issues
+          Docker Troubleshooting Helper
         </h2>
       </div>
-      <div className="p-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-        <div className="flex">
-          <div className="text-blue-600 dark:text-blue-400 mr-3">
-            <i className="zmdi zmdi-info text-xl"></i>
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-2">
-              Choose Your Troubleshooting Path
-            </h3>
-            <p className="text-blue-700 dark:text-blue-300 mb-4">
-              For local deployment issues, you have two options:
-            </p>
-          </div>
+
+      {/* Progress indicator */}
+      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Progress</span>
+          <span className="text-sm text-gray-500 dark:text-gray-400">{getTroubleshootingCompletionPercentage()}%</span>
+        </div>
+        <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+          <div
+            className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+            style={{ width: `${getTroubleshootingCompletionPercentage()}%` }}
+          ></div>
         </div>
       </div>
-      
-      <div className="space-y-4">
-        <button
-          onClick={() => router.push('/help/troubleshooting')}
-          className="w-full p-4 text-left border-2 border-blue-300 dark:border-blue-600 rounded-lg hover:border-blue-500 dark:hover:border-blue-400 transition-colors bg-blue-50 dark:bg-blue-900/20"
-        >
-          <div className="flex items-center">
-            <div className="w-4 h-4 bg-blue-500 rounded-full mr-4 flex-shrink-0"></div>
-            <div>
-              <div className="font-semibold text-gray-900 dark:text-gray-100">Interactive Troubleshooting Helper</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">
-                Step-by-step guided troubleshooting with report generation (Recommended)
+
+      {/* Step 1: Checklist */}
+      {troubleshootingStep === 1 && (
+        <div className="space-y-6">
+          <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+            <h2 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
+              Step 1: Complete Troubleshooting Checklist
+            </h2>
+            <p className="text-blue-800 dark:text-blue-200 text-sm">
+              Check off each item as you complete the troubleshooting steps. Click the commands to see what to run.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {checklistItems.map((item) => (
+              <div key={item.key} className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                <Checkbox
+                  label={item.label}
+                  checked={troubleshootingChecklist[item.key]}
+                  onChange={(value) => handleTroubleshootingChecklistChange(item.key, value)}
+                />
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-2 ml-6">
+                  {item.description}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {!isTroubleshootingChecklistComplete() && (
+            <div className="p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+              <p className="text-yellow-800 dark:text-yellow-200 text-sm">
+                <i className="zmdi zmdi-info mr-2"></i>
+                Complete all checklist items to continue to the next step.
+              </p>
+            </div>
+          )}
+
+          <div className="flex justify-end">
+            <button
+              onClick={() => setTroubleshootingStep(2)}
+              disabled={!isTroubleshootingChecklistComplete()}
+              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                isTroubleshootingChecklistComplete()
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white'
+                  : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+              }`}
+            >
+              Continue to Data Collection
+              <i className="zmdi zmdi-arrow-right ml-2"></i>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Step 2: Data Collection */}
+      {troubleshootingStep === 2 && (
+        <div className="space-y-6">
+          <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+            <h2 className="text-lg font-semibold text-green-900 dark:text-green-100 mb-2">
+              Step 2: Collect System Information and Command Outputs
+            </h2>
+            <p className="text-green-800 dark:text-green-200 text-sm">
+              Run the suggested commands and paste their outputs using the text editors below.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {[
+              { key: 'hardwareSpecs', title: 'Hardware Specifications and OS Information', command: 'Include hardware specs and OS version' },
+              { key: 'dockerVersionOutput', title: 'Docker Version and Hello-World Test', command: 'docker --version && docker run --rm hello-world' },
+              { key: 'containerStatusOutput', title: 'Container Status', command: 'docker ps --filter "name=maps4fs"' },
+              { key: 'apiContainerLogs', title: 'API Container Logs', command: 'docker logs maps4fsapi > maps4fsapi.log' },
+              { key: 'uiContainerLogs', title: 'UI Container Logs', command: 'docker logs maps4fsui > maps4fsui.log' },
+              { key: 'dockerEventsLog', title: 'Docker Events Log', command: 'docker events --since 24h > docker_events.log' },
+              { key: 'apiAccessibilityCheck', title: 'API Accessibility Check', command: 'Invoke-WebRequest -Uri http://localhost:8000/info/version -UseBasicParsing' },
+              { key: 'uiAccessibilityCheck', title: 'UI Accessibility Check', command: 'Invoke-WebRequest -Uri http://localhost:3000 -UseBasicParsing' }
+            ].map((item) => (
+              <div key={item.key} className="p-4 border border-gray-300 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-800">
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center space-x-2">
+                      <h4 className="font-medium text-gray-900 dark:text-gray-100">{item.title}</h4>
+                      {troubleshootingData[item.key] && (
+                        <span className="inline-flex items-center px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 text-xs font-medium rounded">
+                          <i className="zmdi zmdi-check-circle mr-1"></i>
+                          Added
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">Command: <code className="bg-gray-100 dark:bg-gray-700 px-1 rounded">{item.command}</code></p>
+                  </div>
+                  <button
+                    onClick={() => openTextEditor(item.key, item.title)}
+                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                      troubleshootingData[item.key] 
+                        ? 'bg-gray-600 hover:bg-gray-700 text-white'
+                        : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    }`}
+                  >
+                    {troubleshootingData[item.key] ? 'Edit' : 'Add Output'}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="flex justify-between">
+            <button
+              onClick={() => setTroubleshootingStep(1)}
+              className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors"
+            >
+              <i className="zmdi zmdi-arrow-left mr-2"></i>
+              Back to Checklist
+            </button>
+            <button
+              onClick={() => setTroubleshootingStep(3)}
+              disabled={!isTroubleshootingDataCollectionComplete()}
+              className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                isTroubleshootingDataCollectionComplete()
+                  ? 'bg-green-600 hover:bg-green-700 text-white'
+                  : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+              }`}
+            >
+              Generate Report
+              <i className="zmdi zmdi-arrow-right ml-2"></i>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Step 3: Report Generation */}
+      {troubleshootingStep === 3 && (
+        <div className="space-y-6">
+          <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
+            <h2 className="text-lg font-semibold text-purple-900 dark:text-purple-100 mb-2">
+              Step 3: Generate Troubleshooting Report
+            </h2>
+            <p className="text-purple-800 dark:text-purple-200 text-sm">
+              Your troubleshooting report is ready. Download it and share it when asking for help.
+            </p>
+          </div>
+
+          {/* Warning if not fully complete */}
+          {!isTroubleshootingFullyComplete() && (
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+              <div className="flex items-center">
+                <i className="zmdi zmdi-alert-triangle text-red-600 dark:text-red-400 mr-3"></i>
+                <div>
+                  <h3 className="text-red-800 dark:text-red-200 font-medium">Incomplete Data</h3>
+                  <p className="text-red-700 dark:text-red-300 text-sm">
+                    Your report may be incomplete. Please go back and ensure all checklist items are checked and all data is collected.
+                  </p>
+                </div>
               </div>
             </div>
-            <i className="zmdi zmdi-arrow-right text-gray-400 ml-auto"></i>
-          </div>
-        </button>
-        
-        <button
-          onClick={() => window.open('https://maps4fs.gitbook.io/docs/setup-and-installation/local_deployment#troubleshooting', '_blank')}
-          className="w-full p-4 text-left border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-gray-500 dark:hover:border-gray-400 transition-colors bg-white dark:bg-gray-800"
-        >
-          <div className="flex items-center">
-            <div className="w-4 h-4 bg-gray-500 rounded-full mr-4 flex-shrink-0"></div>
-            <div>
-              <div className="font-semibold text-gray-900 dark:text-gray-100">Manual Troubleshooting Guide</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">
-                Read the documentation and troubleshoot manually
+          )}
+
+          {/* Success message for copy */}
+          {copySuccess && (
+            <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+              <div className="flex items-center">
+                <i className="zmdi zmdi-check-circle text-green-600 dark:text-green-400 mr-3"></i>
+                <div>
+                  <h3 className="text-green-800 dark:text-green-200 font-medium">Report Copied!</h3>
+                  <p className="text-green-700 dark:text-green-300 text-sm">
+                    The troubleshooting report has been copied to your clipboard.
+                  </p>
+                </div>
               </div>
             </div>
-            <i className="zmdi zmdi-open-in-new text-gray-400 ml-auto"></i>
+          )}
+
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Report Summary</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+              <div>
+                <span className="font-medium text-gray-700 dark:text-gray-300">Checklist Completion:</span>
+                <span className="ml-2 text-gray-600 dark:text-gray-400">
+                  {Object.values(troubleshootingChecklist).filter(Boolean).length}/{Object.keys(troubleshootingChecklist).length} items
+                </span>
+              </div>
+              <div>
+                <span className="font-medium text-gray-700 dark:text-gray-300">Data Collection:</span>
+                <span className="ml-2 text-gray-600 dark:text-gray-400">
+                  {Object.values(troubleshootingData).filter(data => data && data.trim()).length}/{Object.keys(troubleshootingData).length} fields
+                </span>
+              </div>
+              <div>
+                <span className="font-medium text-gray-700 dark:text-gray-300">Overall Progress:</span>
+                <span className="ml-2 text-gray-600 dark:text-gray-400">{getTroubleshootingCompletionPercentage()}%</span>
+              </div>
+              <div>
+                <span className="font-medium text-gray-700 dark:text-gray-300">Status:</span>
+                <span className={`ml-2 ${isTroubleshootingFullyComplete() ? 'text-green-600 dark:text-green-400' : 'text-yellow-600 dark:text-yellow-400'}`}>
+                  {isTroubleshootingFullyComplete() ? 'Complete' : 'Incomplete'}
+                </span>
+              </div>
+            </div>
           </div>
-        </button>
-      </div>
+
+          <div className="flex justify-between">
+            <button
+              onClick={() => setTroubleshootingStep(2)}
+              className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors"
+            >
+              <i className="zmdi zmdi-arrow-left mr-2"></i>
+              Back to Data Collection
+            </button>
+            <div className="flex space-x-3">
+              <button
+                onClick={copyTroubleshootingReportToClipboard}
+                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center"
+              >
+                <i className="zmdi zmdi-copy mr-2"></i>
+                Copy Report
+              </button>
+              <button
+                onClick={downloadTroubleshootingReport}
+                className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors flex items-center"
+              >
+                <i className="zmdi zmdi-download mr-2"></i>
+                Download Report
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 
@@ -723,6 +1126,15 @@ ${formData.generationSettings}
         onSave={handleJsonSave}
         jsonData={jsonModal.data}
         title={jsonModal.title}
+      />
+      
+      {/* Text Editor Modal */}
+      <TextEditorModal
+        isOpen={textModal.isOpen}
+        onClose={() => setTextModal({ isOpen: false, title: '', field: '', data: '' })}
+        onSave={handleTextSave}
+        textData={textModal.data}
+        title={textModal.title}
       />
       </div>
     </>
