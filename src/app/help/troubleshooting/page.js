@@ -236,12 +236,23 @@ export default function TroubleshootingPage() {
   };
 
   const getCompletionPercentage = () => {
-    const completed = Object.values(checklist).filter(Boolean).length;
-    return Math.round((completed / Object.keys(checklist).length) * 100);
+    const checklistCompleted = Object.values(checklist).filter(Boolean).length;
+    const dataCompleted = Object.values(formData).filter(data => data && data.trim()).length;
+    const totalItems = Object.keys(checklist).length + dataItems.length;
+    const totalCompleted = checklistCompleted + dataCompleted;
+    return Math.round((totalCompleted / totalItems) * 100);
   };
 
   const isChecklistComplete = () => {
     return Object.values(checklist).every(Boolean);
+  };
+
+  const isDataCollectionComplete = () => {
+    return Object.values(formData).every(data => data && data.trim());
+  };
+
+  const isFullyComplete = () => {
+    return isChecklistComplete() && isDataCollectionComplete();
   };
 
   return (
@@ -389,6 +400,44 @@ export default function TroubleshootingPage() {
                 ))}
               </div>
 
+              {/* Data Collection Progress */}
+              <div className={`p-4 rounded-lg border ${
+                isDataCollectionComplete() 
+                  ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800' 
+                  : 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800'
+              }`}>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h3 className={`font-medium ${
+                      isDataCollectionComplete() 
+                        ? 'text-green-800 dark:text-green-200' 
+                        : 'text-yellow-800 dark:text-yellow-200'
+                    }`}>
+                      Data Collection Progress
+                    </h3>
+                    <p className={`text-sm ${
+                      isDataCollectionComplete() 
+                        ? 'text-green-700 dark:text-green-300' 
+                        : 'text-yellow-700 dark:text-yellow-300'
+                    }`}>
+                      {Object.values(formData).filter(data => data && data.trim()).length} of {dataItems.length} items collected
+                    </p>
+                  </div>
+                  <div className={`text-2xl ${
+                    isDataCollectionComplete() 
+                      ? 'text-green-500' 
+                      : 'text-yellow-500'
+                  }`}>
+                    <i className={`zmdi ${isDataCollectionComplete() ? 'zmdi-check-circle' : 'zmdi-time'}`}></i>
+                  </div>
+                </div>
+                {!isDataCollectionComplete() && (
+                  <p className="text-xs text-yellow-600 dark:text-yellow-400 mt-2">
+                    Please collect all required data before proceeding to report generation.
+                  </p>
+                )}
+              </div>
+
               <div className="flex justify-between">
                 <button
                   onClick={() => setCurrentStep(1)}
@@ -400,7 +449,13 @@ export default function TroubleshootingPage() {
                 
                 <button
                   onClick={() => setCurrentStep(3)}
-                  className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors"
+                  disabled={!isDataCollectionComplete()}
+                  className={`px-6 py-3 rounded-lg font-medium transition-colors ${
+                    isDataCollectionComplete()
+                      ? 'bg-green-600 hover:bg-green-700 text-white'
+                      : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                  }`}
+                  title={!isDataCollectionComplete() ? 'Please collect all required data before generating report' : ''}
                 >
                   Generate Report
                   <i className="zmdi zmdi-arrow-right ml-2"></i>
@@ -420,6 +475,21 @@ export default function TroubleshootingPage() {
                   Your troubleshooting report is ready. Download it and share it when asking for help.
                 </p>
               </div>
+
+              {/* Warning if not fully complete */}
+              {!isFullyComplete() && (
+                <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+                  <div className="flex items-center">
+                    <i className="zmdi zmdi-alert-triangle text-red-600 dark:text-red-400 mr-3"></i>
+                    <div>
+                      <h3 className="text-red-800 dark:text-red-200 font-medium">Incomplete Data</h3>
+                      <p className="text-red-700 dark:text-red-300 text-sm">
+                        Your report may be incomplete. Please go back and ensure all checklist items are checked and all data is collected.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
