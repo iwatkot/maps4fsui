@@ -619,15 +619,6 @@ ${formData.generationSettings}
       {/* Step 3: Report Generation */}
       {troubleshootingStep === 3 && (
         <div className="space-y-6">
-          <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
-            <h2 className="text-lg font-semibold text-purple-900 dark:text-purple-100 mb-2">
-              Step 3: Generate Troubleshooting Report
-            </h2>
-            <p className="text-purple-800 dark:text-purple-200 text-sm">
-              Your troubleshooting report is ready. Download it and share it when asking for help.
-            </p>
-          </div>
-
           {/* Warning if not fully complete */}
           {!isTroubleshootingFullyComplete() && (
             <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
@@ -686,31 +677,62 @@ ${formData.generationSettings}
             </div>
           </div>
 
-          <div className="flex justify-between">
-            <button
-              onClick={() => setTroubleshootingStep(2)}
-              className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors"
-            >
-              <i className="zmdi zmdi-arrow-left mr-2"></i>
-              Back to Data Collection
-            </button>
-            <div className="flex space-x-3">
-              <button
-                onClick={copyTroubleshootingReportToClipboard}
-                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center"
-              >
-                <i className="zmdi zmdi-copy mr-2"></i>
-                Copy Report
-              </button>
-              <button
-                onClick={downloadTroubleshootingReport}
-                className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors flex items-center"
-              >
-                <i className="zmdi zmdi-download mr-2"></i>
-                Download Report
-              </button>
+          {isTroubleshootingFullyComplete() && (
+            <div className="p-6 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg">
+              <h3 className="text-lg font-semibold text-green-800 dark:text-green-200 mb-2">
+                Ready to Submit!
+              </h3>
+              <p className="text-green-700 dark:text-green-300 mb-4">
+                All information has been collected. Generate your help report below and share it in Discord when asking for assistance.
+              </p>
+              <div className="flex space-x-3">
+                <button
+                  onClick={downloadTroubleshootingReport}
+                  className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors flex items-center"
+                >
+                  <i className="zmdi zmdi-download mr-2"></i>
+                  Generate Help Report
+                </button>
+                <a
+                  href="https://discord.gg/Sj5QKKyE42"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors flex items-center"
+                >
+                  <i className="zmdi zmdi-comments mr-2"></i>
+                  Open Discord
+                </a>
+              </div>
             </div>
-          </div>
+          )}
+
+          {!isTroubleshootingFullyComplete() && (
+            <div className="flex justify-between">
+              <button
+                onClick={() => setTroubleshootingStep(2)}
+                className="px-6 py-3 bg-gray-500 hover:bg-gray-600 text-white rounded-lg font-medium transition-colors"
+              >
+                <i className="zmdi zmdi-arrow-left mr-2"></i>
+                Back to Data Collection
+              </button>
+              <div className="flex space-x-3">
+                <button
+                  onClick={copyTroubleshootingReportToClipboard}
+                  className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors flex items-center"
+                >
+                  <i className="zmdi zmdi-copy mr-2"></i>
+                  Copy Report
+                </button>
+                <button
+                  onClick={downloadTroubleshootingReport}
+                  className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors flex items-center"
+                >
+                  <i className="zmdi zmdi-download mr-2"></i>
+                  Download Report
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
