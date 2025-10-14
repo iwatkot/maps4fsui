@@ -142,8 +142,8 @@ export const constraints = {
 export const createSizeOptions = (isPublicVersion) => {
   if (isPublicVersion) {
     return [
-      ...availableSizeOptions.slice(0, 2), // First two options enabled
-      ...availableSizeOptions.slice(2).map(option => ({ // Rest disabled with info
+      ...availableSizeOptions.slice(0, 3), // First three options enabled
+      ...availableSizeOptions.slice(3).map(option => ({ // Rest disabled with info
         ...option,
         disabled: true,
         description: option.description || 'Available in local version only'
