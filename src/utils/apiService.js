@@ -7,6 +7,8 @@ class ApiService {
   constructor() {
     this.baseUrl = config.backendUrl;
     this.bearerToken = config.bearerToken;
+    this.lastNoBearerTokenLog = 0; // Throttle bearer token warning
+    this.noBearerTokenLogInterval = 30000; // Log at most every 30 seconds
   }
 
   /**
@@ -23,7 +25,12 @@ class ApiService {
     if (this.bearerToken) {
       headers['Authorization'] = `Bearer ${this.bearerToken}`;
     } else {
-      logger.info('No bearer token configured - making request without authentication');
+      // Throttle the no bearer token message to prevent spam
+      const now = Date.now();
+      if (now - this.lastNoBearerTokenLog > this.noBearerTokenLogInterval) {
+        logger.info('No bearer token configured - making request without authentication');
+        this.lastNoBearerTokenLog = now;
+      }
     }
 
     return headers;

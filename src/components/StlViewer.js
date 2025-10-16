@@ -67,6 +67,8 @@ export default function StlViewer({ url, filename, size, isLocal = false, onErro
 
   // Load authenticated STL file
   useEffect(() => {
+    let currentBlobUrl = null;
+    
     const loadStl = async () => {
       try {
         setIsLoading(true);
@@ -79,6 +81,7 @@ export default function StlViewer({ url, filename, size, isLocal = false, onErro
         } else {
           // Use authenticated fetch for backend API files
           blobUrl = await getAuthenticatedStlUrl(url);
+          currentBlobUrl = blobUrl; // Track for cleanup
         }
         
         setStlBlobUrl(blobUrl);
@@ -97,11 +100,11 @@ export default function StlViewer({ url, filename, size, isLocal = false, onErro
 
     // Cleanup blob URL on unmount or URL change (only for authenticated files)
     return () => {
-      if (stlBlobUrl && !isLocal && stlBlobUrl.startsWith('blob:')) {
-        revokeBlobUrl(stlBlobUrl);
+      if (currentBlobUrl && !isLocal && currentBlobUrl.startsWith('blob:')) {
+        revokeBlobUrl(currentBlobUrl);
       }
     };
-  }, [url, isLocal, onError, stlBlobUrl]);
+  }, [url, isLocal, onError]);
 
   const formatFileSize = (bytes) => {
     if (bytes < 1024) return `${bytes} B`;
