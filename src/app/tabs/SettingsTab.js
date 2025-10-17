@@ -481,7 +481,7 @@ export default function SettingsTab() {
             No {activeSection.replace('_', ' ')} templates found for {selectedGame.toUpperCase()}.
             <br />
             <span className="text-xs text-gray-400 dark:text-gray-500 mt-2 block">
-              Expected directory: {config.mfsTemplatesDir}/{selectedGame}/{activeSection}
+              Expected directory: templates/{selectedGame}/{activeSection}
             </span>
           </div>
         </div>
