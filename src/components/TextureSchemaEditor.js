@@ -5,6 +5,7 @@ import JSONEditorModal from './JSONEditorModal';
 import SaveSchemaModal from './SaveSchemaModal';
 import SelectorCompact from './SelectorCompact';
 import { getTextureSchema } from '../api/schemas';
+import config from '@/app/config.js';
 
 // Hardcoded texture URLs for preview images
 const TEXTURE_URLS = {
@@ -256,13 +257,15 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
               <i className="zmdi zmdi-code mr-2"></i>
               Show Schema
             </button>
-            <button
-              onClick={handleSaveSchema}
-              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center"
-            >
-              <i className="zmdi zmdi-save mr-2"></i>
-              Save Schema
-            </button>
+            {!config.isPublicVersion && (
+              <button
+                onClick={handleSaveSchema}
+                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center"
+              >
+                <i className="zmdi zmdi-save mr-2"></i>
+                Save Schema
+              </button>
+            )}
           </div>
         </div>
       </div>

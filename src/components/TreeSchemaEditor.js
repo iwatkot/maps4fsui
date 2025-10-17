@@ -5,6 +5,7 @@ import JSONEditorModal from '@/components/JSONEditorModal';
 import SaveSchemaModal from '@/components/SaveSchemaModal';
 import SelectorCompact from '@/components/SelectorCompact';
 import { getTreeSchema } from '../api/schemas';
+import config from '@/app/config.js';
 
 // Hardcoded tree data (keep this for images)
 const TREE_DATA = {
@@ -274,13 +275,15 @@ const TreeSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
               <i className="zmdi zmdi-code mr-2"></i>
               Show Schema
             </button>
-            <button
-              onClick={handleSaveSchema}
-              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center"
-            >
-              <i className="zmdi zmdi-save mr-2"></i>
-              Save Schema
-            </button>
+            {!config.isPublicVersion && (
+              <button
+                onClick={handleSaveSchema}
+                className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center"
+              >
+                <i className="zmdi zmdi-save mr-2"></i>
+                Save Schema
+              </button>
+            )}
           </div>
         </div>
       </div>
