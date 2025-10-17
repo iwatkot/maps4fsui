@@ -35,6 +35,7 @@ export default function MyMapsTab({ onDuplicateMap }) {
   const [showJSONModal, setShowJSONModal] = useState(false);
   const [jsonData, setJsonData] = useState(null);
   const [jsonType, setJsonType] = useState('');
+  const [mapSchemaPaths, setMapSchemaPaths] = useState({ texture: null, tree: null });
   const [downloading, setDownloading] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
@@ -204,6 +205,19 @@ export default function MyMapsTab({ onDuplicateMap }) {
     setPreviewPage(0); // Reset preview page when switching maps
     setEditingName(false); // Reset editing state
     setEditedName('');
+    // Fetch schema file availability for this map
+    fetchSchemaFiles(map.id);
+  };
+
+  const fetchSchemaFiles = async (mapId) => {
+    try {
+      const res = await fetch(`/api/maps/schema-files?mapId=${encodeURIComponent(mapId)}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      setMapSchemaPaths({ texture: data.texture, tree: data.tree });
+    } catch (err) {
+      console.error('Error fetching schema files:', err);
+    }
   };
 
   // Handle name editing
@@ -1269,6 +1283,108 @@ export default function MyMapsTab({ onDuplicateMap }) {
                       <i className="zmdi zmdi-bookmark mr-2"></i>
                       Save Custom DEM to Presets
                     </button>
+                  )}
+
+                  {/* Map-local schema preview & save buttons */}
+                  {mapSchemaPaths.texture && (
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={async () => {
+                          try {
+                            const res = await fetch('/api/files/content', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ filePath: mapSchemaPaths.texture })
+                            });
+                            if (!res.ok) throw new Error('Failed to load texture schema');
+                            const content = await res.text();
+                            setJsonData(JSON.parse(content));
+                            setJsonType('Texture Schema (map-local)');
+                            setShowJSONModal(true);
+                          } catch (err) {
+                            console.error('Error previewing texture schema:', err);
+                            showToast('Failed to preview texture schema', 'error');
+                          }
+                        }}
+                        className="flex-1 px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
+                      >
+                        <i className="zmdi zmdi-image mr-2"></i>
+                        Preview Texture Schema
+                      </button>
+                      <button
+                        onClick={async () => {
+                          try {
+                            const res = await fetch('/api/files/copy-to-templates', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ sourcePath: mapSchemaPaths.texture, game: selectedMap.mainSettings.game || selectedMap.game || 'fs25', type: 'texture', mapName: selectedMap.name })
+                            });
+                            const data = await res.json();
+                            if (!res.ok) throw new Error(data.error || 'Failed to save texture schema');
+                            showToast('Texture schema saved to templates', 'success');
+                            // Refresh Settings tab or templates listing is manual, but update local state
+                            setMapSchemaPaths(prev => ({ ...prev }));
+                          } catch (err) {
+                            console.error('Error saving texture schema:', err);
+                            showToast('Failed to save texture schema', 'error');
+                          }
+                        }}
+                        className="px-4 py-3 min-h-[44px] bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center justify-center"
+                        title="Save texture schema to templates"
+                      >
+                        <i className="zmdi zmdi-bookmark"></i>
+                      </button>
+                    </div>
+                  )}
+
+                  {mapSchemaPaths.tree && (
+                    <div className="flex items-center space-x-2">
+                      <button
+                        onClick={async () => {
+                          try {
+                            const res = await fetch('/api/files/content', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ filePath: mapSchemaPaths.tree })
+                            });
+                            if (!res.ok) throw new Error('Failed to load tree schema');
+                            const content = await res.text();
+                            setJsonData(JSON.parse(content));
+                            setJsonType('Tree Schema (map-local)');
+                            setShowJSONModal(true);
+                          } catch (err) {
+                            console.error('Error previewing tree schema:', err);
+                            showToast('Failed to preview tree schema', 'error');
+                          }
+                        }}
+                        className="flex-1 px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
+                      >
+                        <i className="zmdi zmdi-nature mr-2"></i>
+                        Preview Tree Schema
+                      </button>
+                      <button
+                        onClick={async () => {
+                          try {
+                            const res = await fetch('/api/files/copy-to-templates', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ sourcePath: mapSchemaPaths.tree, game: selectedMap.mainSettings.game || selectedMap.game || 'fs25', type: 'tree', mapName: selectedMap.name })
+                            });
+                            const data = await res.json();
+                            if (!res.ok) throw new Error(data.error || 'Failed to save tree schema');
+                            showToast('Tree schema saved to templates', 'success');
+                            setMapSchemaPaths(prev => ({ ...prev }));
+                          } catch (err) {
+                            console.error('Error saving tree schema:', err);
+                            showToast('Failed to save tree schema', 'error');
+                          }
+                        }}
+                        className="px-4 py-3 min-h-[44px] bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center justify-center"
+                        title="Save tree schema to templates"
+                      >
+                        <i className="zmdi zmdi-bookmark"></i>
+                      </button>
+                    </div>
                   )}
                   
                   {/* Other status-specific actions */}
