@@ -7,9 +7,10 @@ import config from '@/app/config';
  * Start map generation process
  * @param {Object} settings - Main settings from the UI
  * @param {Object} osmData - Optional custom OSM data with originalXml
+ * @param {Object} templatePayload - Optional custom template paths
  * @returns {Promise<Object>} - API response with task_id or error
  */
-export async function startMapGeneration(settings, osmData = null) {
+export async function startMapGeneration(settings, osmData = null, templatePayload = null) {
   try {
     logger.info('Starting map generation process');
     
@@ -37,9 +38,18 @@ export async function startMapGeneration(settings, osmData = null) {
       logger.info(`Including custom OSM data (${osmData.originalXml.length} characters, ${osmData.featureCount} features)`);
     }
 
+    // Step 4: Add custom template paths if provided
+    if (templatePayload) {
+      Object.assign(payload, templatePayload);
+      const templateKeys = Object.keys(templatePayload);
+      if (templateKeys.length > 0) {
+        logger.info(`Including custom templates: ${templateKeys.join(', ')}`);
+      }
+    }
+
     logger.info('Sending generation request to /map/generate');
     
-    // Step 4: Send to /map/generate endpoint using apiService
+    // Step 5: Send to /map/generate endpoint using apiService
     const data = await apiService.post('/map/generate', payload);
     
     logger.info(`Generation started successfully with task ID: ${data.task_id}`);

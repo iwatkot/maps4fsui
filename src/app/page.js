@@ -5,6 +5,7 @@ import AppHeader from '@/components/AppHeader';
 import GeneratorTab from '@/app/tabs/GeneratorTab';
 import MyMapsTab from '@/app/tabs/MyMapsTab';
 import PresetsTab from '@/app/tabs/PresetsTab';
+import SettingsTab from '@/app/tabs/SettingsTab';
 import SchemasTab from '@/app/tabs/SchemasTab';
 import SlideOutPromo from '@/components/SlideOutPromo';
 import { useBackendVersion } from '@/hooks/useBackendVersion';
@@ -89,6 +90,11 @@ export default function Home() {
         {activeTab === 'presets' && !isPublicVersion && (
           <div className="absolute inset-0 animate-fade-in">
             <PresetsTab />
+          </div>
+        )}
+        {activeTab === 'settings' && !isPublicVersion && (
+          <div className="absolute inset-0 animate-fade-in">
+            <SettingsTab />
           </div>
         )}
         {activeTab === 'my-maps' && (

@@ -2,6 +2,7 @@
 const appEnv = process.env.NEXT_PUBLIC_APP_ENV || '';
 const mfsRootDir = process.env.NEXT_PUBLIC_MFS_ROOT_DIR || '/usr/src/app/mfsrootdir';
 const mfsDefaultsDir = process.env.NEXT_PUBLIC_MFS_DEFAULTS_DIR || '/usr/src/app/defaults';
+const mfsTemplatesDir = process.env.NEXT_PUBLIC_MFS_TEMPLATES_DIR || '/usr/src/app/templates';
 
 const config = {
   // Access environment variables like this:
@@ -17,6 +18,8 @@ const config = {
   mfsDefaultsDemDir: `${mfsDefaultsDir}/dem`,
   mfsDefaultsMSettingsDir: `${mfsDefaultsDir}/main_settings`,
   mfsDefaultsGSettingsDir: `${mfsDefaultsDir}/generation_settings`,
+
+  mfsTemplatesDir: mfsTemplatesDir,
 };
 
 export default config;
