@@ -25,6 +25,7 @@ import {
 import ButtonProgress from '@/components/ButtonProgress';
 import MixedPreviewGallery from '@/components/MixedPreviewGallery';
 import { useMapGeneration } from '@/hooks/useMapGeneration';
+import { useDefaultTemplates } from '@/hooks/useDefaultTemplates';
 import { separateFilesByType } from '@/utils/fileTypeUtils';
 import DemSettingsContent from '@/app/settings/demSettings';
 import BackgroundSettingsContent from '@/app/settings/backgroundSettings';
@@ -509,6 +510,9 @@ export default function GeneratorTab({
     startGeneration,
     downloadMap
   } = useMapGeneration();
+
+  // Template management (only for public version)
+  const { getTemplatePayload, hasTemplates, getTemplateSummary } = useDefaultTemplates(selectedGame);
 
   // Check if generate button should be enabled
   const isGenerateEnabled = validateCoordinates(coordinatesInput) && !isGenerating;
@@ -999,6 +1003,23 @@ export default function GeneratorTab({
 
         {/* Fixed Generate Button at Bottom */}
         <div className="border-t border-gray-200 dark:border-gray-700 p-6 bg-gray-50 dark:bg-gray-800">
+          {/* Template Indicator (only for non-public version) */}
+          {!config.isPublicVersion && hasTemplates() && (
+            <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+              <div className="flex items-center">
+                <i className="zmdi zmdi-settings text-blue-600 dark:text-blue-400 mr-2"></i>
+                <span className="text-sm font-medium text-blue-800 dark:text-blue-200">
+                  Using Custom Templates:
+                </span>
+              </div>
+              <div className="mt-1 text-xs text-blue-700 dark:text-blue-300 space-y-1">
+                {getTemplateSummary().map((template, index) => (
+                  <div key={index}>• {template}</div>
+                ))}
+              </div>
+            </div>
+          )}
+          
           <ButtonProgress
             label="Generate map"
             downloadLabel="Download map"
@@ -1047,7 +1068,11 @@ export default function GeneratorTab({
               
               // Pass custom OSM data if using custom data source
               const customOsmData = dataSource === DATA_SOURCES.CUSTOM ? osmData : null;
-              startGeneration(settings, customOsmData);
+              
+              // Get template payload for non-public version
+              const templatePayload = !config.isPublicVersion ? getTemplatePayload() : null;
+              
+              startGeneration(settings, customOsmData, templatePayload);
             }}
             onDownload={downloadMap}
             disabled={!isGenerateEnabled}

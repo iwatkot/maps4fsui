@@ -48,7 +48,7 @@ export function useMapGeneration() {
   }, [targetProgress, progress]);
 
   // Start the generation process with real API
-  const startGeneration = useCallback(async (settings, osmData = null) => {
+  const startGeneration = useCallback(async (settings, osmData = null, templatePayload = null) => {
     if (isGenerating) return;
     
     setIsGenerating(true);
@@ -64,7 +64,7 @@ export function useMapGeneration() {
     try {
       // Step 1: Start generation with real API
       setStatusText("Initializing");
-      const startResult = await startMapGeneration(settings, osmData);
+      const startResult = await startMapGeneration(settings, osmData, templatePayload);
       
       if (!startResult.success) {
         throw new Error(startResult.error || "Failed to start generation");

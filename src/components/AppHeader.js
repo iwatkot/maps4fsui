@@ -53,7 +53,13 @@ export default function AppHeader({
       id: 'schemas',
       label: 'Schemas Editor',
       icon: <i className="zmdi zmdi-folder-outline"></i>
-    }
+    },
+    // Only show Settings tab in non-public version
+    ...(!isPublicVersion ? [{
+      id: 'settings',
+      label: 'Settings',
+      icon: <i className="zmdi zmdi-settings"></i>
+    }] : [])
   ];
 
   // Define right navigation links
