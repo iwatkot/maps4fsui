@@ -20,7 +20,9 @@ import {
   gameOptions, 
   createSizeOptions, 
   defaultValues,
-  constraints, 
+  constraints,
+  getMaxCustomSize,
+  getMaxOutputSize,
 } from '@/config/validation';
 import ButtonProgress from '@/components/ButtonProgress';
 import MixedPreviewGallery from '@/components/MixedPreviewGallery';
@@ -948,9 +950,9 @@ export default function GeneratorTab({
             onChange={setCustomSize}
             placeholder="Enter custom size"
             labelWidth='w-40'
-            tooltip="Custom map size in meters."
+            tooltip={`Custom map size in meters.${isPublicVersion ? ` Maximum ${getMaxCustomSize(isPublicVersion)} meters in public version.` : ''}`}
             min={1}
-            max={100000}
+            max={getMaxCustomSize(isPublicVersion)}
             size="sm"
           />
         )}
@@ -963,9 +965,9 @@ export default function GeneratorTab({
             onChange={setOutputSize}
             placeholder="Enter output size"
             labelWidth='w-40'
-            tooltip="Output size in pixels. Note that when downgrading the map size, some details may be lost."
+            tooltip={`Output size in pixels. Note that when downgrading the map size, some details may be lost.${isPublicVersion ? ` Maximum ${getMaxOutputSize(isPublicVersion)} pixels in public version.` : ''}`}
             min={1}
-            max={100000}
+            max={getMaxOutputSize(isPublicVersion)}
             size="sm"
           />
         )}
@@ -1036,6 +1038,24 @@ export default function GeneratorTab({
               // Only include outputSize when custom size is selected
               if (selectedSize === "custom") {
                 mainSettings.outputSize = outputSize;
+              }
+
+              // Validate size limits for public version
+              if (isPublicVersion) {
+                const maxCustomSize = getMaxCustomSize(isPublicVersion);
+                const maxOutputSize = getMaxOutputSize(isPublicVersion);
+                
+                // Check custom size limit
+                if (selectedSize === "custom" && customSize > maxCustomSize) {
+                  alert(`Custom size cannot exceed ${maxCustomSize} meters in the public version.`);
+                  return;
+                }
+                
+                // Check output size limit
+                if (selectedSize === "custom" && outputSize > maxOutputSize) {
+                  alert(`Output size cannot exceed ${maxOutputSize} pixels in the public version.`);
+                  return;
+                }
               }
 
               // Add DTM settings if provider requires them

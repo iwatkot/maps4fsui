@@ -140,6 +140,9 @@ export const constraints = {
 
 // Helper function to create size options based on version
 export const createSizeOptions = (isPublicVersion) => {
+  // Comment out the current public version size limit (show only 3 first options)
+  // We now allow all options but limit the actual values to 16384 max in public version
+  /*
   if (isPublicVersion) {
     return [
       ...availableSizeOptions.slice(0, 3), // First three options enabled
@@ -150,5 +153,16 @@ export const createSizeOptions = (isPublicVersion) => {
       }))
     ];
   }
+  */
   return availableSizeOptions;
+};
+
+// Helper function to get maximum allowed custom size based on version
+export const getMaxCustomSize = (isPublicVersion) => {
+  return isPublicVersion ? 16384 : 100000;
+};
+
+// Helper function to get maximum allowed output size based on version
+export const getMaxOutputSize = (isPublicVersion) => {
+  return isPublicVersion ? 16384 : 100000;
 };
