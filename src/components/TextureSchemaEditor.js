@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import JSONEditorModal from './JSONEditorModal';
+import SaveSchemaModal from './SaveSchemaModal';
 import SelectorCompact from './SelectorCompact';
 import { getTextureSchema } from '../api/schemas';
 
@@ -58,6 +59,7 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
   const [error, setError] = useState(null);
   const [showJsonModal, setShowJsonModal] = useState(false);
   const [showSchemaModal, setShowSchemaModal] = useState(false);
+  const [showSaveModal, setShowSaveModal] = useState(false);
   const [editingTexture, setEditingTexture] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
@@ -132,6 +134,15 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
     console.log('Textures array:', textures);
     console.log('Textures length:', textures.length);
     setShowSchemaModal(true);
+  };
+
+  const handleSaveSchema = () => {
+    setShowSaveModal(true);
+  };
+
+  const handleSaveSuccess = (result) => {
+    console.log('Schema saved successfully:', result);
+    // You can add a toast notification here if desired
   };
 
   const downloadSchema = () => {
@@ -236,7 +247,7 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
             </div>
           </div>
 
-          {/* Action button */}
+          {/* Action buttons */}
           <div className="flex gap-3">
             <button
               onClick={generateFinalSchema}
@@ -244,6 +255,13 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
             >
               <i className="zmdi zmdi-code mr-2"></i>
               Show Schema
+            </button>
+            <button
+              onClick={handleSaveSchema}
+              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center"
+            >
+              <i className="zmdi zmdi-save mr-2"></i>
+              Save Schema
             </button>
           </div>
         </div>
@@ -367,6 +385,15 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
           title="FS25 Texture Schema"
         />
       )}
+
+      {/* Save Schema Modal */}
+      <SaveSchemaModal
+        isOpen={showSaveModal}
+        onClose={() => setShowSaveModal(false)}
+        schemaData={textures}
+        schemaType="texture_schemas"
+        onSaveSuccess={handleSaveSuccess}
+      />
       </div>
     </div>
   );

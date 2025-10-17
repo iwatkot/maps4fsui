@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import JSONEditorModal from '@/components/JSONEditorModal';
+import SaveSchemaModal from '@/components/SaveSchemaModal';
 import SelectorCompact from '@/components/SelectorCompact';
 import { getTreeSchema } from '../api/schemas';
 
@@ -94,6 +95,7 @@ const TREE_DATA = {
 const TreeSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
   const [selectedTrees, setSelectedTrees] = useState(new Set());
   const [showJSONModal, setShowJSONModal] = useState(false);
+  const [showSaveModal, setShowSaveModal] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all'); // 'all', 'broadleaved', 'needleleaved', 'other'
   const [treeSchema, setTreeSchema] = useState([]);
@@ -170,6 +172,15 @@ const TreeSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
 
   const handleShowJSON = () => {
     setShowJSONModal(true);
+  };
+
+  const handleSaveSchema = () => {
+    setShowSaveModal(true);
+  };
+
+  const handleSaveSuccess = (result) => {
+    console.log('Schema saved successfully:', result);
+    // You can add a toast notification here if desired
   };
 
   const formatTreeName = (name) => {
@@ -262,6 +273,13 @@ const TreeSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
             >
               <i className="zmdi zmdi-code mr-2"></i>
               Show Schema
+            </button>
+            <button
+              onClick={handleSaveSchema}
+              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center"
+            >
+              <i className="zmdi zmdi-save mr-2"></i>
+              Save Schema
             </button>
           </div>
         </div>
@@ -386,6 +404,15 @@ const TreeSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
         onClose={() => setShowJSONModal(false)}
         jsonData={generateSchema()}
         title="FS25 Tree Schema"
+      />
+
+      {/* Save Schema Modal */}
+      <SaveSchemaModal
+        isOpen={showSaveModal}
+        onClose={() => setShowSaveModal(false)}
+        schemaData={generateSchema()}
+        schemaType="tree_schemas"
+        onSaveSuccess={handleSaveSuccess}
       />
     </div>
   );
