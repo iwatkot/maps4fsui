@@ -63,6 +63,7 @@ export const defaultValues = {
   treeLimit: 0,
   treesRelativeShift: 20,
   splineDensity: 2,
+  licensePlatePrefix: "M4F",
   // Texture Settings.
   fieldsPadding: 0,
   dissolve: false,
@@ -125,6 +126,10 @@ export const constraints = {
   treeLimit: {
     min: 0,
     max: 100000,
+  },
+  licensePlatePrefix: {
+    minLength: 1,
+    maxLength: 3,
   },
   // Texture settings.
   fieldsPadding: {
