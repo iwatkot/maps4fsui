@@ -581,8 +581,8 @@ export default function GeneratorTab({
           </div>
         )}
 
-        {/* Queue Overload Overlay - Only for public version */}
-        {isPublicVersion && isQueueOverloaded && (
+        {/* Queue Overload Overlay - Only for public version and not when user is already generating */}
+        {isPublicVersion && isQueueOverloaded && !isGenerating && (
           <div className="absolute inset-0 bg-gray-900 bg-opacity-75 z-50 flex items-center justify-center">
             <div className="bg-white dark:bg-gray-800 rounded-lg p-8 max-w-md mx-4 text-center shadow-2xl border border-gray-200 dark:border-gray-600">
               <div className="mb-4">
