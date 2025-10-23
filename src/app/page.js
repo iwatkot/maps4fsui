@@ -8,6 +8,7 @@ import PresetsTab from '@/app/tabs/PresetsTab';
 import SettingsTab from '@/app/tabs/SettingsTab';
 import SchemasTab from '@/app/tabs/SchemasTab';
 import SlideOutPromo from '@/components/SlideOutPromo';
+import SurveyPopup from '@/components/SurveyPopup';
 import { useBackendVersion } from '@/hooks/useBackendVersion';
 import { useVersionStatus } from '@/hooks/useVersionStatus';
 import config from '@/app/config';
@@ -116,6 +117,11 @@ export default function Home() {
           isVisible={showPromo}
           onClose={handleClosePromo}
         />
+      )}
+
+      {/* Survey Popup (only for public version and generator tab) */}
+      {isClient && isPublicVersion && activeTab === 'generator' && (
+        <SurveyPopup isPublic={isPublicVersion} />
       )}
     </div>
   );
