@@ -16,6 +16,7 @@ export default function SurveyPage() {
     howDidYouHear: '',
     experience: '',
     rating: '',
+    mapSize: '',
     triedLocalDeploy: '',
     deploySuccess: '',
     deploymentChallenges: '',
@@ -89,6 +90,13 @@ export default function SurveyPage() {
     { value: 'both', label: 'Both text and videos' }
   ];
 
+  const mapSizeOptions = [
+    { value: '2x2', label: '2x2 km' },
+    { value: '4x4', label: '4x4 km' },
+    { value: '8x8', label: '8x8 km' },
+    { value: '16x16', label: '16x16 km' }
+  ];
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -127,6 +135,7 @@ export default function SurveyPage() {
       howDidYouHear: '',
       experience: '',
       rating: '',
+      mapSize: '',
       triedLocalDeploy: '',
       deploySuccess: '',
       deploymentChallenges: '',
@@ -224,6 +233,14 @@ export default function SurveyPage() {
                 selectedValue={surveyData.rating}
                 onChange={(value) => setSurveyData(prev => ({ ...prev, rating: value }))}
                 required
+              />
+
+              <SimpleRadio
+                name="mapSize"
+                label="What map size do you typically create?"
+                options={mapSizeOptions}
+                selectedValue={surveyData.mapSize}
+                onChange={(value) => setSurveyData(prev => ({ ...prev, mapSize: value }))}
               />
 
               <SimpleRadio
