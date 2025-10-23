@@ -6,7 +6,8 @@ export default function SimpleRadio({
   selectedValue, 
   onChange, 
   label = "",
-  required = false 
+  required = false,
+  horizontal = false
 }) {
   return (
     <div className="mb-4">
@@ -16,7 +17,7 @@ export default function SimpleRadio({
           {required && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}
-      <div className="space-y-2">
+      <div className={horizontal ? "flex space-x-6" : "space-y-2"}>
         {options.map((option) => (
           <label key={option.value} className="flex items-center cursor-pointer">
             <input

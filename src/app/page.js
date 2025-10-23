@@ -119,8 +119,8 @@ export default function Home() {
         />
       )}
 
-      {/* Survey Popup (only for public version and generator tab) */}
-      {isClient && isPublicVersion && activeTab === 'generator' && (
+      {/* Survey Popup (show on generator tab) */}
+      {isClient && activeTab === 'generator' && (
         <SurveyPopup isPublic={isPublicVersion} />
       )}
     </div>

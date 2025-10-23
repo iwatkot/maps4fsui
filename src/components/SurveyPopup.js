@@ -13,9 +13,7 @@ export default function SurveyPopup({ isPublic = false }) {
   const router = useRouter();
 
   useEffect(() => {
-    // Only show on public version
-    if (!isPublic) return;
-
+    // Show popup regardless of public/private version
     // Check if user has dismissed or completed survey
     const dismissed = localStorage.getItem(SURVEY_DISMISSED_KEY);
     const completed = localStorage.getItem(SURVEY_COMPLETED_KEY);
@@ -31,7 +29,7 @@ export default function SurveyPopup({ isPublic = false }) {
     }, 3000); // Show after 3 seconds
 
     return () => clearTimeout(timer);
-  }, [isPublic]);
+  }, []); // Removed isPublic dependency
 
   const handleDismiss = () => {
     setIsAnimating(false);

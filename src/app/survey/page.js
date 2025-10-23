@@ -15,10 +15,25 @@ export default function SurveyPage() {
   const [surveyData, setSurveyData] = useState({
     howDidYouHear: '',
     experience: '',
-    favoriteFeatures: [],
-    suggestions: '',
     rating: '',
-    email: ''
+    triedLocalDeploy: '',
+    deploySuccess: '',
+    deploymentChallenges: '',
+    documentationClear: '',
+    dtmAvailable: '',
+    englishTrouble: '',
+    triedCustomOsm: '',
+    facedErrors: '',
+    knowWhereHelp: '',
+    finishedMaps: '',
+    publishedMaps: '',
+    joinedDiscord: '',
+    followUpdates: '',
+    tutorialPreference: '',
+    missingFeatures: '',
+    likeMost: '',
+    interfaceClear: '',
+    additionalFeedback: ''
   });
   
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -57,16 +72,21 @@ export default function SurveyPage() {
     { value: '1', label: '1 - Very Poor' }
   ];
 
-  const featureOptions = [
-    'Real terrain generation',
-    'Height maps from SRTM',
-    'OpenStreetMap integration',
-    'Multiple map sizes',
-    'Satellite imagery',
-    'Road generation',
-    'Water detection',
-    'Field boundaries',
-    'Forest areas'
+  const yesNoOptions = [
+    { value: 'yes', label: 'Yes' },
+    { value: 'no', label: 'No' }
+  ];
+
+  const deploySuccessOptions = [
+    { value: 'succeeded', label: 'Yes, I managed to deploy it successfully' },
+    { value: 'challenges', label: 'I tried but faced challenges and dropped it' },
+    { value: 'not-tried', label: 'I haven\'t tried to deploy locally yet' }
+  ];
+
+  const tutorialPreferenceOptions = [
+    { value: 'text', label: 'Text documentation' },
+    { value: 'youtube', label: 'YouTube videos' },
+    { value: 'both', label: 'Both text and videos' }
   ];
 
   const handleSubmit = async (e) => {
@@ -76,8 +96,15 @@ export default function SurveyPage() {
 
     try {
       const payload = {
-        results: surveyData
+        results: {}
       };
+
+      // Only include fields that have values
+      Object.keys(surveyData).forEach(key => {
+        if (surveyData[key] && surveyData[key] !== '') {
+          payload.results[key] = surveyData[key];
+        }
+      });
 
       await apiService.post('/users/receive_survey', payload);
       
@@ -99,21 +126,29 @@ export default function SurveyPage() {
     setSurveyData({
       howDidYouHear: '',
       experience: '',
-      favoriteFeatures: [],
-      suggestions: '',
       rating: '',
-      email: ''
+      triedLocalDeploy: '',
+      deploySuccess: '',
+      deploymentChallenges: '',
+      documentationClear: '',
+      dtmAvailable: '',
+      englishTrouble: '',
+      triedCustomOsm: '',
+      facedErrors: '',
+      knowWhereHelp: '',
+      finishedMaps: '',
+      publishedMaps: '',
+      joinedDiscord: '',
+      followUpdates: '',
+      tutorialPreference: '',
+      missingFeatures: '',
+      likeMost: '',
+      interfaceClear: '',
+      additionalFeedback: ''
     });
   };
 
-  const handleFeatureChange = (feature, checked) => {
-    setSurveyData(prev => ({
-      ...prev,
-      favoriteFeatures: checked 
-        ? [...prev.favoriteFeatures, feature]
-        : prev.favoriteFeatures.filter(f => f !== feature)
-    }));
-  };
+
 
   if (hasSentSurvey && submitSuccess) {
     return (
@@ -128,16 +163,18 @@ export default function SurveyPage() {
               <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
                 Your feedback has been submitted successfully. We really appreciate your input!
               </p>
-              <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <SimpleButton 
                   onClick={() => router.push('/')}
                   variant="primary"
+                  className="flex-1 sm:flex-none"
                 >
                   Back to Generator
                 </SimpleButton>
                 <SimpleButton 
                   onClick={handleReset}
                   variant="secondary"
+                  className="flex-1 sm:flex-none"
                 >
                   Submit Again
                 </SimpleButton>
@@ -180,23 +217,6 @@ export default function SurveyPage() {
                 required
               />
 
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Which features do you find most useful? (select all that apply)
-                </label>
-                <div className="space-y-2">
-                  {featureOptions.map((feature) => (
-                    <Checkbox
-                      key={feature}
-                      label={feature}
-                      checked={surveyData.favoriteFeatures.includes(feature)}
-                      onChange={(checked) => handleFeatureChange(feature, checked)}
-                      size="sm"
-                    />
-                  ))}
-                </div>
-              </div>
-
               <SimpleRadio
                 name="rating"
                 label="How would you rate Maps4FS overall?"
@@ -206,20 +226,168 @@ export default function SurveyPage() {
                 required
               />
 
-              <SimpleTextInput
-                label="What improvements would you like to see?"
-                value={surveyData.suggestions}
-                onChange={(value) => setSurveyData(prev => ({ ...prev, suggestions: value }))}
-                placeholder="Your suggestions..."
-                multiline
-                rows={4}
+              <SimpleRadio
+                name="triedLocalDeploy"
+                label="Have you tried to deploy Maps4FS locally?"
+                options={yesNoOptions}
+                selectedValue={surveyData.triedLocalDeploy}
+                onChange={(value) => setSurveyData(prev => ({ ...prev, triedLocalDeploy: value }))}
+                horizontal
+              />
+
+              {surveyData.triedLocalDeploy === 'yes' && (
+                <SimpleRadio
+                  name="deploySuccess"
+                  label="Did you manage to deploy it successfully or faced challenges?"
+                  options={deploySuccessOptions}
+                  selectedValue={surveyData.deploySuccess}
+                  onChange={(value) => setSurveyData(prev => ({ ...prev, deploySuccess: value }))}
+                />
+              )}
+
+              {(surveyData.deploySuccess === 'challenges' || surveyData.triedLocalDeploy === 'yes') && (
+                <SimpleTextInput
+                  label="If you faced some challenges during local deployment, explain what was the most difficult"
+                  value={surveyData.deploymentChallenges}
+                  onChange={(value) => setSurveyData(prev => ({ ...prev, deploymentChallenges: value }))}
+                  placeholder="Describe the main challenges you encountered..."
+                  multiline
+                  rows={3}
+                />
+              )}
+
+              <SimpleRadio
+                name="documentationClear"
+                label="Is documentation clear and understandable?"
+                options={yesNoOptions}
+                selectedValue={surveyData.documentationClear}
+                onChange={(value) => setSurveyData(prev => ({ ...prev, documentationClear: value }))}
+                horizontal
+              />
+
+              <SimpleRadio
+                name="dtmAvailable"
+                label="Are high quality DTM providers available for your region?"
+                options={yesNoOptions}
+                selectedValue={surveyData.dtmAvailable}
+                onChange={(value) => setSurveyData(prev => ({ ...prev, dtmAvailable: value }))}
+                horizontal
+              />
+
+              <SimpleRadio
+                name="englishTrouble"
+                label="Do you have any difficulties with the English user interface?"
+                options={yesNoOptions}
+                selectedValue={surveyData.englishTrouble}
+                onChange={(value) => setSurveyData(prev => ({ ...prev, englishTrouble: value }))}
+                horizontal
+              />
+
+              <SimpleRadio
+                name="triedCustomOsm"
+                label="Have you tried using custom OSM files?"
+                options={yesNoOptions}
+                selectedValue={surveyData.triedCustomOsm}
+                onChange={(value) => setSurveyData(prev => ({ ...prev, triedCustomOsm: value }))}
+                horizontal
+              />
+
+              <SimpleRadio
+                name="facedErrors"
+                label="Did you face any errors or challenges that you couldn't understand?"
+                options={yesNoOptions}
+                selectedValue={surveyData.facedErrors}
+                onChange={(value) => setSurveyData(prev => ({ ...prev, facedErrors: value }))}
+                horizontal
+              />
+
+              <SimpleRadio
+                name="knowWhereHelp"
+                label="Do you know where to search for help?"
+                options={yesNoOptions}
+                selectedValue={surveyData.knowWhereHelp}
+                onChange={(value) => setSurveyData(prev => ({ ...prev, knowWhereHelp: value }))}
+                horizontal
+              />
+
+              <SimpleRadio
+                name="finishedMaps"
+                label="Did you finish any maps after using Maps4FS?"
+                options={yesNoOptions}
+                selectedValue={surveyData.finishedMaps}
+                onChange={(value) => setSurveyData(prev => ({ ...prev, finishedMaps: value }))}
+                horizontal
+              />
+
+              <SimpleRadio
+                name="publishedMaps"
+                label="Did you publish any maps to ModHub that were created by Maps4FS?"
+                options={yesNoOptions}
+                selectedValue={surveyData.publishedMaps}
+                onChange={(value) => setSurveyData(prev => ({ ...prev, publishedMaps: value }))}
+                horizontal
+              />
+
+              <SimpleRadio
+                name="joinedDiscord"
+                label="Did you join the Maps4FS Discord server?"
+                options={yesNoOptions}
+                selectedValue={surveyData.joinedDiscord}
+                onChange={(value) => setSurveyData(prev => ({ ...prev, joinedDiscord: value }))}
+                horizontal
+              />
+
+              <SimpleRadio
+                name="followUpdates"
+                label="Do you follow Maps4FS updates to know about the latest features?"
+                options={yesNoOptions}
+                selectedValue={surveyData.followUpdates}
+                onChange={(value) => setSurveyData(prev => ({ ...prev, followUpdates: value }))}
+                horizontal
+              />
+
+              <SimpleRadio
+                name="tutorialPreference"
+                label="What tutorials do you prefer?"
+                options={tutorialPreferenceOptions}
+                selectedValue={surveyData.tutorialPreference}
+                onChange={(value) => setSurveyData(prev => ({ ...prev, tutorialPreference: value }))}
+              />
+
+              <SimpleRadio
+                name="interfaceClear"
+                label="Is the Maps4FS interface clear and understandable?"
+                options={yesNoOptions}
+                selectedValue={surveyData.interfaceClear}
+                onChange={(value) => setSurveyData(prev => ({ ...prev, interfaceClear: value }))}
+                horizontal
               />
 
               <SimpleTextInput
-                label="Email (optional - for follow-up questions)"
-                value={surveyData.email}
-                onChange={(value) => setSurveyData(prev => ({ ...prev, email: value }))}
-                placeholder="your.email@example.com"
+                label="What important features are missing in Maps4FS?"
+                value={surveyData.missingFeatures}
+                onChange={(value) => setSurveyData(prev => ({ ...prev, missingFeatures: value }))}
+                placeholder="Tell us about features you'd like to see..."
+                multiline
+                rows={3}
+              />
+
+              <SimpleTextInput
+                label="What do you like most about Maps4FS?"
+                value={surveyData.likeMost}
+                onChange={(value) => setSurveyData(prev => ({ ...prev, likeMost: value }))}
+                placeholder="Share what you enjoy most..."
+                multiline
+                rows={3}
+              />
+
+              <SimpleTextInput
+                label="Any additional feedback"
+                value={surveyData.additionalFeedback}
+                onChange={(value) => setSurveyData(prev => ({ ...prev, additionalFeedback: value }))}
+                placeholder="Any other thoughts or suggestions..."
+                multiline
+                rows={4}
               />
 
               {submitError && (
