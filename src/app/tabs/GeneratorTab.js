@@ -36,6 +36,7 @@ import I3dSettingsContent from '@/app/settings/i3dSettings';
 import TextureSettingsContent from '@/app/settings/textureSettings';
 import SatelliteSettingsContent from '@/app/settings/satelliteSettings';
 import PresetSelector from '@/components/PresetSelector';
+import DownloadLinkWidget from '@/components/DownloadLinkWidget';
 import apiService from '@/utils/apiService';
 
 const isPublicVersion = config.isPublicVersion;
@@ -1020,6 +1021,11 @@ export default function GeneratorTab({
                 ))}
               </div>
             </div>
+          )}
+          
+          {/* Download Link Widget (only for public version when task ID is available) */}
+          {config.isPublicVersion && taskId && (
+            <DownloadLinkWidget taskId={taskId} />
           )}
           
           <ButtonProgress
