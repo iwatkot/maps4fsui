@@ -66,6 +66,13 @@ export default function AppHeader({
   const rightNavLinks = (
     <>
       <Link
+        href="/survey"
+        className="text-gray-500 hover:text-green-600 dark:text-gray-400 dark:hover:text-green-400 transition-colors"
+        title="User Survey"
+      >
+        <i className="zmdi zmdi-comment-text-alt text-5xl" style={{fontSize: '1.2rem'}}></i>
+      </Link>
+      <Link
         href="/help"
         className="text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
         title="Get Help"
