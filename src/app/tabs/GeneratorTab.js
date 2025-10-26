@@ -481,11 +481,11 @@ export default function GeneratorTab({
   const satelliteSettings = pendingGenerationSettings?.SatelliteSettings || {};
 
   const { content: demContent, values: demValues } = DemSettingsContent(!onlyPopularSettings, demSettings);
-  const { content: backgroundContent, values: backgroundValues } = BackgroundSettingsContent(!onlyPopularSettings, config.isPublicVersion, backgroundSettings);
+  const { content: backgroundContent, values: backgroundValues } = BackgroundSettingsContent(!onlyPopularSettings, false, backgroundSettings);
   const { content: grleContent, values: grleValues } = GrleSettingsContent(!onlyPopularSettings, false, grleSettings);
   const { content: i3dContent, values: i3dValues } = I3dSettingsContent(!onlyPopularSettings, false, i3dSettings);
   const { content: textureContent, values: textureValues } = TextureSettingsContent(!onlyPopularSettings, false, textureSettings);
-  const { content: satelliteContent, values: satelliteValues } = SatelliteSettingsContent(!onlyPopularSettings, config.isPublicVersion, satelliteSettings);
+  const { content: satelliteContent, values: satelliteValues } = SatelliteSettingsContent(!onlyPopularSettings, false, satelliteSettings);
 
   // Apply pending generation settings from duplication
   useEffect(() => {

@@ -22,7 +22,7 @@ export default function SatelliteSettingsContent(showAll = false, onPublic = fal
     }, [initialValues]);
 
     const expanderSummary = `${downloadImagesSummary} | Zoom level: ${zoomLevel}`.replace(/^ \| /, '');
-    const maxZoomLevel = onPublic ? 16 : constraints.zoomLevel.max;
+    const maxZoomLevel = constraints.zoomLevel.max;
 
     const values = {
         downloadImages: downloadImages,
