@@ -30,6 +30,7 @@ export default function SettingsTab() {
     fs25: {
       texture_schemas: null,
       tree_schemas: null,
+      buildings_schemas: null,
       map_templates: null
     },
     fs22: {
@@ -41,7 +42,7 @@ export default function SettingsTab() {
   // Templates structure definition
   const TEMPLATES_STRUCTURE = {
     "general": [], // General settings - no game-specific sections
-    "fs25": ["texture_schemas", "tree_schemas", "map_templates"],
+    "fs25": ["texture_schemas", "tree_schemas", "buildings_schemas", "map_templates"],
     "fs22": ["texture_schemas", "map_templates"],
   };
 
@@ -51,6 +52,7 @@ export default function SettingsTab() {
       fs25: {
         texture_schemas: localStorage.getItem('defaultTemplate_fs25_texture_schemas'),
         tree_schemas: localStorage.getItem('defaultTemplate_fs25_tree_schemas'),
+        buildings_schemas: localStorage.getItem('defaultTemplate_fs25_buildings_schemas'),
         map_templates: localStorage.getItem('defaultTemplate_fs25_map_templates')
       },
       fs22: {
@@ -99,6 +101,12 @@ export default function SettingsTab() {
         label: `Tree Schemas`, 
         icon: <i className="zmdi zmdi-nature"></i>,
         description: 'JSON files that define tree placement patterns and species for forest generation. (FS25 only)',
+        available: selectedGame === 'fs25' // Only for FS25
+      },
+      buildings_schemas: { 
+        label: `Buildings Schemas`, 
+        icon: <i className="zmdi zmdi-home"></i>,
+        description: 'JSON files that define building placement patterns and types for settlement generation. (FS25 only)',
         available: selectedGame === 'fs25' // Only for FS25
       },
       map_templates: { 
@@ -252,7 +260,8 @@ export default function SettingsTab() {
   const getExtensions = (section) => {
     switch (section) {
       case 'texture_schemas':
-      case 'tree_schemas': 
+      case 'tree_schemas':
+      case 'buildings_schemas': 
         return ['.json'];
       case 'map_templates': 
         return ['.zip'];
