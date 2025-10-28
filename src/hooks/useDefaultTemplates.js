@@ -10,6 +10,7 @@ export function useDefaultTemplates(gameVersion = 'fs25') {
   const [defaultTemplates, setDefaultTemplates] = useState({
     texture_schemas: null,
     tree_schemas: null,
+    buildings_schemas: null,
     map_templates: null
   });
 
@@ -19,6 +20,7 @@ export function useDefaultTemplates(gameVersion = 'fs25') {
       const templates = {
         texture_schemas: localStorage.getItem(`defaultTemplate_${gameVersion}_texture_schemas`),
         tree_schemas: localStorage.getItem(`defaultTemplate_${gameVersion}_tree_schemas`),
+        buildings_schemas: localStorage.getItem(`defaultTemplate_${gameVersion}_buildings_schemas`),
         map_templates: localStorage.getItem(`defaultTemplate_${gameVersion}_map_templates`)
       };
       setDefaultTemplates(templates);
@@ -60,6 +62,10 @@ export function useDefaultTemplates(gameVersion = 'fs25') {
       payload.custom_tree_schema_path = defaultTemplates.tree_schemas;
     }
     
+    if (defaultTemplates.buildings_schemas && gameVersion === 'fs25') {
+      payload.custom_buildings_schema_path = defaultTemplates.buildings_schemas;
+    }
+    
     if (defaultTemplates.map_templates) {
       payload.custom_map_template_path = defaultTemplates.map_templates;
     }
@@ -74,6 +80,7 @@ export function useDefaultTemplates(gameVersion = 'fs25') {
     return Boolean(
       defaultTemplates.texture_schemas || 
       defaultTemplates.tree_schemas || 
+      defaultTemplates.buildings_schemas ||
       defaultTemplates.map_templates
     );
   };
@@ -90,6 +97,10 @@ export function useDefaultTemplates(gameVersion = 'fs25') {
     
     if (defaultTemplates.tree_schemas && gameVersion === 'fs25') {
       summary.push(`Tree Schema: ${defaultTemplates.tree_schemas}`);
+    }
+    
+    if (defaultTemplates.buildings_schemas && gameVersion === 'fs25') {
+      summary.push(`Buildings Schema: ${defaultTemplates.buildings_schemas}`);
     }
     
     if (defaultTemplates.map_templates) {
