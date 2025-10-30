@@ -73,6 +73,10 @@ export const defaultValues = {
   // Satellite Settings.
   downloadImages: false,
   zoomLevel: 16,
+  // Building Settings.
+  generateBuildings: true,
+  region: "auto",
+  toleranceFactor: 30,
 };
 
 // Validation constraints
@@ -140,6 +144,11 @@ export const constraints = {
   zoomLevel: {
     min: 14,
     max: 18,
+  },
+  // Building settings.
+  toleranceFactor: {
+    min: 5,
+    max: 70,
   },
 };
 

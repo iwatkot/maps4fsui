@@ -73,7 +73,7 @@ export default function Expander({
         {/* Expandable Content Panel */}
         {isExpanded && (
           <div 
-            className="panel-backdrop mt-2 overflow-hidden"
+            className="panel-backdrop mt-2 overflow-visible"
             style={{
               animation: 'dropdownOpen 200ms ease-out forwards'
             }}
