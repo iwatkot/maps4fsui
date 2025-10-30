@@ -4,6 +4,168 @@ import { useState, useEffect } from 'react';
 import JSONEditorModal from '@/components/JSONEditorModal';
 import config from '@/app/config';
 import { getAuthenticatedFetch } from '@/utils/authenticatedFetch';
+import apiService from '@/utils/apiService';
+
+/**
+ * ServerManagementSection - Component for managing server operations
+ */
+function ServerManagementSection({ showToast }) {
+  const [isCleaningCache, setIsCleaningCache] = useState(false);
+  const [isReloadingTemplates, setIsReloadingTemplates] = useState(false);
+
+  const handleCleanCache = async () => {
+    setIsCleaningCache(true);
+    try {
+      console.log('Calling clean cache endpoint...');
+      const result = await apiService.post('/server/clean_cache', {});
+      showToast('Cache cleaned successfully', 'success');
+      console.log('Cache clean result:', result);
+    } catch (err) {
+      console.error('Failed to clean cache:', err);
+      showToast(`Failed to clean cache: ${err.message}`, 'error');
+    } finally {
+      setIsCleaningCache(false);
+    }
+  };
+
+  const handleReloadTemplates = async () => {
+    setIsReloadingTemplates(true);
+    try {
+      console.log('Calling reload templates endpoint...');
+      const result = await apiService.post('/server/reload_templates', {});
+      showToast('Templates reloaded successfully', 'success');
+      console.log('Template reload result:', result);
+    } catch (err) {
+      console.error('Failed to reload templates:', err);
+      showToast(`Failed to reload templates: ${err.message}`, 'error');
+    } finally {
+      setIsReloadingTemplates(false);
+    }
+  };
+
+  return (
+    <div className="max-w-4xl mx-auto">
+      <div className="space-y-6">
+        {/* Server Management Header */}
+        <div className="text-center mb-8">
+          <div className="text-4xl mb-4">🖥️</div>
+          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            Server Management
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400">
+            Manage your backend server operations and maintenance tasks.
+          </p>
+        </div>
+
+        {/* Server Operations */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Clean Cache Card */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <div className="flex items-center mb-4">
+              <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center mr-4">
+                <i className="zmdi zmdi-delete text-red-600 dark:text-red-400 text-xl"></i>
+              </div>
+              <div>
+                <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100">Clean Cache</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Remove cached data and temporary files</p>
+              </div>
+            </div>
+            <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+              Clears all cached data, temporary files, and processing artifacts. This can help resolve issues 
+              with outdated data or free up disk space.
+            </p>
+            <button
+              onClick={handleCleanCache}
+              disabled={isCleaningCache}
+              className={`w-full px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center ${
+                isCleaningCache
+                  ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                  : 'bg-red-600 hover:bg-red-700 text-white hover:scale-[1.02] active:scale-[0.98]'
+              }`}
+            >
+              {isCleaningCache ? (
+                <>
+                  <div className="animate-spin h-4 w-4 border-2 border-gray-400 border-t-transparent rounded-full mr-2"></div>
+                  Cleaning...
+                </>
+              ) : (
+                <>
+                  <i className="zmdi zmdi-delete mr-2"></i>
+                  Clean Cache
+                </>
+              )}
+            </button>
+          </div>
+
+          {/* Reload Templates Card */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <div className="flex items-center mb-4">
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mr-4">
+                <i className="zmdi zmdi-refresh text-blue-600 dark:text-blue-400 text-xl"></i>
+              </div>
+              <div>
+                <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100">Reload Templates</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Download and update default templates</p>
+              </div>
+            </div>
+            <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+              Downloads the latest default templates from the remote repository. This ensures you have 
+              the most up-to-date schemas and configurations.
+            </p>
+            <button
+              onClick={handleReloadTemplates}
+              disabled={isReloadingTemplates}
+              className={`w-full px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center ${
+                isReloadingTemplates
+                  ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                  : 'bg-blue-600 hover:bg-blue-700 text-white hover:scale-[1.02] active:scale-[0.98]'
+              }`}
+            >
+              {isReloadingTemplates ? (
+                <>
+                  <div className="animate-spin h-4 w-4 border-2 border-gray-400 border-t-transparent rounded-full mr-2"></div>
+                  Reloading...
+                </>
+              ) : (
+                <>
+                  <i className="zmdi zmdi-refresh mr-2"></i>
+                  Reload Templates
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Server Info */}
+        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+          <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3 flex items-center">
+            <i className="zmdi zmdi-info-outline mr-2 text-blue-600 dark:text-blue-400"></i>
+            Server Information
+          </h4>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+            <div>
+              <span className="font-medium text-gray-700 dark:text-gray-300">Backend URL:</span>
+              <span className="ml-2 text-gray-600 dark:text-gray-400 font-mono">{config.backendUrl}</span>
+            </div>
+            <div>
+              <span className="font-medium text-gray-700 dark:text-gray-300">Environment:</span>
+              <span className="ml-2 text-gray-600 dark:text-gray-400">{config.isPublicVersion ? 'Public' : 'Local'}</span>
+            </div>
+          </div>
+          <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded">
+            <div className="flex items-start">
+              <i className="zmdi zmdi-alert-triangle text-yellow-600 dark:text-yellow-400 mr-2 mt-0.5"></i>
+              <div className="text-sm text-yellow-800 dark:text-yellow-200">
+                <strong>Note:</strong> These operations affect the backend server. 
+                Make sure no map generation is in progress before performing maintenance tasks.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 /**
  * SettingsTab - Tab for managing templates (texture schemas, tree schemas, map templates)
@@ -673,17 +835,8 @@ export default function SettingsTab() {
 
           {/* Handle General settings */}
           {selectedGame === 'general' && activeSection === 'general_settings' ? (
-            <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-              <div className="text-4xl mb-4">⚙️</div>
-              <div className="text-lg font-medium mb-2">No Settings Available</div>
-              <div className="text-sm max-w-md mx-auto">
-                General software settings are not available at the moment.
-                <br />
-                <span className="text-xs text-gray-400 dark:text-gray-500 mt-2 block">
-                  This section will be populated with application preferences in future updates.
-                </span>
-              </div>
-            </div>
+            <ServerManagementSection showToast={showToast} />
+          
           ) : (
             /* Check if current section is available for selected game */
             sectionTabs.find(t => t.id === activeSection)?.available ? (
