@@ -35,6 +35,7 @@ import GrleSettingsContent from '@/app/settings/grleSettings';
 import I3dSettingsContent from '@/app/settings/i3dSettings';
 import TextureSettingsContent from '@/app/settings/textureSettings';
 import SatelliteSettingsContent from '@/app/settings/satelliteSettings';
+import BuildingSettingsContent from '@/app/settings/buildingSettings';
 import PresetSelector from '@/components/PresetSelector';
 import DownloadLinkWidget from '@/components/DownloadLinkWidget';
 import apiService from '@/utils/apiService';
@@ -479,6 +480,7 @@ export default function GeneratorTab({
   const i3dSettings = pendingGenerationSettings?.I3DSettings || {};
   const textureSettings = pendingGenerationSettings?.TextureSettings || {};
   const satelliteSettings = pendingGenerationSettings?.SatelliteSettings || {};
+  const buildingSettings = pendingGenerationSettings?.BuildingSettings || {};
 
   const { content: demContent, values: demValues } = DemSettingsContent(!onlyPopularSettings, demSettings);
   const { content: backgroundContent, values: backgroundValues } = BackgroundSettingsContent(!onlyPopularSettings, false, backgroundSettings);
@@ -486,6 +488,7 @@ export default function GeneratorTab({
   const { content: i3dContent, values: i3dValues } = I3dSettingsContent(!onlyPopularSettings, false, i3dSettings);
   const { content: textureContent, values: textureValues } = TextureSettingsContent(!onlyPopularSettings, false, textureSettings);
   const { content: satelliteContent, values: satelliteValues } = SatelliteSettingsContent(!onlyPopularSettings, false, satelliteSettings);
+  const { content: buildingContent, values: buildingValues } = BuildingSettingsContent(!onlyPopularSettings, false, buildingSettings);
 
   // Apply pending generation settings from duplication
   useEffect(() => {
@@ -1002,6 +1005,7 @@ export default function GeneratorTab({
         {i3dContent}
         {textureContent}
         {satelliteContent}
+        {buildingContent}
         </div>
 
         {/* Fixed Generate Button at Bottom */}
@@ -1089,6 +1093,7 @@ export default function GeneratorTab({
                   grle_settings: grleValues,
                   texture_settings: textureValues,
                   satellite_settings: satelliteValues,
+                  building_settings: buildingValues,
                 },
               };
               

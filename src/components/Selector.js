@@ -66,7 +66,7 @@ export default function Selector({
         {/* Dropdown Panel */}
         {isOpen && (
           <div 
-            className="panel-backdrop absolute z-10 w-full mt-2 overflow-hidden"
+            className="panel-backdrop absolute z-30 w-full mt-2 overflow-hidden"
             style={{
               animation: 'dropdownOpen 200ms ease-out forwards'
             }}
