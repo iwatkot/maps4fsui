@@ -483,12 +483,12 @@ export default function GeneratorTab({
   const buildingSettings = pendingGenerationSettings?.BuildingSettings || {};
 
   const { content: demContent, values: demValues } = DemSettingsContent(!onlyPopularSettings, demSettings);
-  const { content: backgroundContent, values: backgroundValues } = BackgroundSettingsContent(!onlyPopularSettings, false, backgroundSettings);
-  const { content: grleContent, values: grleValues } = GrleSettingsContent(!onlyPopularSettings, false, grleSettings);
-  const { content: i3dContent, values: i3dValues } = I3dSettingsContent(!onlyPopularSettings, false, i3dSettings);
-  const { content: textureContent, values: textureValues } = TextureSettingsContent(!onlyPopularSettings, false, textureSettings);
-  const { content: satelliteContent, values: satelliteValues } = SatelliteSettingsContent(!onlyPopularSettings, false, satelliteSettings);
-  const { content: buildingContent, values: buildingValues } = BuildingSettingsContent(!onlyPopularSettings, false, buildingSettings);
+  const { content: backgroundContent, values: backgroundValues } = BackgroundSettingsContent(!onlyPopularSettings, isPublicVersion, backgroundSettings);
+  const { content: grleContent, values: grleValues } = GrleSettingsContent(!onlyPopularSettings, isPublicVersion, grleSettings);
+  const { content: i3dContent, values: i3dValues } = I3dSettingsContent(!onlyPopularSettings, isPublicVersion, i3dSettings);
+  const { content: textureContent, values: textureValues } = TextureSettingsContent(!onlyPopularSettings, isPublicVersion, textureSettings);
+  const { content: satelliteContent, values: satelliteValues } = SatelliteSettingsContent(!onlyPopularSettings, isPublicVersion, satelliteSettings);
+  const { content: buildingContent, values: buildingValues } = BuildingSettingsContent(!onlyPopularSettings, isPublicVersion, buildingSettings);
 
   // Apply pending generation settings from duplication
   useEffect(() => {
