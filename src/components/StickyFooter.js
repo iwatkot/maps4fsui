@@ -28,6 +28,24 @@ export default function StickyFooter() {
             >
               CC BY-NC 4.0
             </a>
+            <span className="text-gray-300 dark:text-gray-600">•</span>
+            <a
+              href="https://maps4fs.gitbook.io/docs/legal-information/terms-of-use"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+            >
+              Terms of Use
+            </a>
+            <span className="text-gray-300 dark:text-gray-600">•</span>
+            <a
+              href="https://maps4fs.gitbook.io/docs/legal-information/official-sources"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-orange-600 dark:hover:text-orange-400 transition-colors text-orange-500 dark:text-orange-400"
+            >
+              Official Sources & Risks
+            </a>
           </div>
 
           {/* Right side - Main site */}
