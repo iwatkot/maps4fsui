@@ -11,6 +11,7 @@ import SlideOutPromo from '@/components/SlideOutPromo';
 import SurveyPopup from '@/components/SurveyPopup';
 import { useBackendVersion } from '@/hooks/useBackendVersion';
 import { useVersionStatus } from '@/hooks/useVersionStatus';
+import StickyFooter from '@/components/StickyFooter';
 import config from '@/app/config';
 import logger from '@/utils/logger';
 
@@ -123,6 +124,9 @@ export default function Home() {
       {isClient && activeTab === 'generator' && (
         <SurveyPopup isPublic={isPublicVersion} />
       )}
+
+      {/* Sticky Footer */}
+      <StickyFooter />
     </div>
   );
 }
