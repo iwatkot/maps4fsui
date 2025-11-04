@@ -52,7 +52,14 @@ export async function startMapGeneration(settings, osmData = null, templatePaylo
     // Step 5: Send to /map/generate endpoint using apiService
     const data = await apiService.post('/map/generate', payload);
     
-    logger.info(`Generation started successfully with task ID: ${data.task_id}`);
+    if (!data || Object.keys(data).length === 0 || !data.task_id) {
+      return {
+        success: true,
+        taskId: null,
+        description: null,
+        silent: true
+      };
+    }
     
     return {
       success: true,

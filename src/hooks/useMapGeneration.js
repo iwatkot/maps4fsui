@@ -70,6 +70,15 @@ export function useMapGeneration() {
         throw new Error(startResult.error || "Failed to start generation");
       }
 
+      // Handle silent success case (empty response from API)
+      if (startResult.silent || !startResult.taskId) {
+        setStatusType(STATUS_TYPES.PROCESSING);
+        setStatusText("Processing...");
+        setTargetProgress(50);
+        // Keep isGenerating as true to maintain the processing state
+        return;
+      }
+
       const generationTaskId = startResult.taskId;
       setTaskId(generationTaskId);
       setStatusText("Generating the map...");

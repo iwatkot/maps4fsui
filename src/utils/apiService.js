@@ -78,8 +78,23 @@ class ApiService {
         throw new ApiError(errorMessage, response.status, errorData);
       }
 
-      const responseData = await response.json();
-      logger.debug('Response data:', responseData);      return responseData;
+      // Check if response body is empty
+      const contentLength = response.headers.get('Content-Length');
+      const responseText = await response.text();
+      
+      // Handle empty responses silently
+      if (!responseText || responseText.trim() === '' || contentLength === '0') {
+        return {}; // Return empty object for empty responses
+      }
+
+      // Try to parse as JSON
+      let responseData;
+      try {
+        responseData = JSON.parse(responseText);
+      } catch (jsonError) {
+        responseData = { message: responseText };
+      }
+      return responseData;
     } catch (error) {
       if (error instanceof ApiError) {
         throw error;
@@ -140,8 +155,22 @@ class ApiService {
         throw new ApiError(errorMessage, response.status, errorData);
       }
 
-      const responseData = await response.json();
-      logger.debug('Response data:', responseData);
+      // Check if response body is empty
+      const contentLength = response.headers.get('Content-Length');
+      const responseText = await response.text();
+      
+      // Handle empty responses silently
+      if (!responseText || responseText.trim() === '' || contentLength === '0') {
+        return {}; // Return empty object for empty responses
+      }
+
+      // Try to parse as JSON
+      let responseData;
+      try {
+        responseData = JSON.parse(responseText);
+      } catch (jsonError) {
+        responseData = { message: responseText };
+      }
       
       return responseData;
     } catch (error) {
