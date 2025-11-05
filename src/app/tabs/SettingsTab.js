@@ -196,7 +196,7 @@ function ServerManagementSection({ showToast }) {
             </div>
             <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 flex-grow">
               Removes all stored preferences including default templates, presets, survey responses, 
-              and other settings saved in your browser's local storage.
+              and other settings saved in your browser&apos;s local storage.
             </p>
             <button
               onClick={handleClearLocalStorage}
