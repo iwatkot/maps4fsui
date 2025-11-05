@@ -125,7 +125,7 @@ export default function Home() {
         <SurveyPopup isPublic={isPublicVersion} />
       )}
 
-      {/* Sticky Footer */}
+      {/* Footer */}
       <StickyFooter />
     </div>
   );

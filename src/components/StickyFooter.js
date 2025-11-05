@@ -6,7 +6,7 @@
  */
 export default function StickyFooter() {
   return (
-    <div className="sticky bottom-0 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 z-20">
+    <div className="bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
       <div className="px-6 py-2">
         <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
           {/* Left side - Copyright */}
