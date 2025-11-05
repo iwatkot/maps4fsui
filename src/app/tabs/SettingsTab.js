@@ -12,6 +12,7 @@ import apiService from '@/utils/apiService';
 function ServerManagementSection({ showToast }) {
   const [isCleaningCache, setIsCleaningCache] = useState(false);
   const [isReloadingTemplates, setIsReloadingTemplates] = useState(false);
+  const [isClearingLocalStorage, setIsClearingLocalStorage] = useState(false);
 
   const handleCleanCache = async () => {
     setIsCleaningCache(true);
@@ -43,34 +44,81 @@ function ServerManagementSection({ showToast }) {
     }
   };
 
-  return (
-    <div className="max-w-4xl mx-auto">
-      <div className="space-y-6">
-        {/* Server Management Header */}
-        <div className="text-center mb-8">
-          <div className="text-4xl mb-4">🖥️</div>
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-            Server Management
-          </h3>
-          <p className="text-gray-600 dark:text-gray-400">
-            Manage your backend server operations and maintenance tasks.
-          </p>
-        </div>
+  const handleClearLocalStorage = async () => {
+    setIsClearingLocalStorage(true);
+    try {
+      // Clear all localStorage items used by the application
+      const keysToRemove = [
+        // Promo and intro settings
+        'maps4fs-promo-closed',
+        'maps4fs-intro-closed',
+        
+        // Survey settings
+        'maps4fs_survey_dismissed',
+        'maps4fs_survey_completed',
+        
+        // Default presets
+        'defaultPreset_mainSettings',
+        'defaultPreset_generationSettings',
+        'defaultPreset_osm',
+        'defaultPreset_dem',
+        
+        // Default templates for FS25
+        'defaultTemplate_fs25_texture_schemas',
+        'defaultTemplate_fs25_tree_schemas',
+        'defaultTemplate_fs25_buildings_schemas',
+        'defaultTemplate_fs25_map_templates',
+        
+        // Default templates for FS22
+        'defaultTemplate_fs22_texture_schemas',
+        'defaultTemplate_fs22_map_templates'
+      ];
 
+      keysToRemove.forEach(key => {
+        localStorage.removeItem(key);
+      });
+
+      // Also clear any dynamic keys that might exist (in case there are other game versions)
+      const allKeys = Object.keys(localStorage);
+      const dynamicKeys = allKeys.filter(key => 
+        key.startsWith('defaultTemplate_') || 
+        key.startsWith('defaultPreset_') ||
+        key.startsWith('maps4fs')
+      );
+      
+      dynamicKeys.forEach(key => {
+        if (!keysToRemove.includes(key)) {
+          localStorage.removeItem(key);
+        }
+      });
+
+      showToast('Browser settings cleared successfully', 'success');
+      console.log('LocalStorage cleared, removed keys:', [...keysToRemove, ...dynamicKeys]);
+    } catch (err) {
+      console.error('Failed to clear localStorage:', err);
+      showToast(`Failed to clear browser settings: ${err.message}`, 'error');
+    } finally {
+      setIsClearingLocalStorage(false);
+    }
+  };
+
+  return (
+    <div className="max-w-7xl mx-auto">
+      <div className="space-y-6">
         {/* Server Operations */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Clean Cache Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 flex flex-col h-full">
             <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center mr-4">
-                <i className="zmdi zmdi-delete text-red-600 dark:text-red-400 text-xl"></i>
+              <div className="w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+                <i className="zmdi zmdi-delete text-red-600 dark:text-red-400 text-lg"></i>
               </div>
               <div>
                 <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100">Clean Cache</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Remove cached data and temporary files</p>
               </div>
             </div>
-            <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+            <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 flex-grow">
               Clears all cached data, temporary files, and processing artifacts. This can help resolve issues 
               with outdated data or free up disk space.
             </p>
@@ -98,17 +146,17 @@ function ServerManagementSection({ showToast }) {
           </div>
 
           {/* Reload Templates Card */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 flex flex-col h-full">
             <div className="flex items-center mb-4">
-              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mr-4">
-                <i className="zmdi zmdi-refresh text-blue-600 dark:text-blue-400 text-xl"></i>
+              <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+                <i className="zmdi zmdi-refresh text-blue-600 dark:text-blue-400 text-lg"></i>
               </div>
               <div>
                 <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100">Reload Templates</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400">Download and update default templates</p>
               </div>
             </div>
-            <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+            <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 flex-grow">
               Downloads the latest default templates from the remote repository. This ensures you have 
               the most up-to-date schemas and configurations.
             </p>
@@ -134,32 +182,43 @@ function ServerManagementSection({ showToast }) {
               )}
             </button>
           </div>
-        </div>
 
-        {/* Server Info */}
-        <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
-          <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-3 flex items-center">
-            <i className="zmdi zmdi-info-outline mr-2 text-blue-600 dark:text-blue-400"></i>
-            Server Information
-          </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-            <div>
-              <span className="font-medium text-gray-700 dark:text-gray-300">Backend URL:</span>
-              <span className="ml-2 text-gray-600 dark:text-gray-400 font-mono">{config.backendUrl}</span>
-            </div>
-            <div>
-              <span className="font-medium text-gray-700 dark:text-gray-300">Environment:</span>
-              <span className="ml-2 text-gray-600 dark:text-gray-400">{config.isPublicVersion ? 'Public' : 'Local'}</span>
-            </div>
-          </div>
-          <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded">
-            <div className="flex items-start">
-              <i className="zmdi zmdi-alert-triangle text-yellow-600 dark:text-yellow-400 mr-2 mt-0.5"></i>
-              <div className="text-sm text-yellow-800 dark:text-yellow-200">
-                <strong>Note:</strong> These operations affect the backend server. 
-                Make sure no map generation is in progress before performing maintenance tasks.
+          {/* Clear Browser Settings Card */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 flex flex-col h-full">
+            <div className="flex items-center mb-4">
+              <div className="w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center mr-4 flex-shrink-0">
+                <i className="zmdi zmdi-storage text-orange-600 dark:text-orange-400 text-lg"></i>
+              </div>
+              <div>
+                <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100">Clear Browser Settings</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">Reset all local preferences and defaults</p>
               </div>
             </div>
+            <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 flex-grow">
+              Removes all stored preferences including default templates, presets, survey responses, 
+              and other settings saved in your browser's local storage.
+            </p>
+            <button
+              onClick={handleClearLocalStorage}
+              disabled={isClearingLocalStorage}
+              className={`w-full px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200 flex items-center justify-center ${
+                isClearingLocalStorage
+                  ? 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                  : 'bg-orange-600 hover:bg-orange-700 text-white hover:scale-[1.02] active:scale-[0.98]'
+              }`}
+            >
+              {isClearingLocalStorage ? (
+                <>
+                  <div className="animate-spin h-4 w-4 border-2 border-gray-400 border-t-transparent rounded-full mr-2"></div>
+                  Clearing...
+                </>
+              ) : (
+                <>
+                  <i className="zmdi zmdi-storage mr-2"></i>
+                  Clear Settings
+                </>
+              )}
+            </button>
           </div>
         </div>
       </div>
@@ -243,9 +302,9 @@ export default function SettingsTab() {
     if (selectedGame === 'general') {
       return [{
         id: 'general_settings',
-        label: 'General Settings',
+        label: 'Server Settings',
         icon: <i className="zmdi zmdi-settings"></i>,
-        description: 'Software-related settings and preferences.',
+        description: 'Server management and local preferences.',
         available: true
       }];
     }

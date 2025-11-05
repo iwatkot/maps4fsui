@@ -37,8 +37,7 @@ export default function BuildingSettingsContent(showAll = false, onPublic = fals
     const values = {
         generateBuildings: generateBuildings,
         region: region,
-        // Convert percentage to decimal for API (70 -> 0.7)
-        toleranceFactor: toleranceFactor / 100
+        toleranceFactor: toleranceFactor
     };
 
     return { 
