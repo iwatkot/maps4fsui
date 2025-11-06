@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import MainTabs from '@/components/MainTabs';
 import UpdateIndicator from '@/components/UpdateIndicator';
+import PublicServerStatus from '@/components/PublicServerStatus';
 import { useBackendVersion } from '@/hooks/useBackendVersion';
 import { useVersionStatus } from '@/hooks/useVersionStatus';
 import config from '@/app/config';
@@ -123,6 +124,9 @@ export default function AppHeader({
           latestVersion={versionStatus.latestVersion}
         />
       )}
+      
+      {/* Public Server Status - only show in public version */}
+      <PublicServerStatus isPublicVersion={isPublicVersion} />
       
       {/* Backend Version Badge */}
       {currentBackendVersion && (
