@@ -13,6 +13,9 @@ export default function PublicServerStatus({ isPublicVersion }) {
   const { serverStatus, isLoading, error } = usePublicServerStatus(isPublicVersion);
   const [showTooltip, setShowTooltip] = useState(false);
 
+  // DISABLED: Don't render the component for now
+  return null;
+
   // Don't render if not public version or still loading initially
   if (!isPublicVersion || isLoading) {
     return null;
