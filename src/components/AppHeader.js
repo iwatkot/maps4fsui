@@ -66,6 +66,16 @@ export default function AppHeader({
   // Define right navigation links
   const rightNavLinks = (
     <>
+      {/* Status Icon - only show in public version */}
+      {isPublicVersion && (
+        <Link
+          href="/status"
+          className="text-gray-500 hover:text-purple-600 dark:text-gray-400 dark:hover:text-purple-400 transition-colors"
+          title="Server Status"
+        >
+          <i className="zmdi zmdi-chart text-5xl" style={{fontSize: '1.2rem'}}></i>
+        </Link>
+      )}
       <Link
         href="/survey"
         className="text-gray-500 hover:text-green-600 dark:text-gray-400 dark:hover:text-green-400 transition-colors"
