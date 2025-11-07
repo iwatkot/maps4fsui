@@ -267,8 +267,8 @@ export default function StatusPage() {
             </div>
           )}
 
-          {/* Loading State */}
-          {loading && (
+          {/* Loading State - only show on initial load */}
+          {loading && backendData.length === 0 && (
             <div className="text-center py-12">
               <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
               <p className="mt-4 text-gray-600 dark:text-gray-400">Loading server status...</p>
