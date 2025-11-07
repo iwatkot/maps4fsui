@@ -43,13 +43,6 @@ export default function StatusPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetchHealthData();
-    // Refresh every 30 seconds
-    const interval = setInterval(fetchHealthData, 30000);
-    return () => clearInterval(interval);
-  }, []);
-
   const fetchHealthData = async () => {
     try {
       // Don't show loading state on refresh, only on initial load
@@ -91,6 +84,14 @@ export default function StatusPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchHealthData();
+    // Refresh every 30 seconds
+    const interval = setInterval(fetchHealthData, 30000);
+    return () => clearInterval(interval);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const renderBackendStatus = (backend) => {
     if (!backend.online) {
