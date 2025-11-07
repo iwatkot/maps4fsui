@@ -210,7 +210,7 @@ export default function StatusPage() {
                     
                     {/* Content - Single Line */}
                     <div className="flex-1 text-sm text-gray-900 dark:text-gray-100 flex items-center">
-                      <span className="font-medium">{item.game_code} - {item.size}km</span>
+                      <span className="font-medium">{item.game_code} - {item.size}m</span>
                       <span className="text-gray-600 dark:text-gray-400 mx-2">•</span>
                       <span className="text-gray-600 dark:text-gray-400">{item.coordinates}</span>
                       <span className="text-gray-600 dark:text-gray-400 mx-2">•</span>
