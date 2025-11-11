@@ -179,7 +179,7 @@ export default function StatusPage() {
             {/* Completed Tasks */}
             <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-2">
               <div className="text-xs text-green-700 dark:text-green-300 font-medium mb-1">
-                ✅ Completed
+                Completed
               </div>
               <div className="text-lg font-bold text-green-800 dark:text-green-200">
                 {data.completed_tasks || 0}
@@ -189,7 +189,7 @@ export default function StatusPage() {
             {/* Failed Tasks */}
             <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-2">
               <div className="text-xs text-red-700 dark:text-red-300 font-medium mb-1">
-                ❌ Failed
+                Failed
               </div>
               <div className="text-lg font-bold text-red-800 dark:text-red-200">
                 {data.failed_tasks || 0}
@@ -199,7 +199,7 @@ export default function StatusPage() {
             {/* Failed Percentage */}
             <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-2">
               <div className="text-xs text-yellow-700 dark:text-yellow-300 font-medium mb-1">
-                📊 Fail Rate
+                Fail Rate
               </div>
               <div className="text-lg font-bold text-yellow-800 dark:text-yellow-200">
                 {data.failed_percentage ? `${data.failed_percentage.toFixed(1)}%` : '0.0%'}
@@ -212,7 +212,7 @@ export default function StatusPage() {
             {/* Average Processing Time */}
             <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2">
               <div className="text-xs text-blue-700 dark:text-blue-300 font-medium mb-1">
-                ⏱️ Average Processing Time
+                Average Processing Time
               </div>
               <div className="text-lg font-bold text-blue-800 dark:text-blue-200">
                 {data.average_processing_time} minutes
@@ -222,7 +222,7 @@ export default function StatusPage() {
             {/* Estimated Wait Time */}
             <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-2">
               <div className="text-xs text-orange-700 dark:text-orange-300 font-medium mb-1">
-                ⏳ Estimated Wait Time
+                Estimated Wait Time
               </div>
               <div className="text-lg font-bold text-orange-800 dark:text-orange-200">
                 {data.estimated_wait_time} minutes
