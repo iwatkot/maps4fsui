@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import AppHeader from '@/components/AppHeader';
+import SimpleTextInput from '@/components/SimpleTextInput';
+import SimpleButton from '@/components/SimpleButton';
+import apiService from '@/utils/apiService';
 
 // Hardcoded endpoints - for debug use localhost, for production use maps4fs.xyz
 const USE_DEBUG = false; // Set to false for production
@@ -42,6 +45,12 @@ export default function StatusPage() {
   const [backendData, setBackendData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
+  // Task queue status state
+  const [taskLink, setTaskLink] = useState('');
+  const [taskStatus, setTaskStatus] = useState(null);
+  const [taskLoading, setTaskLoading] = useState(false);
+  const [taskError, setTaskError] = useState(null);
 
   const fetchHealthData = async () => {
     try {
@@ -85,6 +94,85 @@ export default function StatusPage() {
     }
   };
 
+  // Function to extract session_name from download link
+  const parseSessionName = (link) => {
+    try {
+      // Remove any whitespace
+      const cleanLink = link.trim();
+      
+      // Check if it contains session_name parameter in query string
+      try {
+        const url = new URL(cleanLink);
+        const sessionName = url.searchParams.get('session_name');
+        
+        if (sessionName) {
+          return sessionName;
+        }
+      } catch (urlError) {
+        // URL parsing failed, continue with pattern matching
+      }
+      
+      // Parse session name from the URL path for the format:
+      // https://api.maps4fs.xyz/map/download/20251111_221858_fs25_45_000_19_000
+      const pathMatch = cleanLink.match(/\/map\/download\/([^\/\?]+)/);
+      if (pathMatch) {
+        return pathMatch[1];
+      }
+      
+      // Alternative parsing for other formats
+      const sessionMatch = cleanLink.match(/session_name[=\/]([^&\?\/]+)/);
+      if (sessionMatch) {
+        return sessionMatch[1];
+      }
+      
+      return null;
+    } catch (error) {
+      return null;
+    }
+  };
+
+  // Function to check task queue status
+  const checkTaskStatus = async () => {
+    if (!taskLink.trim()) {
+      setTaskError('Please enter a download link');
+      return;
+    }
+
+    const sessionName = parseSessionName(taskLink);
+    if (!sessionName) {
+      setTaskError('Could not find session_name in the provided link. Please make sure you paste the complete download link.');
+      return;
+    }
+
+    try {
+      setTaskLoading(true);
+      setTaskError(null);
+      
+      // For debug purposes, show both original and parsed session name
+      console.log('Original link:', taskLink);
+      console.log('Parsed session name:', sessionName);
+      
+      const response = await apiService.get(`/info/task_queue/${sessionName}`);
+      setTaskStatus({
+        sessionName,
+        originalLink: taskLink,
+        ...response
+      });
+    } catch (error) {
+      setTaskError(`Failed to get task status: ${error.message}`);
+      setTaskStatus(null);
+    } finally {
+      setTaskLoading(false);
+    }
+  };
+
+  // Function to clear task status
+  const clearTaskStatus = () => {
+    setTaskLink('');
+    setTaskStatus(null);
+    setTaskError(null);
+  };
+
   useEffect(() => {
     fetchHealthData();
     // Refresh every 30 seconds
@@ -92,6 +180,31 @@ export default function StatusPage() {
     return () => clearInterval(interval);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Auto-refresh task status every 30 seconds if task status is active
+  useEffect(() => {
+    if (taskStatus && taskLink.trim()) {
+      const refreshTaskStatus = async () => {
+        const sessionName = parseSessionName(taskLink);
+        if (sessionName) {
+          try {
+            const response = await apiService.get(`/info/task_queue/${sessionName}`);
+            setTaskStatus({
+              sessionName,
+              originalLink: taskLink,
+              ...response
+            });
+          } catch (error) {
+            // Silently fail on refresh - don't show error for auto-refresh
+            console.error('Auto-refresh failed:', error.message);
+          }
+        }
+      };
+
+      const interval = setInterval(refreshTaskStatus, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [taskStatus, taskLink]);
 
   const renderBackendStatus = (backend) => {
     if (!backend.online) {
@@ -291,6 +404,94 @@ export default function StatusPage() {
     );
   };
 
+  // Render task queue status display
+  const renderTaskStatus = () => {
+    if (!taskStatus) return null;
+
+    const { in_queue, processing, position, estimated_wait_time } = taskStatus;
+
+    // Determine status and styling
+    let statusInfo;
+    if (!in_queue && !processing) {
+      statusInfo = {
+        title: 'Task Not Found',
+        description: 'This task is not in the queue or may have already completed',
+        color: 'gray',
+        bgColor: 'bg-gray-50 dark:bg-gray-900/20',
+        borderColor: 'border-gray-200 dark:border-gray-800',
+        textColor: 'text-gray-800 dark:text-gray-200'
+      };
+    } else if (processing) {
+      statusInfo = {
+        title: 'Processing',
+        description: 'Your map is currently being generated',
+        color: 'blue',
+        bgColor: 'bg-blue-50 dark:bg-blue-900/20',
+        borderColor: 'border-blue-200 dark:border-blue-800',
+        textColor: 'text-blue-800 dark:text-blue-200'
+      };
+    } else if (in_queue) {
+      statusInfo = {
+        title: 'In Queue',
+        description: 'Your task is waiting in the queue',
+        color: 'yellow',
+        bgColor: 'bg-yellow-50 dark:bg-yellow-900/20',
+        borderColor: 'border-yellow-200 dark:border-yellow-800',
+        textColor: 'text-yellow-800 dark:text-yellow-200'
+      };
+    }
+
+    return (
+      <div className={`${statusInfo.bgColor} border ${statusInfo.borderColor} rounded-lg p-4`}>
+        <div className="flex items-center mb-4">
+          <div className={`w-3 h-3 bg-${statusInfo.color}-500 rounded-full mr-2 ${processing ? 'animate-pulse' : ''}`}></div>
+          <h3 className={`text-lg font-semibold ${statusInfo.textColor}`}>
+            Task Status: {statusInfo.title}
+          </h3>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          {/* In Queue Status */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700">
+            <div className="text-xs text-gray-600 dark:text-gray-400 font-medium mb-1">
+              Status
+            </div>
+            <div className={`text-lg font-bold ${in_queue ? 'text-yellow-600 dark:text-yellow-400' : processing ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500'}`}>
+              {processing ? 'Processing' : in_queue ? 'In Queue' : 'Not Found'}
+            </div>
+          </div>
+
+          {/* Queue Position */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700">
+            <div className="text-xs text-gray-600 dark:text-gray-400 font-medium mb-1">
+              Queue Position
+            </div>
+            <div className="text-lg font-bold text-gray-900 dark:text-gray-100">
+              {position !== null ? `#${position}` : 'N/A'}
+            </div>
+          </div>
+
+          {/* Estimated Wait Time */}
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-gray-200 dark:border-gray-700">
+            <div className="text-xs text-gray-600 dark:text-gray-400 font-medium mb-1">
+              Estimated Wait
+            </div>
+            <div className="text-lg font-bold text-orange-600 dark:text-orange-400">
+              {estimated_wait_time ? `${estimated_wait_time.toFixed(1)} min` : 'N/A'}
+            </div>
+          </div>
+        </div>
+
+        {/* Session Info */}
+        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-600">
+          <p className="text-xs text-gray-600 dark:text-gray-400">
+            <strong>Session:</strong> {taskStatus.sessionName}
+          </p>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="h-screen bg-white dark:bg-gray-900 flex flex-col overflow-hidden" style={{ minWidth: '1000px' }}>
       {/* Header */}
@@ -304,7 +505,7 @@ export default function StatusPage() {
       <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-6 py-6">
           {/* Page Header */}
-          <div className="mb-4">
+          <div className="mb-6">
             <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1">
               Backend Server Status
             </h1>
@@ -313,13 +514,73 @@ export default function StatusPage() {
             </p>
           </div>
 
-          {/* Error Display */}
+          {/* Task Queue Status Section */}
+          <div className="mb-6">
+            <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">
+                Check Your Task Status
+              </h2>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                Paste your download link here to check the queue status and estimated wait time for your map generation.
+              </p>
+              
+              <div className="flex flex-col md:flex-row gap-4 mb-4">
+                <div className="flex-1">
+                  <div className="relative">
+                    <input
+                      type="text"
+                      value={taskLink}
+                      onChange={(e) => setTaskLink(e.target.value)}
+                      placeholder="https://api.maps4fs.xyz/map/download/20251111_221858_fs25_45_000_19_000"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent h-10"
+                    />
+                  </div>
+                </div>
+                <div className="flex gap-2 items-center md:items-stretch">
+                  <SimpleButton
+                    onClick={checkTaskStatus}
+                    disabled={taskLoading || !taskLink.trim()}
+                    className="whitespace-nowrap h-10"
+                  >
+                    {taskLoading ? 'Checking...' : 'Check Status'}
+                  </SimpleButton>
+                  {(taskStatus || taskError) && (
+                    <SimpleButton
+                      onClick={clearTaskStatus}
+                      variant="secondary"
+                      className="whitespace-nowrap h-10"
+                    >
+                      Clear
+                    </SimpleButton>
+                  )}
+                </div>
+              </div>
+
+              {/* Task Error Display */}
+              {taskError && (
+                <div className="mb-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+                  <div className="flex items-center">
+                    <div className="w-4 h-4 bg-red-500 rounded-full mr-3"></div>
+                    <div>
+                      <h3 className="text-red-800 dark:text-red-200 font-medium text-sm">Error</h3>
+                      <p className="text-red-700 dark:text-red-300 text-sm">{taskError}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Task Status Display */}
+              {renderTaskStatus()}
+            </div>
+          </div>
+
+          {/* General Error Display */}
           {error && (
             <div className="mb-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
               <div className="flex items-center">
                 <i className="zmdi zmdi-alert-triangle text-red-600 dark:text-red-400 mr-3"></i>
                 <div>
-                  <h3 className="text-red-800 dark:text-red-200 font-medium">Error</h3>
+                  <h3 className="text-red-800 dark:text-red-200 font-medium">System Error</h3>
                   <p className="text-red-700 dark:text-red-300 text-sm">{error}</p>
                 </div>
               </div>
