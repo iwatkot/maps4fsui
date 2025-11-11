@@ -127,47 +127,106 @@ export default function StatusPage() {
           </div>
         </div>
 
-        {/* Basic Stats */}
-        <div className="grid grid-cols-3 gap-3 mb-4">
-          {/* Online Status */}
-          <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-2">
-            <div className="text-xs text-green-700 dark:text-green-300 font-medium mb-1">
-              Status
+        {/* Stats Grid - 3-3-2 Layout */}
+        <div className="space-y-3 mb-4">
+          {/* First Row - 3 columns */}
+          <div className="grid grid-cols-3 gap-3">
+            {/* Online Status */}
+            <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-2">
+              <div className="text-xs text-green-700 dark:text-green-300 font-medium mb-1">
+                Status
+              </div>
+              <div className="text-lg font-bold text-green-800 dark:text-green-200">
+                Online
+              </div>
             </div>
-            <div className="text-lg font-bold text-green-800 dark:text-green-200">
-              Online
-            </div>
-          </div>
 
-          {/* Queue Size */}
-          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2">
-            <div className="text-xs text-blue-700 dark:text-blue-300 font-medium mb-1">
-              Queue Load
+            {/* Queue Size */}
+            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2">
+              <div className="text-xs text-blue-700 dark:text-blue-300 font-medium mb-1">
+                Queue Load
+              </div>
+              <div className="text-lg font-bold text-blue-800 dark:text-blue-200">
+                {data.queue_size} / {data.max_queue_size}
+              </div>
+              <div className="mt-1">
+                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                  <div
+                    className={`h-1.5 rounded-full transition-all duration-300 ${
+                      queuePercentage > 80 ? 'bg-red-500' : 
+                      queuePercentage > 50 ? 'bg-yellow-500' : 
+                      'bg-green-500'
+                    }`}
+                    style={{ width: `${queuePercentage}%` }}
+                  ></div>
+                </div>
+              </div>
             </div>
-            <div className="text-lg font-bold text-blue-800 dark:text-blue-200">
-              {data.queue_size} / {data.max_queue_size}
-            </div>
-            <div className="mt-1">
-              <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
-                <div
-                  className={`h-1.5 rounded-full transition-all duration-300 ${
-                    queuePercentage > 80 ? 'bg-red-500' : 
-                    queuePercentage > 50 ? 'bg-yellow-500' : 
-                    'bg-green-500'
-                  }`}
-                  style={{ width: `${queuePercentage}%` }}
-                ></div>
+
+            {/* Uptime */}
+            <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-2">
+              <div className="text-xs text-purple-700 dark:text-purple-300 font-medium mb-1">
+                Uptime
+              </div>
+              <div className="text-lg font-bold text-purple-800 dark:text-purple-200">
+                {data.online_since}
               </div>
             </div>
           </div>
 
-          {/* Uptime */}
-          <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-2">
-            <div className="text-xs text-purple-700 dark:text-purple-300 font-medium mb-1">
-              Uptime
+          {/* Second Row - 3 columns */}
+          <div className="grid grid-cols-3 gap-3">
+            {/* Completed Tasks */}
+            <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-2">
+              <div className="text-xs text-green-700 dark:text-green-300 font-medium mb-1">
+                ✅ Completed
+              </div>
+              <div className="text-lg font-bold text-green-800 dark:text-green-200">
+                {data.completed_tasks || 0}
+              </div>
             </div>
-            <div className="text-lg font-bold text-purple-800 dark:text-purple-200">
-              {data.online_since}
+
+            {/* Failed Tasks */}
+            <div className="bg-red-50 dark:bg-red-900/20 rounded-lg p-2">
+              <div className="text-xs text-red-700 dark:text-red-300 font-medium mb-1">
+                ❌ Failed
+              </div>
+              <div className="text-lg font-bold text-red-800 dark:text-red-200">
+                {data.failed_tasks || 0}
+              </div>
+            </div>
+
+            {/* Failed Percentage */}
+            <div className="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-2">
+              <div className="text-xs text-yellow-700 dark:text-yellow-300 font-medium mb-1">
+                📊 Fail Rate
+              </div>
+              <div className="text-lg font-bold text-yellow-800 dark:text-yellow-200">
+                {data.failed_percentage ? `${data.failed_percentage.toFixed(1)}%` : '0.0%'}
+              </div>
+            </div>
+          </div>
+
+          {/* Third Row - 2 columns */}
+          <div className="grid grid-cols-2 gap-3">
+            {/* Average Processing Time */}
+            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-2">
+              <div className="text-xs text-blue-700 dark:text-blue-300 font-medium mb-1">
+                ⏱️ Average Processing Time
+              </div>
+              <div className="text-lg font-bold text-blue-800 dark:text-blue-200">
+                {data.average_processing_time} minutes
+              </div>
+            </div>
+
+            {/* Estimated Wait Time */}
+            <div className="bg-orange-50 dark:bg-orange-900/20 rounded-lg p-2">
+              <div className="text-xs text-orange-700 dark:text-orange-300 font-medium mb-1">
+                ⏳ Estimated Wait Time
+              </div>
+              <div className="text-lg font-bold text-orange-800 dark:text-orange-200">
+                {data.estimated_wait_time} minutes
+              </div>
             </div>
           </div>
         </div>
