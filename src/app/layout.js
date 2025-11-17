@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import StructuredData from "../components/StructuredData";
+import SecurityWarningWrapper from "../components/SecurityWarningWrapper";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -109,7 +110,9 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <StructuredData />
-        {children}
+        <SecurityWarningWrapper>
+          {children}
+        </SecurityWarningWrapper>
       </body>
     </html>
   );
