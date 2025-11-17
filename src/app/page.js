@@ -109,7 +109,8 @@ export default function Home() {
       </div>
 
       {/* Slide-out Promo (only for public version) */}
-      {isClient && isPublicVersion && (
+      {/* Temporarily disabled */}
+      {/* {isClient && isPublicVersion && (
         <SlideOutPromo
           title="Launch the tool locally"
           message="Use it without limitations on your own machine with full access to all features and faster processing."
@@ -118,12 +119,13 @@ export default function Home() {
           isVisible={showPromo}
           onClose={handleClosePromo}
         />
-      )}
+      )} */}
 
       {/* Survey Popup (show on generator tab) */}
-      {isClient && activeTab === 'generator' && (
+      {/* Temporarily disabled */}
+      {/* {isClient && activeTab === 'generator' && (
         <SurveyPopup isPublic={isPublicVersion} />
-      )}
+      )} */}
 
       {/* Footer */}
       <StickyFooter />
