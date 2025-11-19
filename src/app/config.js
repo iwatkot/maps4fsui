@@ -20,6 +20,10 @@ const config = {
   mfsDefaultsGSettingsDir: `${mfsDefaultsDir}/generation_settings`,
 
   mfsTemplatesDir: mfsTemplatesDir,
+
+  // MinIO storage configuration for Windows app downloads
+  minioEndpoint: process.env.NEXT_PUBLIC_MINIO_ENDPOINT || 'https://storage.atlasfs.xyz',
+  minioBucket: 'windows-app',
 };
 
 export default config;
