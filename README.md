@@ -15,7 +15,7 @@
 
 <div align="center" markdown>
 
-<img src="https://github.com/iwatkot/maps4fsuil/releases/download/0.0.2/maps4fs-poster_dev_3.png">
+<img src="https://github.com/iwatkot/maps4fsui/releases/download/2.9.53.5/ui-1280-640.png">
 
 <p align="center">
     <a href="#maps4fs">Maps4FS</a> •
