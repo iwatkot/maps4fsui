@@ -48,8 +48,8 @@ export default function StickyFooter() {
             </a>
           </div>
 
-          {/* Right side - Main site */}
-          <div>
+          {/* Right side - Main sites */}
+          <div className="flex items-center space-x-2">
             <a
               href="https://maps4fs.xyz"
               target="_blank"
@@ -57,6 +57,15 @@ export default function StickyFooter() {
               className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium"
             >
               maps4fs.xyz
+            </a>
+            <span className="text-gray-300 dark:text-gray-600">•</span>
+            <a
+              href="https://atlasfs.xyz"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-green-600 dark:hover:text-green-400 transition-colors font-medium"
+            >
+              atlasfs.xyz
             </a>
           </div>
         </div>

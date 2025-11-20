@@ -597,7 +597,7 @@ export default function GeneratorTab({
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-4">
                 The server is currently processing <span className="font-semibold text-orange-600">{queueSize}</span> maps. 
-                Please try again later or consider running locally for immediate processing.
+                Please try again later or download the Windows app for immediate processing.
               </p>
               <div className="space-y-3">
                 <button
@@ -624,13 +624,13 @@ export default function GeneratorTab({
                   </div>
                 </button>
                 <a
-                  href="https://maps4fs.gitbook.io/docs/setup-and-installation/local_deployment"
+                  href="https://maps4fs.xyz/download"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors flex items-center justify-center"
                 >
                   <i className="zmdi zmdi-download mr-2"></i>
-                  Run Locally
+                  Download App
                 </a>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
                   Queue limit: {QUEUE_LIMIT} • Current: {queueSize}
@@ -685,7 +685,32 @@ export default function GeneratorTab({
           <p className="text-xs text-blue-700 dark:text-blue-300 mb-2">
             Something missing or incorrect? Data comes from OpenStreetMap - you can contribute improvements there.
           </p>
+          {(
+            <p className="text-xs text-blue-700 dark:text-blue-300 mb-3">
+              <span className="inline-flex items-center bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-200 px-2 py-0.5 rounded font-semibold mr-1">
+                🎉 NEW
+              </span>
+              <a 
+                href="https://maps4fs.xyz/download"
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="underline hover:text-purple-600 dark:hover:text-purple-400 font-semibold"
+              >
+                Standalone Windows App available
+              </a>
+              {' '}- no Docker required!
+            </p>
+          )}
           <div className="flex flex-wrap gap-2 text-xs">
+            <a 
+              href="https://maps4fs.xyz/download"
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center px-2 py-1 bg-purple-600 dark:bg-purple-700 text-white rounded hover:bg-purple-700 dark:hover:bg-purple-600 transition-colors font-semibold"
+            >
+              <i className="zmdi zmdi-download text-xs mr-1"></i>
+              Windows App
+            </a>
             <a 
               href="https://maps4fs.gitbook.io/docs" 
               target="_blank" 
@@ -823,8 +848,6 @@ export default function GeneratorTab({
             </div>
           </div>
         )}
-
-
 
         {/* Game Selector */}
         <Selector
@@ -1166,16 +1189,16 @@ export default function GeneratorTab({
                   {isPublicVersion ? (
                     <>
                       <a
-                        href="https://maps4fs.gitbook.io/docs/setup-and-installation/local_deployment"
+                        href="https://maps4fs.xyz/download"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
                       >
                         <i className="zmdi zmdi-download mr-2"></i>
-                        Local Deployment
+                        Download Windows App
                       </a>
                       <div className="text-sm text-gray-500 dark:text-gray-400">
-                        Deploy the tool locally for full control and reliability.
+                        Run the tool on your Windows machine for full control and reliability.
                       </div>
                     </>
                   ) : (

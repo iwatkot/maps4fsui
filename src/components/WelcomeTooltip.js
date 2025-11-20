@@ -4,15 +4,17 @@ import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
 
 const WelcomeTooltip = () => {
+  // DISABLED - keeping the component but never showing it
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     // Check if the user has already seen this message
     const hasSeenMessage = localStorage.getItem('atlasfs-announcement-seen');
     
-    if (!hasSeenMessage) {
-      setIsVisible(true);
-    }
+    // DISABLED: Never show this popup
+    // if (!hasSeenMessage) {
+    //   setIsVisible(true);
+    // }
   }, []);
 
   const handleClose = () => {
@@ -21,6 +23,9 @@ const WelcomeTooltip = () => {
     setIsVisible(false);
   };
 
+  // Always return null - popup is disabled
+  return null;
+  
   if (!isVisible) return null;
 
   return (

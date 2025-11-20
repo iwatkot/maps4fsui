@@ -344,10 +344,25 @@ ${formData.generationSettings}
           className="w-full p-4 text-left border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-blue-500 dark:hover:border-blue-400 transition-colors bg-white dark:bg-gray-800"
         >
           <div className="flex items-center">
+            <div className="w-4 h-4 bg-green-500 rounded-full mr-4 flex-shrink-0"></div>
+            <div>
+              <div className="font-semibold text-gray-900 dark:text-gray-100">Windows App</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Standalone Windows application</div>
+            </div>
+          </div>
+        </button>
+        <button
+          onClick={() => {
+            setIsPublicVersion(false);
+            setCurrentStep(2);
+          }}
+          className="w-full p-4 text-left border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-blue-500 dark:hover:border-blue-400 transition-colors bg-white dark:bg-gray-800"
+        >
+          <div className="flex items-center">
             <div className="w-4 h-4 bg-gray-500 rounded-full mr-4 flex-shrink-0"></div>
             <div>
-              <div className="font-semibold text-gray-900 dark:text-gray-100">Local Deployment</div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">Running the tool on your own machine</div>
+              <div className="font-semibold text-gray-900 dark:text-gray-100">Local Deployment (Docker)</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400">Running with Docker on your machine</div>
             </div>
           </div>
         </button>
@@ -392,7 +407,7 @@ ${formData.generationSettings}
               // Public version not working - show info about reports not being accepted
               setCurrentStep('public-not-working');
             } else {
-              // Local deployment not working - show troubleshooting options
+              // Windows app not working - show troubleshooting options
               setCurrentStep('local-not-working');
             }
           }}

@@ -59,7 +59,15 @@ export default function AppHeader({
       id: 'settings',
       label: 'Settings',
       icon: <i className="zmdi zmdi-settings"></i>
-    }] : [])
+    }] : []),
+    // Atlas FS - external link tab
+    {
+      id: 'atlasfs',
+      label: 'Atlas FS',
+      icon: <i className="zmdi zmdi-globe"></i>,
+      isExternal: true,
+      href: 'https://atlasfs.xyz'
+    }
   ];
 
   // Define right navigation links
@@ -75,16 +83,14 @@ export default function AppHeader({
           <i className="zmdi zmdi-chart text-5xl" style={{fontSize: '1.2rem'}}></i>
         </Link>
       )}
-      {/* Download Icon - only show in public version */}
-      {isPublicVersion && (
-        <Link
-          href="/download"
-          className="text-gray-500 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400 transition-colors"
-          title="Download Windows App"
-        >
-          <i className="zmdi zmdi-download text-5xl" style={{fontSize: '1.2rem'}}></i>
-        </Link>
-      )}
+      {/* Download Icon - always visible */}
+      <Link
+        href="/download"
+        className="text-gray-500 hover:text-purple-600 dark:text-gray-400 dark:hover:text-purple-400 transition-colors"
+        title="Download Windows App"
+      >
+        <i className="zmdi zmdi-download text-5xl" style={{fontSize: '1.2rem'}}></i>
+      </Link>
       <Link
         href="/survey"
         className="text-gray-500 hover:text-green-600 dark:text-gray-400 dark:hover:text-green-400 transition-colors"

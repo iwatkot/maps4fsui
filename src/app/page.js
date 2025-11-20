@@ -112,10 +112,10 @@ export default function Home() {
       {/* Temporarily disabled */}
       {/* {isClient && isPublicVersion && (
         <SlideOutPromo
-          title="Launch the tool locally"
-          message="Use it without limitations on your own machine with full access to all features and faster processing."
-          buttonText="Local Deployment"
-          buttonLink="https://maps4fs.gitbook.io/docs/setup-and-installation/local_deployment"
+          title="Download Windows App"
+          message="Run Maps4FS on your Windows machine without limitations. No Docker required, just download and run!"
+          buttonText="Download Now"
+          buttonLink="https://maps4fs.xyz/download"
           isVisible={showPromo}
           onClose={handleClosePromo}
         />
