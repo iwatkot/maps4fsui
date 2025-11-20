@@ -57,7 +57,7 @@ export const metadata = {
     siteName: "Maps4FS",
     images: [
       {
-        url: "https://maps4fs.xyz/og-image.png",
+        url: "https://maps4fs.xyz/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Maps4FS - Real-world map generator for Farming Simulator",
@@ -68,7 +68,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Maps4FS - Generate Realistic Farming Simulator Maps from Real Places",
     description: "Create authentic Farming Simulator 22 & 25 map templates from real-world terrain data. Free, open-source tool with automated field, forest, and terrain generation.",
-    images: ["https://maps4fs.xyz/og-image.png"],
+    images: ["https://maps4fs.xyz/og-image.jpg"],
     creator: "@iwatkot",
   },
   verification: {
@@ -102,9 +102,15 @@ export default function RootLayout({ children }) {
           crossOrigin="anonymous"
           referrerPolicy="no-referrer"
         />
+        {/* Favicons and Icons */}
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="icon" type="image/png" sizes="192x192" href="/icon-192x192.png" />
+        <link rel="icon" type="image/png" sizes="512x512" href="/icon-512x512.png" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#22c55e" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="msapplication-TileImage" content="/mstile-150x150.png" />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}

@@ -41,7 +41,7 @@ export const metadata = {
     siteName: "Maps4FS",
     images: [
       {
-        url: "https://maps4fs.xyz/og-image.png",
+        url: "https://maps4fs.xyz/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "Maps4FS Help Center - Get support for map generation issues",
@@ -52,7 +52,7 @@ export const metadata = {
     card: "summary_large_image", 
     title: "Get Help - Maps4FS Support Center",
     description: "Get help with Maps4FS map generation issues. Interactive support form to report bugs and troubleshoot Farming Simulator map creation problems.",
-    images: ["https://maps4fs.xyz/og-image.png"],
+    images: ["https://maps4fs.xyz/og-image.jpg"],
     creator: "@iwatkot",
   },
   alternates: {
