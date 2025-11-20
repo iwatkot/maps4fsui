@@ -137,24 +137,6 @@ export default function DownloadPage() {
             </div>
           )}
 
-          {/* Security Warning */}
-          {!loading && !error && files.length > 0 && (
-            <div className="mt-8 bg-orange-50 dark:bg-orange-900/20 border border-orange-300 dark:border-orange-700 rounded-lg p-5">
-              <h3 className="text-orange-900 dark:text-orange-200 font-semibold mb-3 flex items-center">
-                <i className="zmdi zmdi-alert-circle text-lg mr-2"></i>
-                Security Notice
-              </h3>
-              <div className="space-y-2 text-orange-800 dark:text-orange-300 text-sm">
-                <p>
-                  Before downloading, verify that your browser shows exactly: <code className="bg-white dark:bg-gray-800 px-2 py-0.5 rounded text-xs font-mono">https://maps4fs.xyz/download</code>
-                </p>
-                <p>
-                  <strong>Check carefully - if any symbol is different, leave the page immediately.</strong> Only download from this official domain. Never download from IP addresses, third-party websites, forums, or file-sharing services. Downloading executables from untrusted sources can compromise your system. The consequences of that might be catastrophic.
-                </p>
-              </div>
-            </div>
-          )}
-
           {/* Info Section */}
           {!loading && !error && files.length > 0 && (
             <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
@@ -166,26 +148,12 @@ export default function DownloadPage() {
                 <li>Download the latest .exe file from the list above</li>
                 <li><strong>No installation required</strong> - this is a portable standalone application</li>
                 <li>Simply run the .exe file to launch Maps4FS</li>
-                <li>Start generating maps offline with full features!</li>
+                <li>Start generating maps with full features!</li>
+                <li>
+                  <strong>For Background Center Removal feature:</strong> Blender 4.3 must be installed on your machine. 
+                  Download from: <a href="https://www.blender.org/download/" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-600 dark:hover:text-blue-400">blender.org/download</a>
+                </li>
               </ol>
-            </div>
-          )}
-
-          {/* Requirements Section */}
-          {!loading && !error && files.length > 0 && (
-            <div className="mt-6 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6">
-              <h3 className="text-yellow-900 dark:text-yellow-300 font-semibold mb-3 flex items-center">
-                <i className="zmdi zmdi-wrench text-xl mr-2"></i>
-                System Requirements
-              </h3>
-              <div className="space-y-2 text-yellow-800 dark:text-yellow-300 text-sm">
-                <p>
-                  <strong>For Background Center Removal feature:</strong> Blender 4.3 must be installed on your machine.
-                </p>
-                <p className="text-xs">
-                  Download Blender from: <a href="https://www.blender.org/download/" target="_blank" rel="noopener noreferrer" className="underline hover:text-yellow-600 dark:hover:text-yellow-400">blender.org/download</a>
-                </p>
-              </div>
             </div>
           )}
 
