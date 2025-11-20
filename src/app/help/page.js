@@ -14,6 +14,7 @@ export default function HelpPage() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const [isPublicVersion, setIsPublicVersion] = useState(null);
+  const [deploymentType, setDeploymentType] = useState(null); // 'public', 'windows', 'docker'
   const [isToolWorking, setIsToolWorking] = useState(null);
   const [dtmProvider, setDtmProvider] = useState('');
   
@@ -324,6 +325,7 @@ ${formData.generationSettings}
         <button
           onClick={() => {
             setIsPublicVersion(true);
+            setDeploymentType('public');
             setCurrentStep(2);
           }}
           className="w-full p-4 text-left border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-blue-500 dark:hover:border-blue-400 transition-colors bg-white dark:bg-gray-800"
@@ -339,6 +341,7 @@ ${formData.generationSettings}
         <button
           onClick={() => {
             setIsPublicVersion(false);
+            setDeploymentType('windows');
             setCurrentStep(2);
           }}
           className="w-full p-4 text-left border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-blue-500 dark:hover:border-blue-400 transition-colors bg-white dark:bg-gray-800"
@@ -354,6 +357,7 @@ ${formData.generationSettings}
         <button
           onClick={() => {
             setIsPublicVersion(false);
+            setDeploymentType('docker');
             setCurrentStep(2);
           }}
           className="w-full p-4 text-left border-2 border-gray-300 dark:border-gray-600 rounded-lg hover:border-blue-500 dark:hover:border-blue-400 transition-colors bg-white dark:bg-gray-800"
@@ -403,11 +407,14 @@ ${formData.generationSettings}
         <button
           onClick={() => {
             setIsToolWorking(false);
-            if (isPublicVersion) {
+            if (deploymentType === 'public') {
               // Public version not working - show info about reports not being accepted
               setCurrentStep('public-not-working');
+            } else if (deploymentType === 'windows') {
+              // Windows app not working - direct to Discord
+              setCurrentStep('windows-not-working');
             } else {
-              // Windows app not working - show troubleshooting options
+              // Docker not working - show troubleshooting options
               setCurrentStep('local-not-working');
             }
           }}
@@ -418,7 +425,7 @@ ${formData.generationSettings}
             <div>
               <div className="font-semibold text-gray-900 dark:text-gray-100">No, it&apos;s not working</div>
               <div className="text-sm text-gray-600 dark:text-gray-400">
-                {isPublicVersion 
+                {deploymentType === 'public'
                   ? 'Tool doesn&apos;t load or crashes immediately' 
                   : 'Setup issues, crashes, or won&apos;t start'
                 }
@@ -792,22 +799,83 @@ ${formData.generationSettings}
             </div>
             <div className="mt-4 flex space-x-3">
               <a
+                href="/download"
+                className="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors"
+              >
+                <i className="zmdi zmdi-windows mr-2"></i>
+                Download Windows App
+              </a>
+              <a
                 href="https://maps4fs.gitbook.io/docs/setup-and-installation/local_deployment"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors"
               >
                 <i className="zmdi zmdi-download mr-2"></i>
-                Local Deployment Guide
+                Docker Deployment Guide
               </a>
               <a
-                href="https://discord.gg/Sj5QKKyE42"
+                href="https://discord.gg/wemVfUUFRA"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors"
               >
                 <i className="zmdi zmdi-comments mr-2"></i>
                 Discord Server
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderWindowsNotWorking = () => (
+    <div className="space-y-6">
+      <div className="flex items-center space-x-4">
+        <button
+          onClick={() => setCurrentStep(2)}
+          className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+          title="Go Back"
+        >
+          <i className="zmdi zmdi-arrow-left text-xl"></i>
+        </button>
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+          Windows App Issues
+        </h2>
+      </div>
+      <div className="p-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+        <div className="flex">
+          <div className="text-blue-600 dark:text-blue-400 mr-3">
+            <i className="zmdi zmdi-info text-xl"></i>
+          </div>
+          <div>
+            <h3 className="text-lg font-semibold text-blue-800 dark:text-blue-200 mb-2">
+              Get Help on Discord
+            </h3>
+            <p className="text-blue-700 dark:text-blue-300 mb-4">
+              If the Windows app is not working (crashes, won&apos;t start, or has errors), please join our Discord server and describe your issue in detail.
+            </p>
+            <div className="space-y-2">
+              <p className="text-sm text-blue-600 dark:text-blue-400">
+                <strong>When asking for help, please include:</strong>
+              </p>
+              <ul className="list-disc list-inside text-sm text-blue-600 dark:text-blue-400 space-y-1">
+                <li>Windows version you&apos;re using</li>
+                <li>What exactly happens when you try to run the app</li>
+                <li>Any error messages you see</li>
+                <li>Screenshots if possible</li>
+              </ul>
+            </div>
+            <div className="mt-4">
+              <a
+                href="https://discord.gg/wemVfUUFRA"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors"
+              >
+                <i className="zmdi zmdi-comments mr-2"></i>
+                Join Discord & Get Help
               </a>
             </div>
           </div>
@@ -1149,6 +1217,7 @@ ${formData.generationSettings}
             {currentStep === 2 && renderStep2()}
             {currentStep === 'local-not-working' && renderLocalNotWorking()}
             {currentStep === 'public-not-working' && renderPublicNotWorking()}
+            {currentStep === 'windows-not-working' && renderWindowsNotWorking()}
             {currentStep === 3 && renderStep3()}
             {currentStep === 4 && renderStep4()}
             {currentStep === 5 && renderStep5()}
