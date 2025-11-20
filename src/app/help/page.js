@@ -709,7 +709,7 @@ ${formData.generationSettings}
                   Generate Help Report
                 </button>
                 <a
-                  href="https://discord.gg/Sj5QKKyE42"
+                  href="https://discord.gg/wemVfUUFRA"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors flex items-center"

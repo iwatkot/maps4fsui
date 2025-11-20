@@ -69,7 +69,7 @@ const WelcomeTooltip = () => {
               If you&apos;d like to publish your map on Atlas, I&apos;d love to help! 
               I&apos;ll handle everything, just reach out to me on{' '}
               <a 
-                href="https://discord.gg/Sj5QKKyE42" 
+                href="https://discord.gg/wemVfUUFRA" 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline font-medium"

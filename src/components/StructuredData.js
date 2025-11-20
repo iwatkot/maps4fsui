@@ -10,7 +10,7 @@ export default function StructuredData() {
     "url": "https://maps4fs.xyz",
     "sameAs": [
       "https://github.com/iwatkot/maps4fs",
-      "https://discord.gg/Sj5QKKyE42",
+      "https://discord.gg/wemVfUUFRA",
       "https://patreon.com/iwatkot",
       "https://buymeacoffee.com/iwatkot"
     ],

@@ -739,7 +739,7 @@ export default function GeneratorTab({
               Get Help
             </a>
             <a 
-              href="https://discord.gg/Sj5QKKyE42" 
+              href="https://discord.gg/wemVfUUFRA" 
               target="_blank" 
               rel="noopener noreferrer"
               className="inline-flex items-center px-2 py-1 bg-blue-100 dark:bg-blue-800 text-blue-800 dark:text-blue-200 rounded hover:bg-blue-200 dark:hover:bg-blue-700 transition-colors"

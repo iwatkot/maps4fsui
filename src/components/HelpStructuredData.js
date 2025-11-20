@@ -20,7 +20,7 @@ export default function HelpStructuredData() {
         "description": "Free, open-source tool for generating realistic Farming Simulator maps from real-world terrain data",
         "sameAs": [
           "https://github.com/iwatkot/maps4fs",
-          "https://discord.gg/Sj5QKKyE42",
+          "https://discord.gg/wemVfUUFRA",
           "https://www.youtube.com/@iwatkot"
         ]
       },

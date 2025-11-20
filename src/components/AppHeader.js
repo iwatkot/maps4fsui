@@ -133,7 +133,7 @@ export default function AppHeader({
         <i className="zmdi zmdi-youtube-play text-5xl" style={{fontSize: '1.2rem'}}></i>
       </a>
       <a
-        href="https://discord.gg/Sj5QKKyE42"
+        href="https://discord.gg/wemVfUUFRA"
         target="_blank"
         rel="noopener noreferrer"
         className="text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 transition-colors"

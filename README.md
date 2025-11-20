@@ -22,7 +22,7 @@
     <a href="#overview">Overview</a>
 </p>
 
-[![Join Discord](https://img.shields.io/badge/join-discord-blue)](https://discord.gg/Sj5QKKyE42)
+[![Join Discord](https://img.shields.io/badge/join-discord-blue)](https://discord.gg/wemVfUUFRA)
 [![Docker Pulls](https://img.shields.io/docker/pulls/iwatkot/maps4fsui)](https://hub.docker.com/r/iwatkot/maps4fsui)
 [![Docker Image Size](https://img.shields.io/docker/image-size/iwatkot/maps4fsui)](https://hub.docker.com/r/iwatkot/maps4fsui)
 [![Docker Version](https://img.shields.io/docker/v/iwatkot/maps4fsui)](https://hub.docker.com/r/iwatkot/maps4fsui)
