@@ -27,7 +27,7 @@ export async function POST(request) {
     if (!isValidFilename(filename)) {
       securityLogger.fileSecurityEvent('save', filename, 'Invalid filename');
       return NextResponse.json({ 
-        error: 'Invalid filename. Only alphanumeric characters, dashes, underscores, and dots are allowed.' 
+        error: 'Invalid filename. Only alphanumeric characters, spaces, dashes, underscores, and dots are allowed.' 
       }, { status: 400 });
     }
 

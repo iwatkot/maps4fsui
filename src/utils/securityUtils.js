@@ -25,9 +25,9 @@ export function isValidFilename(filename) {
     return false;
   }
 
-  // Only allow alphanumeric, dash, underscore, and dot
+  // Only allow alphanumeric, dash, underscore, dot, and spaces
   // This prevents command injection and special shell characters
-  const safeFilenameRegex = /^[a-zA-Z0-9_\-\.]+$/;
+  const safeFilenameRegex = /^[a-zA-Z0-9_\-\.\s]+$/;
   if (!safeFilenameRegex.test(filename)) {
     return false;
   }
@@ -163,16 +163,16 @@ export function validateFileContent(content, maxSize = 10 * 1024 * 1024) { // 10
     /system\s*\(/i,
     /passthru\s*\(/i,
     /shell_exec\s*\(/i,
+    /\$\{.*\}/,  // Template literal injection
+    /`.*`/,      // Backtick execution
+  ];
+
   for (const pattern of suspiciousPatterns) {
     if (pattern.test(content)) {
       securityLogger.suspiciousActivity('Suspicious content pattern detected', {
         pattern: pattern.toString(),
         contentLength: content.length
       });
-      // Don't block, just warn (this could be legitimate code)
-      // return { valid: false, reason: 'Suspicious content detected' };
-    }
-  }   console.warn(`[SECURITY] Suspicious content pattern detected: ${pattern}`);
       // Don't block, just warn (this could be legitimate code)
       // return { valid: false, reason: 'Suspicious content detected' };
     }
