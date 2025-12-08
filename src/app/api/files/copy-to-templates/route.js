@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import config from '@/app/config.js';
+import { isValidDirectory, isValidFilename } from '@/utils/securityUtils';
+import securityLogger from '@/utils/securityLogger';
 
 /**
  * POST /api/files/copy-to-templates
@@ -16,9 +18,28 @@ export async function POST(request) {
       return NextResponse.json({ error: 'sourcePath, game, type and mapName are required' }, { status: 400 });
     }
 
-    // Basic security checks
-    if (sourcePath.includes('..') || sourcePath.includes('\0')) {
+    // Enhanced security validation
+    const normalizedSource = path.normalize(sourcePath);
+    
+    if (normalizedSource.includes('..') || normalizedSource.includes('\0')) {
+      securityLogger.fileSecurityEvent('copy', sourcePath, 'Path traversal attempt');
       return NextResponse.json({ error: 'Invalid sourcePath' }, { status: 400 });
+    }
+
+    // Validate source directory
+    const sourceDir = path.dirname(normalizedSource);
+    if (!isValidDirectory(sourceDir)) {
+      securityLogger.fileSecurityEvent('copy', sourcePath, 'Invalid source directory');
+      return NextResponse.json({ error: 'Invalid source path' }, { status: 403 });
+    }
+
+    // Validate game and mapName (prevent injection)
+    if (!/^[a-zA-Z0-9_-]+$/.test(game)) {
+      return NextResponse.json({ error: 'Invalid game parameter' }, { status: 400 });
+    }
+    
+    if (!/^[a-zA-Z0-9_\s-]+$/.test(mapName)) {
+      return NextResponse.json({ error: 'Invalid mapName parameter' }, { status: 400 });
     }
 
     if (!fs.existsSync(sourcePath)) {
