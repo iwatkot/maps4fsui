@@ -1,6 +1,13 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
+import { 
+  isValidFilename, 
+  isValidDirectory, 
+  sanitizeFilePath, 
+  validateFileContent 
+} from '@/utils/securityUtils';
+import securityLogger from '@/utils/securityLogger';
 
 /**
  * POST /api/files/save - Save content to a file
@@ -16,22 +23,42 @@ export async function POST(request) {
       }, { status: 400 });
     }
 
-    // Basic security checks
-    if (filename.includes('..') || filename.includes('/') || filename.includes('\\')) {
-      return NextResponse.json({ error: 'Invalid filename' }, { status: 400 });
+    // Enhanced security validation
+    if (!isValidFilename(filename)) {
+      securityLogger.fileSecurityEvent('save', filename, 'Invalid filename');
+      return NextResponse.json({ 
+        error: 'Invalid filename. Only alphanumeric characters, spaces, dashes, underscores, and dots are allowed.' 
+      }, { status: 400 });
     }
 
-    if (directory.includes('..')) {
-      return NextResponse.json({ error: 'Invalid directory path' }, { status: 400 });
+    if (!isValidDirectory(directory)) {
+      securityLogger.fileSecurityEvent('save', directory, 'Invalid directory');
+      return NextResponse.json({ 
+        error: 'Invalid directory path' 
+      }, { status: 400 });
+    }
+
+    // Validate content
+    const contentValidation = validateFileContent(content);
+    if (!contentValidation.valid) {
+      return NextResponse.json({ 
+        error: contentValidation.reason 
+      }, { status: 400 });
+    }
+
+    // Sanitize the full file path
+    const filePath = sanitizeFilePath(directory, filename);
+    if (!filePath) {
+      securityLogger.fileSecurityEvent('save', `${directory}/${filename}`, 'Path sanitization failed');
+      return NextResponse.json({ 
+        error: 'Invalid file path' 
+      }, { status: 400 });
     }
 
     // Ensure directory exists
     if (!fs.existsSync(directory)) {
       fs.mkdirSync(directory, { recursive: true });
     }
-
-    // Full file path
-    const filePath = path.join(directory, filename);
     
     // Write the file
     fs.writeFileSync(filePath, content, 'utf8');
