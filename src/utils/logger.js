@@ -34,8 +34,7 @@ class Logger {
     } else {
       // Client-side: Regular console format for browser DevTools
       console.log(`[INFO] ${message}`, data || '');
-      // Also send to server for terminal visibility
-      this.sendToServer('INFO', message, data);
+      // Don't auto-send to server - only specific events should log
     }
   }
 
@@ -44,7 +43,7 @@ class Logger {
       console.error(this.formatMessage('ERROR', message, data));
     } else {
       console.error(`[ERROR] ${message}`, data || '');
-      this.sendToServer('ERROR', message, data);
+      // Don't auto-send to server - only specific events should log
     }
   }
 
@@ -53,7 +52,7 @@ class Logger {
       console.warn(this.formatMessage('WARN', message, data));
     } else {
       console.warn(`[WARN] ${message}`, data || '');
-      this.sendToServer('WARN', message, data);
+      // Don't auto-send to server - only specific events should log
     }
   }
 
@@ -62,7 +61,7 @@ class Logger {
       console.log(this.formatMessage('DEBUG', message, data));
     } else {
       console.debug(`[DEBUG] ${message}`, data || '');
-      this.sendToServer('DEBUG', message, data);
+      // Don't auto-send to server - only specific events should log
     }
   }
 }
