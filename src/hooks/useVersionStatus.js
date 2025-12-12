@@ -29,7 +29,7 @@ export const useVersionStatus = () => {
         if (!statusResponse.is_latest) {
           // logger.info(`Update available: ${statusResponse.current_version} -> ${statusResponse.latest_version}`);
         } else {
-          // logger.info('Backend is running the latest version');s
+          // logger.info('Backend is running the latest version');
         }
         
       } catch (error) {

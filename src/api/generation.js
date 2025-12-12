@@ -49,7 +49,7 @@ export async function startMapGeneration(settings, osmData = null, templatePaylo
       Object.assign(payload, templatePayload);
       const templateKeys = Object.keys(templatePayload);
       if (templateKeys.length > 0) {
-        logger.info(`Including custom templates: ${templateKeys.join(', ')}`);
+        // logger.info(`Including custom templates: ${templateKeys.join(', ')}`);
       }
     }
 
