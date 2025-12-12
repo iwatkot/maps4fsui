@@ -40,6 +40,16 @@ export default function Home() {
         setShowPromo(false);
       }
     }
+    
+    // Log page visit with IP
+    fetch('/api/track/pageview', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ 
+        page: '/', 
+        userAgent: navigator.userAgent 
+      })
+    }).catch(() => {}); // Silent fail
   }, []);
 
   // Handler to close promo and save to localStorage

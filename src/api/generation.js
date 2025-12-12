@@ -14,6 +14,9 @@ export async function startMapGeneration(settings, osmData = null, templatePaylo
   try {
     logger.info('Starting map generation process');
     
+    // Log generation attempt (client-side, will be sent to server via logger)
+    logger.info('User initiated map generation');
+    
     // Step 1: Preprocess main settings (camelCase)
     const mainSettings = settings.mainSettings;
     const generationSettings = settings.generationSettings;
