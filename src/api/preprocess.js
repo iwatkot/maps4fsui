@@ -10,7 +10,6 @@ import { isDTMCodeValid } from '@/api/dtm';
  *
  *  const camelString = "addFoundations";
  *  const snakeString = toSnakeCase(camelString);
- *  console.log(snakeString); // "add_foundations"
  */
 const toSnakeCase = (str) => {
   return str.replace(/[A-Z]/g, (match) => `_${match.toLowerCase()}`);
@@ -28,7 +27,6 @@ const toSnakeCase = (str) => {
  *   const input = { addFoundations: true, someValue: null };
  *
  *   const output = objectToSnakeCase(input);
- *   console.log(output); // { add_foundations: true } // Falsy values are skipped.
  */
 export const objectToSnakeCase = (obj, skipFalsy = true) => {
   const newObj = {};
@@ -65,7 +63,6 @@ export const objectToSnakeCase = (obj, skipFalsy = true) => {
  *   };
  *
  *   const output = preprocessSettings(input);
- *   console.log(output);
  *
  *   Output:
  *   {

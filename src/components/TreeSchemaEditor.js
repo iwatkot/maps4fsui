@@ -180,7 +180,6 @@ const TreeSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
   };
 
   const handleSaveSuccess = (result) => {
-    console.log('Schema saved successfully:', result);
     // You can add a toast notification here if desired
   };
 
@@ -415,7 +414,7 @@ const TreeSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
         onClose={() => setShowSaveModal(false)}
         schemaData={generateSchema()}
         schemaType="tree_schemas"
-        onSaveSuccess={handleSaveSuccess}
+        // onSaveSuccess={handleSaveSuccess}
       />
     </div>
   );

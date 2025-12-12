@@ -25,7 +25,6 @@ export default function I3dSettingsContent(showAll = false, onPublic = false, in
     // Update state when initialValues change (for duplication feature)
     useEffect(() => {
         if (Object.keys(initialValues).length > 0) {
-            console.log('I3D Settings: Applying initial values', initialValues);
             setAddTrees(initialValues.add_trees ?? defaultValues.addTrees);
             setForestDensity(initialValues.forest_density ?? defaultValues.forestDensity);
             setTreeLimit(initialValues.tree_limit ?? defaultValues.treeLimit);

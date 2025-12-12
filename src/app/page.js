@@ -17,7 +17,7 @@ import logger from '@/utils/logger';
 
 const isPublicVersion = config.isPublicVersion;
 const backendUrl = config.backendUrl;
-logger.info(`Running in public version: ${isPublicVersion}. Backend URL: ${backendUrl}`);
+// logger.info(`Running in public version: ${isPublicVersion}. Backend URL: ${backendUrl}`);
 
 export default function Home() {
 

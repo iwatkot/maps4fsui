@@ -17,10 +17,8 @@ function ServerManagementSection({ showToast }) {
   const handleCleanCache = async () => {
     setIsCleaningCache(true);
     try {
-      console.log('Calling clean cache endpoint...');
       const result = await apiService.post('/server/clean_cache', {});
       showToast('Cache cleaned successfully', 'success');
-      console.log('Cache clean result:', result);
     } catch (err) {
       console.error('Failed to clean cache:', err);
       showToast(`Failed to clean cache: ${err.message}`, 'error');
@@ -32,10 +30,8 @@ function ServerManagementSection({ showToast }) {
   const handleReloadTemplates = async () => {
     setIsReloadingTemplates(true);
     try {
-      console.log('Calling reload templates endpoint...');
       const result = await apiService.post('/server/reload_templates', {});
       showToast('Templates reloaded successfully', 'success');
-      console.log('Template reload result:', result);
     } catch (err) {
       console.error('Failed to reload templates:', err);
       showToast(`Failed to reload templates: ${err.message}`, 'error');
@@ -93,7 +89,6 @@ function ServerManagementSection({ showToast }) {
       });
 
       showToast('Browser settings cleared successfully', 'success');
-      console.log('LocalStorage cleared, removed keys:', [...keysToRemove, ...dynamicKeys]);
     } catch (err) {
       console.error('Failed to clear localStorage:', err);
       showToast(`Failed to clear browser settings: ${err.message}`, 'error');
@@ -354,7 +349,6 @@ export default function SettingsTab() {
 
   // Load files for all sections when game changes
   useEffect(() => {
-    console.log('Settings tab: Game changed to:', selectedGame);
     
     // Always set loading to false immediately for instant UI response
     setLoading(false);
@@ -371,12 +365,10 @@ export default function SettingsTab() {
   }, [selectedGame]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadAllFilesBackground = async () => {
-    console.log('Settings tab: Loading files in background...');
     setError(null);
     
     try {
       const sections = getGameSections(selectedGame);
-      console.log('Settings tab: Loading sections:', sections);
       const promises = sections.map(section => loadSectionFiles(section));
       const results = await Promise.allSettled(promises);
 
@@ -385,7 +377,6 @@ export default function SettingsTab() {
         newFiles[section] = results[index].status === 'fulfilled' ? results[index].value : [];
       });
 
-      console.log('Settings tab: Loaded files:', newFiles);
       setFiles(newFiles);
       
       // Log any errors but don't fail completely
@@ -418,13 +409,11 @@ export default function SettingsTab() {
   }, [selectedGame, activeSection]);
 
   const loadAllFiles = async () => {
-    console.log('Settings tab: Starting to load files...');
     setLoading(true);
     setError(null);
     
     try {
       const sections = getGameSections(selectedGame);
-      console.log('Settings tab: Loading sections:', sections);
       const promises = sections.map(section => loadSectionFiles(section));
       const results = await Promise.allSettled(promises);
 
@@ -433,7 +422,6 @@ export default function SettingsTab() {
         newFiles[section] = results[index].status === 'fulfilled' ? results[index].value : [];
       });
 
-      console.log('Settings tab: Loaded files:', newFiles);
       setFiles(newFiles);
       
       // Log any errors but don't fail completely
@@ -446,7 +434,6 @@ export default function SettingsTab() {
       // Don't set error state - just show empty interface
       console.warn('Templates directory may not exist yet, showing empty interface');
     } finally {
-      console.log('Settings tab: Finished loading, setting loading to false');
       setLoading(false);
     }
   };

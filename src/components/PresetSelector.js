@@ -39,7 +39,6 @@ export default function PresetSelector({
       // Check if this selectedPreset exists in the loaded presets
       const presetExists = presets.find(p => p.name === selectedPreset);
       if (presetExists) {
-        console.log(`Auto-applying default ${type} preset:`, selectedPreset);
         handlePresetChange(selectedPreset);
       }
     }

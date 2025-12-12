@@ -23,7 +23,6 @@ export default function BuildingSettingsContent(showAll = false, onPublic = fals
     // Update state when initialValues change (for duplication feature)
     useEffect(() => {
         if (Object.keys(initialValues).length > 0) {
-            console.log('Building Settings: Applying initial values', initialValues);
             setGenerateBuildings(initialValues.generate_buildings ?? defaultValues.generateBuildings);
             setRegion(initialValues.region ?? defaultValues.region);
             setToleranceFactor(initialValues.tolerance_factor ?? defaultValues.toleranceFactor);

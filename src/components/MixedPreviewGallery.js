@@ -72,7 +72,6 @@ export default function MixedPreviewGallery({ previews, taskId, currentPage, onE
     
     if (stlPageIndex >= 0 && stlPageIndex < stlModels.length) {
       const stlFile = stlModels[stlPageIndex];
-      console.log('🎯 Passing STL to widget:', stlFile.filename, '→', getStlUrl(stlFile));
       
       pageContent = (
         <StlViewer

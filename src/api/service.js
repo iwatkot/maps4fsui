@@ -16,11 +16,11 @@ import logger from '../utils/logger';
  */
 export async function getBackendVersion() {
   try {
-    logger.info('Checking backend version and connectivity');
+    // logger.info('Checking backend version and connectivity');
     
     const response = await apiService.get('/info/version');
     
-    logger.info(`Backend version: ${response.version}`);
+    // logger.info(`Backend version: ${response.version}`);
     return response;
   } catch (error) {
     logger.error('Failed to get backend version:', error.message);
@@ -41,11 +41,11 @@ export async function getBackendVersion() {
  */
 export async function getBackendVersionStatus() {
   try {
-    logger.info('Checking backend version status');
+    // logger.info('Checking backend version status');
     
     const response = await apiService.get('/info/status');
     
-    logger.info(`Backend version status: current=${response.current_version}, latest=${response.latest_version}, is_latest=${response.is_latest}`);
+    // logger.info(`Backend version status: current=${response.current_version}, latest=${response.latest_version}, is_latest=${response.is_latest}`);
     return response;
   } catch (error) {
     logger.error('Failed to get backend version status:', error.message);
@@ -64,14 +64,14 @@ export async function getBackendVersionStatus() {
  */
 export async function getServerUpgradable() {
   try {
-    logger.info('Checking if server is upgradable');
+    // logger.info('Checking if server is upgradable');
     
     const response = await apiService.get('/server/upgradable');
     
-    logger.info(`Server upgradable status: ${response.upgradable}`);
+    // logger.info(`Server upgradable status: ${response.upgradable}`);
     return response;
   } catch (error) {
-    logger.error('Failed to check server upgradable status:', error.message);
+    // logger.error('Failed to check server upgradable status:', error.message);
     throw error;
   }
 }
@@ -88,14 +88,14 @@ export async function getServerUpgradable() {
  */
 export async function triggerServerUpgrade() {
   try {
-    logger.info('Triggering server upgrade');
+    // logger.info('Triggering server upgrade');
     
     const response = await apiService.post('/server/upgrade');
     
-    logger.info(`Server upgrade response: ${response.status} - ${response.message}`);
+    // logger.info(`Server upgrade response: ${response.status} - ${response.message}`);
     return response;
   } catch (error) {
-    logger.error('Failed to trigger server upgrade:', error.message);
+    // logger.error('Failed to trigger server upgrade:', error.message);
     throw error;
   }
 }

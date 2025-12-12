@@ -15,7 +15,6 @@ export default function SatelliteSettingsContent(showAll = false, onPublic = fal
     // Update state when initialValues change (for duplication feature)
     useEffect(() => {
         if (Object.keys(initialValues).length > 0) {
-            console.log('Satellite Settings: Applying initial values', initialValues);
             setDownloadImages(initialValues.download_images ?? defaultValues.downloadImages);
             setZoomLevel(initialValues.zoom_level ?? defaultValues.zoomLevel);
         }

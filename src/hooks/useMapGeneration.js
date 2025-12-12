@@ -161,7 +161,7 @@ export function useMapGeneration() {
       
       if (previewResult.success) {
         setPreviews(previewResult.previews);
-        logger.info(`Successfully loaded ${previewResult.previews.length} previews`);
+        // logger.info(`Successfully loaded ${previewResult.previews.length} previews`);
       } else {
         const errorMsg = previewResult.error || 'Failed to load previews';
         setPreviewsError(errorMsg);

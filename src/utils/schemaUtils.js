@@ -18,8 +18,6 @@ export async function saveSchemaToTemplates(schemaData, schemaType, gameVersion 
     // Determine directory path
     const dirPath = `${config.mfsTemplatesDir}/${gameVersion}/${schemaType}`;
     
-    console.log(`Saving schema to: ${dirPath}/${filename}`);
-    
     // Save the file
     const response = await getAuthenticatedFetch('/api/files/save', {
       method: 'POST',

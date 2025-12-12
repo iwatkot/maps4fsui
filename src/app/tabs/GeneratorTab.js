@@ -42,7 +42,7 @@ import apiService from '@/utils/apiService';
 
 const isPublicVersion = config.isPublicVersion;
 const backendUrl = config.backendUrl;
-logger.info(`Running in public version: ${isPublicVersion}. Backend URL: ${backendUrl}`);
+// logger.info(`Running in public version: ${isPublicVersion}. Backend URL: ${backendUrl}`);
 
 /**
  * Format field key to human-readable label
@@ -121,14 +121,11 @@ export default function GeneratorTab({
 
   // Manage initial queue check state based on props
   useEffect(() => {
-    console.log('Managing initial queue check state:', { isPublicVersion, isBackendAvailable });
     if (!isPublicVersion) {
       // For local version, no need for overlay
-      console.log('Setting isInitialQueueCheck to false (local version)');
       setIsInitialQueueCheck(false);
     } else {
       // For public version, show overlay immediately until queue check completes
-      console.log('Setting isInitialQueueCheck to true (public version)');
       setIsInitialQueueCheck(true);
     }
   }, [isPublicVersion, isBackendAvailable]);
@@ -156,7 +153,6 @@ export default function GeneratorTab({
       setQueueSize(queueResult);
       setIsQueueOverloaded(queueResult >= QUEUE_LIMIT);
       setQueueCheckError(false);
-      console.log(`Queue size: ${queueResult}/${QUEUE_LIMIT}`);
     } catch (error) {
       console.error('Failed to check queue size:', error);
       setQueueCheckError(true);
@@ -167,7 +163,6 @@ export default function GeneratorTab({
       await new Promise(resolve => setTimeout(resolve, 500));
     } finally {
       setIsCheckingQueue(false);
-      console.log('Queue check completed, setting isInitialQueueCheck to false');
       setIsInitialQueueCheck(false); // Mark initial check as complete
     }
   }, [isPublicVersion, isBackendAvailable]);
@@ -190,25 +185,25 @@ export default function GeneratorTab({
   // OSM file handlers
   const handleDataSourceChange = (source) => {
     setDataSource(source);
-    logger.info(`Data source changed to: ${source}`);
+    // logger.info(`Data source changed to: ${source}`);
   };
 
   const handleOsmFileSelect = (file) => {
     setSelectedOsmFile(file);
-    logger.info(`OSM file selected: ${file.name} (${file.size} bytes)`);
+    // logger.info(`OSM file selected: ${file.name} (${file.size} bytes)`);
   };
 
   const handleOsmFileRemove = () => {
     setSelectedOsmFile(null);
     setOsmData(null);
     setDataSource(DATA_SOURCES.PUBLIC);
-    logger.info('OSM file removed, switched back to public data source');
+    // logger.info('OSM file removed, switched back to public data source');
   };
 
   const handleOsmDataProcessed = (processedData) => {
     setOsmData(processedData);
     if (processedData) {
-      logger.info(`OSM data processed: ${processedData.featureCount} features`);
+      // logger.info(`OSM data processed: ${processedData.featureCount} features`);
     }
   };
 
@@ -262,7 +257,6 @@ export default function GeneratorTab({
         
         // Store DTM provider to be set after options are loaded
         if (mainSettings.dtm_provider) {
-          console.log('Storing pending DTM provider from duplication:', mainSettings.dtm_provider);
           setPendingDTMProvider(mainSettings.dtm_provider);
         }
       }
@@ -273,7 +267,6 @@ export default function GeneratorTab({
         const osmBlob = new Blob([customOsm.content], { type: 'application/xml' });
         const osmFile = new File([osmBlob], customOsm.fileName, { type: 'application/xml' });
         
-        console.log('Setting custom OSM file from duplication:', osmFile.name, osmFile.size);
         setDataSource(DATA_SOURCES.CUSTOM);
         setSelectedOsmFile(osmFile);
         
@@ -284,7 +277,6 @@ export default function GeneratorTab({
             const processedData = await processOsmFile(osmFile);
             processedData.timestamp = Date.now(); // Add timestamp for cache busting
             setOsmData(processedData);
-            console.log('OSM data processed from duplication:', processedData.featureCount, 'features');
           } catch (error) {
             console.error('Error processing duplicated OSM file:', error);
           }
@@ -295,8 +287,6 @@ export default function GeneratorTab({
       
       // Handle generation settings - duplicate map has highest priority
       if (generationSettings) {
-        console.log('Storing pending generation settings from duplication:', generationSettings);
-        console.log('Generation settings keys:', Object.keys(generationSettings));
         // Clear any existing generation settings and apply from duplication
         setPendingGenerationSettings(generationSettings);
       }
@@ -306,54 +296,38 @@ export default function GeneratorTab({
     }
   }, [duplicateMapData, onDuplicateDataProcessed, setSelectedDTMProvider]);
 
-  // Function to clear all presets (used when duplicating map)
-  const clearAllPresets = () => {
-    // Clear preset selections in PresetSelector components
-    // This will be handled by passing a reset flag to the components
-    console.log('Clearing all preset selections due to map duplication');
-  };
-
   // Function to re-enable presets
   const enablePresets = () => {
     setPresetsDisabled(false);
     setPresetDisableReason('');
     // Don't clear preset selections when re-enabling, let user choose
-    console.log('Presets re-enabled');
   };
 
   // Function to apply generation settings preset
   const applyGenerationSettingsPreset = (presetData) => {
-    console.log('Applying generation settings preset:', presetData);
-    
     try {
       // Check if presets are disabled (e.g., due to duplicate map processing)
       if (presetsDisabled) {
-        console.log('Presets are disabled, skipping generation settings preset application');
         return;
       }
       
       // Store the generation settings - the existing logic will handle applying them
       setPendingGenerationSettings(presetData);
-      console.log('Generation settings preset applied, keys:', Object.keys(presetData));
     } catch (error) {
-      console.error('Error applying generation settings preset:', error);
     }
   };
 
   // Function to apply OSM preset
   const applyOsmPreset = (presetFile) => {
-    console.log('Applying OSM preset:', presetFile);
     
     try {
       // Check if presets are disabled (e.g., due to duplicate map processing)
       if (presetsDisabled) {
-        console.log('Presets are disabled, skipping OSM preset application');
         return;
       }
       
       // Store the selected OSM preset file info
       setSelectedOsmPreset(presetFile);
-      console.log('OSM preset selected:', presetFile.name);
     } catch (error) {
       console.error('Error applying OSM preset:', error);
     }
@@ -361,18 +335,15 @@ export default function GeneratorTab({
 
   // Function to apply DEM preset
   const applyDemPreset = (presetFile) => {
-    console.log('Applying DEM preset:', presetFile);
     
     try {
       // Check if presets are disabled (e.g., due to duplicate map processing)
       if (presetsDisabled) {
-        console.log('Presets are disabled, skipping DEM preset application');
         return;
       }
       
       // Store the selected DEM preset file info
       setSelectedDemPreset(presetFile);
-      console.log('DEM preset selected:', presetFile.name);
     } catch (error) {
       console.error('Error applying DEM preset:', error);
     }
@@ -380,26 +351,22 @@ export default function GeneratorTab({
 
   // Function to apply main settings preset
   const applyMainSettingsPreset = (presetData) => {
-    console.log('Applying main settings preset:', presetData);
     
     try {
       // Check if presets are disabled (e.g., due to duplicate map processing)
       if (presetsDisabled) {
-        console.log('Presets are disabled, skipping main settings preset application');
         return;
       }
       // 1. Game Version - convert uppercase to lowercase (FS25 -> fs25, FS22 -> fs22)
       if (presetData.game) {
         const gameValue = presetData.game.toLowerCase();
         setSelectedGame(gameValue);
-        console.log('Set game to:', gameValue);
       }
       
       // 2. Coordinates - combine latitude and longitude into string format
       if (presetData.latitude !== undefined && presetData.longitude !== undefined) {
         const coordsString = `${presetData.latitude}, ${presetData.longitude}`;
         setCoordinatesInput(coordsString);
-        console.log('Set coordinates to:', coordsString);
       }
       
       // 3. Map Size - check if standard size or custom
@@ -407,30 +374,25 @@ export default function GeneratorTab({
         const standardSizes = [2048, 4096, 8192, 16384];
         if (standardSizes.includes(presetData.size)) {
           setSelectedSize(presetData.size);
-          console.log('Set standard size to:', presetData.size);
         } else {
           // Custom size
           setSelectedSize("custom");
           setCustomSize(presetData.size);
-          console.log('Set custom size to:', presetData.size);
         }
       }
       
       // 4. Output Size
       if (presetData.output_size) {
         setOutputSize(presetData.output_size);
-        console.log('Set output size to:', presetData.output_size);
       }
       
       // 5. Rotation
       if (presetData.rotation !== undefined) {
         setRotation(presetData.rotation);
-        console.log('Set rotation to:', presetData.rotation);
       }
       
       // 6. DTM Provider - store for later application when options are loaded
       if (presetData.dtm_provider) {
-        console.log('Storing pending DTM provider from preset:', presetData.dtm_provider);
         setPendingDTMProvider(presetData.dtm_provider);
       }
       
@@ -442,29 +404,23 @@ export default function GeneratorTab({
   // Set pending DTM provider when options are loaded
   useEffect(() => {
     if (pendingDTMProvider && dtmOptions && dtmOptions.length > 0 && !dtmLoading) {
-      console.log('Attempting to set DTM provider by label:', pendingDTMProvider);
-      console.log('Available DTM options:', dtmOptions.map(opt => ({ label: opt.label, value: opt.value })));
       
       // Search by label since the JSON stores the provider name/label
       const providerByLabel = dtmOptions.find(option => option.label === pendingDTMProvider);
       
       if (providerByLabel) {
-        console.log('Found provider by label:', providerByLabel);
         setSelectedDTMProvider(providerByLabel.value);
         setPendingDTMProvider(null); // Clear the pending provider
       } else {
-        console.log('Provider not found by exact label, checking for partial matches...');
         // Try to find a partial match in case of slight differences
         const partialMatch = dtmOptions.find(option => 
           option.label.toLowerCase().includes(pendingDTMProvider.toLowerCase()) ||
           pendingDTMProvider.toLowerCase().includes(option.label.toLowerCase())
         );
         if (partialMatch) {
-          console.log('Found partial match:', partialMatch);
           setSelectedDTMProvider(partialMatch.value);
           setPendingDTMProvider(null);
         } else {
-          console.log('No match found for DTM provider:', pendingDTMProvider);
         }
       }
     }
@@ -493,7 +449,6 @@ export default function GeneratorTab({
   // Apply pending generation settings from duplication
   useEffect(() => {
     if (pendingGenerationSettings) {
-      console.log('Generation settings applied to components:', pendingGenerationSettings);
       
       // Clear the pending settings after a short delay to allow components to initialize
       setTimeout(() => {
@@ -565,7 +520,6 @@ export default function GeneratorTab({
         {/* Initial Queue Check Overlay - Only for public version */}
         {(() => {
           const shouldShowOverlay = isPublicVersion && isInitialQueueCheck;
-          console.log('Overlay render check:', { isPublicVersion, isBackendAvailable, isInitialQueueCheck, shouldShowOverlay });
           return shouldShowOverlay;
         })() && (
           <div className="absolute inset-0 bg-gray-900 bg-opacity-75 z-50 flex items-center justify-center">
@@ -1099,12 +1053,10 @@ export default function GeneratorTab({
               // Add preset file paths if selected
               if (selectedOsmPreset) {
                 mainSettings.custom_osm_path = selectedOsmPreset.name;
-                console.log('Including OSM preset in payload:', selectedOsmPreset.name);
               }
 
               if (selectedDemPreset) {
                 mainSettings.custom_dem_path = selectedDemPreset.name;
-                console.log('Including DEM preset in payload:', selectedDemPreset.name);
               }
 
               const settings = {

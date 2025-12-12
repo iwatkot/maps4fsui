@@ -28,7 +28,7 @@ class ApiService {
       // Throttle the no bearer token message to prevent spam
       const now = Date.now();
       if (now - this.lastNoBearerTokenLog > this.noBearerTokenLogInterval) {
-        logger.info('No bearer token configured - making request without authentication');
+        // logger.info('No bearer token configured - making request without authentication');
         this.lastNoBearerTokenLog = now;
       }
     }
@@ -46,7 +46,7 @@ class ApiService {
     const url = `${this.baseUrl}${endpoint}`;
     
     try {
-      logger.info(`Making GET request to: ${url}`);
+      // logger.info(`Making GET request to: ${url}`);
       
       const response = await fetch(url, {
         method: 'GET',
@@ -54,7 +54,7 @@ class ApiService {
         ...options
       });
 
-      logger.info(`Response status: ${response.status} ${response.statusText}`);
+      // logger.info(`Response status: ${response.status} ${response.statusText}`);
 
       if (!response.ok) {
         let errorData;
@@ -121,8 +121,8 @@ class ApiService {
     const url = `${this.baseUrl}${endpoint}`;
     
     try {
-      logger.info(`Making POST request to: ${url}`);
-      logger.debug('Request payload:', data);
+      // logger.info(`Making POST request to: ${url}`);
+      // logger.debug('Request payload:', data);
 
       const response = await fetch(url, {
         method: 'POST',
@@ -131,7 +131,7 @@ class ApiService {
         ...options
       });
 
-      logger.info(`Response status: ${response.status} ${response.statusText}`);
+      // logger.info(`Response status: ${response.status} ${response.statusText}`);
 
       if (!response.ok) {
         let errorData;
@@ -201,7 +201,7 @@ class ApiService {
     const url = `${this.baseUrl}${endpoint}`;
     
     try {
-      logger.info(`Making POST (form-data) request to: ${url}`);
+      // logger.info(`Making POST (form-data) request to: ${url}`);
 
       // Get headers without Content-Type for form data (browser sets it automatically)
       const headers = this.getHeaders(options.headers);
@@ -214,7 +214,7 @@ class ApiService {
         ...options
       });
 
-      logger.info(`Response status: ${response.status} ${response.statusText}`);
+      // logger.info(`Response status: ${response.status} ${response.statusText}`);
 
       if (!response.ok) {
         const errorData = await response.text();
@@ -223,7 +223,7 @@ class ApiService {
       }
 
       const responseData = await response.json();
-      logger.debug('Response data:', responseData);
+      // logger.debug('Response data:', responseData);
       
       return responseData;
     } catch (error) {
@@ -269,8 +269,8 @@ class ApiService {
     const url = `${this.baseUrl}${endpoint}`;
     
     try {
-      logger.info(`Making POST (raw) request to: ${url}`);
-      logger.debug('Request payload:', data);
+      // logger.info(`Making POST (raw) request to: ${url}`);
+      // logger.debug('Request payload:', data);
 
       const response = await fetch(url, {
         method: 'POST',
@@ -279,7 +279,7 @@ class ApiService {
         ...options
       });
 
-      logger.info(`Response status: ${response.status} ${response.statusText}`);
+      // logger.info(`Response status: ${response.status} ${response.statusText}`);
       return response; // Return raw response for custom handling
       
     } catch (error) {
@@ -304,7 +304,7 @@ class ApiService {
     const url = `${this.baseUrl}${endpoint}`;
     
     try {
-      logger.info(`Making file download request to: ${url}`);
+      // logger.info(`Making file download request to: ${url}`);
       
       const response = await fetch(url, {
         method: 'POST',
@@ -317,7 +317,7 @@ class ApiService {
         throw new ApiError(errorData.detail || `Download failed with status ${response.status}`, response.status, errorData);
       }
 
-      logger.info('File received from API, starting download');
+      // logger.info('File received from API, starting download');
 
       // Get filename from Content-Disposition header
       const contentDisposition = response.headers.get('Content-Disposition');
@@ -344,7 +344,7 @@ class ApiService {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url_obj);
 
-      logger.info(`File downloaded successfully: ${filename}`);
+      // logger.info(`File downloaded successfully: ${filename}`);
 
       return {
         success: true,
@@ -368,9 +368,9 @@ class ApiService {
    */
   async getQueueSize() {
     try {
-      logger.info('Checking queue size');
+      // logger.info('Checking queue size');
       const response = await this.get('/info/queue_size');
-      logger.debug('Queue size response:', response);
+      // logger.debug('Queue size response:', response);
       return response.queue_size || 0;
     } catch (error) {
       logger.error('Failed to get queue size:', error.message);

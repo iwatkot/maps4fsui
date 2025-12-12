@@ -52,8 +52,6 @@ export default function DataSourceSelector({
       if (onOsmDataProcessed) {
         onOsmDataProcessed(processedData);
       }
-      
-      console.log(`Successfully processed OSM file: ${processedData.featureCount} features`);
     } catch (error) {
       console.error('Failed to process OSM file:', error);
       setProcessingError(error.message);

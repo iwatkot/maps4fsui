@@ -148,10 +148,6 @@ export default function StatusPage() {
       setTaskLoading(true);
       setTaskError(null);
       
-      // For debug purposes, show both original and parsed session name
-      console.log('Original link:', taskLink);
-      console.log('Parsed session name:', sessionName);
-      
       const response = await apiService.get(`/info/task_queue/${sessionName}`);
       setTaskStatus({
         sessionName,

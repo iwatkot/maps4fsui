@@ -19,7 +19,6 @@ export default function TextureSettingsContent(showAll = false, onPublic = false
     // Update state when initialValues change (for duplication feature)
     useEffect(() => {
         if (Object.keys(initialValues).length > 0) {
-            console.log('Texture Settings: Applying initial values', initialValues);
             setFieldsPadding(initialValues.fields_padding ?? defaultValues.fieldsPadding);
             setDissolve(initialValues.dissolve ?? defaultValues.dissolve);
             setSkipDrains(initialValues.skip_drains ?? defaultValues.skipDrains);

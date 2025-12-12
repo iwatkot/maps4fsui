@@ -14,7 +14,7 @@ export const useVersionStatus = () => {
   useEffect(() => {
     const checkVersionStatus = async () => {
       try {
-        logger.info('Checking backend version status for updates');
+        // logger.info('Checking backend version status for updates');
         setIsLoading(true);
         setError(null);
         
@@ -27,9 +27,9 @@ export const useVersionStatus = () => {
         });
         
         if (!statusResponse.is_latest) {
-          logger.info(`Update available: ${statusResponse.current_version} -> ${statusResponse.latest_version}`);
+          // logger.info(`Update available: ${statusResponse.current_version} -> ${statusResponse.latest_version}`);
         } else {
-          logger.info('Backend is running the latest version');
+          // logger.info('Backend is running the latest version');s
         }
         
       } catch (error) {

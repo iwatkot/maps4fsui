@@ -20,7 +20,6 @@ export default function BackgroundSettingsContent(showAll = false, onPublic = fa
     // Update state when initialValues change (for duplication feature)
     useEffect(() => {
         if (Object.keys(initialValues).length > 0) {
-            console.log('Background Settings: Applying initial values', initialValues);
             setGenerateBackground(initialValues.generate_background ?? defaultValues.generateBackground);
             setGenerateWater(initialValues.generate_water ?? defaultValues.generateWater);
             setWaterBlurriness(initialValues.water_blurriness ?? defaultValues.waterBlurriness);

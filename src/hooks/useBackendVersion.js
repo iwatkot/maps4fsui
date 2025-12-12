@@ -14,7 +14,7 @@ export const useBackendVersion = () => {
   useEffect(() => {
     const checkBackend = async () => {
       try {
-        logger.info('Checking backend connectivity and version');
+        // logger.info('Checking backend connectivity and version');
         setIsBackendAvailable(null); // Set to loading state
         setBackendError(null);
         
@@ -22,7 +22,7 @@ export const useBackendVersion = () => {
         
         setBackendVersion(versionResponse.version);
         setIsBackendAvailable(true);
-        logger.info(`Backend is available, version: ${versionResponse.version}`);
+        // logger.info(`Backend is available, version: ${versionResponse.version}`);
         
       } catch (error) {
         logger.error('Backend connectivity check failed:', error.message);

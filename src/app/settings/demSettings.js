@@ -18,7 +18,6 @@ export default function DemSettingsContent(showAll = true, initialValues = {}){
     // Update state when initialValues change (for duplication feature)
     useEffect(() => {
         if (Object.keys(initialValues).length > 0) {
-            console.log('DEM Settings: Applying initial values', initialValues);
             setBlurRadius(initialValues.blur_radius ?? defaultValues.blurRadius);
             setWaterDepth(initialValues.water_depth ?? defaultValues.waterDepth);
             setAddFoundations(initialValues.add_foundations ?? defaultValues.addFoundations);

@@ -20,7 +20,7 @@ export async function startMapGeneration(settings, osmData = null, templatePaylo
     const processedMainSettings = await preprocessMainSettings(mainSettings);
     
     // Step 2: Convert to snake_case for API
-    logger.debug('Converting to snake_case for API');
+    // logger.debug('Converting to snake_case for API');
     const payload = objectToSnakeCase(processedMainSettings);
     for (const [key, value] of Object.entries(generationSettings)) {
       const sectionSettings = value;
@@ -30,12 +30,12 @@ export async function startMapGeneration(settings, osmData = null, templatePaylo
 
     // Step 2.5: Add is_public flag from config
     payload.is_public = config.isPublicVersion;
-    logger.debug(`Adding is_public flag: ${config.isPublicVersion}`);
+    // logger.debug(`Adding is_public flag: ${config.isPublicVersion}`);
 
     // Step 3: Add custom OSM XML if provided
     if (osmData && osmData.originalXml) {
       payload.custom_osm_xml = osmData.originalXml;
-      logger.info(`Including custom OSM data (${osmData.originalXml.length} characters, ${osmData.featureCount} features)`);
+      // logger.info(`Including custom OSM data (${osmData.originalXml.length} characters, ${osmData.featureCount} features)`);
     }
 
     // Step 4: Add custom template paths if provided
@@ -47,7 +47,7 @@ export async function startMapGeneration(settings, osmData = null, templatePaylo
       }
     }
 
-    logger.info('Sending generation request to /map/generate');
+    // logger.info('Sending generation request to /map/generate');
     
     // Step 5: Send to /map/generate endpoint using apiService
     const data = await apiService.post('/map/generate', payload);
@@ -83,17 +83,17 @@ export async function startMapGeneration(settings, osmData = null, templatePaylo
  */
 export async function checkTaskStatus(taskId) {
   try {
-    logger.debug(`Checking task status for: ${taskId}`);
+    // logger.debug(`Checking task status for: ${taskId}`);
     
     // Use apiService raw response to handle special status codes
     const response = await apiService.postRaw('/task/status', { task_id: taskId });
     
-    logger.debug(`Task status response: ${response.status} ${response.statusText}`);
+    // logger.debug(`Task status response: ${response.status} ${response.statusText}`);
     
     // Handle different status codes
     if (response.status === 204) {
       // Task is in queue, processing not started
-      logger.info('Task is queued, waiting to start');
+      // logger.info('Task is queued, waiting to start');
       return {
         status: 'queued',
         message: 'Task is in queue'
@@ -102,7 +102,7 @@ export async function checkTaskStatus(taskId) {
     
     if (response.status === 202) {
       // Task is processing
-      logger.info('Task is being processed');
+      // logger.info('Task is being processed');
       return {
         status: 'processing',
         message: 'Task is being processed'
@@ -165,20 +165,14 @@ export async function downloadGeneratedMap(taskId) {
  */
 export async function getTaskPreviews(taskId) {
   try {
-    logger.info(`Getting task previews for: ${taskId}`);
+    // logger.info(`Getting task previews for: ${taskId}`);
     
     const data = await apiService.post('/task/previews', { task_id: taskId });
     
     // Log STL files found in API response
     const stlFiles = data.previews?.filter(p => p.filename?.toLowerCase().endsWith('.stl')) || [];
-    if (stlFiles.length > 0) {
-      console.log('🎯 STL files found in API response:');
-      stlFiles.forEach(stl => {
-        console.log(`   - ${stl.filename} → ${stl.url}`);
-      });
-    }
     
-    logger.info(`Got ${data.preview_count} previews for task: ${taskId}`);
+    // logger.info(`Got ${data.preview_count} previews for task: ${taskId}`);
     
     return {
       success: true,

@@ -71,7 +71,6 @@ async function createZipArchive(sourceDir, outputPath) {
     });
 
     output.on('close', () => {
-      console.log(`Archive created: ${archive.pointer()} total bytes`);
       resolve();
     });
 

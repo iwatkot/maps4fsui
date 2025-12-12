@@ -22,7 +22,6 @@ export default function GrleSettingsContent(showAll = false, onPublic = false, i
     // Update state when initialValues change (for duplication feature)
     useEffect(() => {
         if (Object.keys(initialValues).length > 0) {
-            console.log('GRLE Settings: Applying initial values', initialValues);
             setFarmlandMargin(initialValues.farmland_margin ?? defaultValues.farmlandMargin);
             setAddGrass(initialValues.add_grass ?? defaultValues.addGrass);
             setRandomPlants(initialValues.random_plants ?? defaultValues.randomPlants);

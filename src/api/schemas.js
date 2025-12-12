@@ -30,14 +30,14 @@ import logger from '../utils/logger';
  */
 export async function getTextureSchema(gameCode = 'fs25') {
   try {
-    logger.info(`Loading texture schema for game: ${gameCode}`);
+    // logger.info(`Loading texture schema for game: ${gameCode}`);
     
     const response = await apiService.post('/templates/schemas', {
       game_code: gameCode,
       schema_type: 'texture'
     });
     
-    logger.info(`Loaded ${response.length} texture entries`);
+    // logger.info(`Loaded ${response.length} texture entries`);
     return response;
   } catch (error) {
     logger.error('Failed to load texture schema:', error.message);
@@ -68,14 +68,14 @@ export async function getTextureSchema(gameCode = 'fs25') {
  */
 export async function getTreeSchema(gameCode = 'fs25') {
   try {
-    logger.info(`Loading tree schema for game: ${gameCode}`);
+    // logger.info(`Loading tree schema for game: ${gameCode}`);
     
     const response = await apiService.post('/templates/schemas', {
       game_code: gameCode,
       schema_type: 'tree'
     });
     
-    logger.info(`Loaded ${response.length} tree entries`);
+    // logger.info(`Loaded ${response.length} tree entries`);
     return response;
   } catch (error) {
     logger.error('Failed to load tree schema:', error.message);
@@ -96,14 +96,14 @@ export async function getTreeSchema(gameCode = 'fs25') {
  */
 export async function getGrleSchema(gameCode = 'fs25') {
   try {
-    logger.info(`Loading GRLE schema for game: ${gameCode}`);
+    // logger.info(`Loading GRLE schema for game: ${gameCode}`);
     
     const response = await apiService.post('/templates/schemas', {
       game_code: gameCode,
       schema_type: 'grle'
     });
     
-    logger.info(`Loaded ${response.length} GRLE entries`);
+    // logger.info(`Loaded ${response.length} GRLE entries`);
     return response;
   } catch (error) {
     logger.error('Failed to load GRLE schema:', error.message);

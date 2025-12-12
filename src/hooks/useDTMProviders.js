@@ -25,7 +25,7 @@ export const useDTMProviders = (coordinatesInput) => {
     const coords = parseCoordinates(coordinatesInput);
     
     if (coords) {
-      logger.info('Coordinates changed, fetching DTM providers for:', coords);
+      // logger.info('Coordinates changed, fetching DTM providers for:', coords);
       
       fetchDTMProviders(coords.lat, coords.lon)
         .then((providers) => {
@@ -51,7 +51,7 @@ export const useDTMProviders = (coordinatesInput) => {
             setSelectedDTMProvider(defaultDTMOption.value);
           }
           
-          logger.info(`Set ${mergedOptions.length} DTM provider options`);
+          // logger.info(`Set ${mergedOptions.length} DTM provider options`);
         })
         .catch((error) => {
           logger.error('Failed to fetch DTM providers:', error.message);
@@ -69,11 +69,11 @@ export const useDTMProviders = (coordinatesInput) => {
   // Effect to fetch provider info when selected DTM provider changes
   useEffect(() => {
     if (selectedDTMProvider && selectedDTMProvider !== defaultDTMOption.value) {
-      logger.info('Selected DTM provider changed, fetching provider info for:', selectedDTMProvider);
+      // logger.info('Selected DTM provider changed, fetching provider info for:', selectedDTMProvider);
       
       fetchProviderInfo(selectedDTMProvider)
         .then((info) => {
-          logger.info('DTM provider info fetched:', info);
+          // logger.info('DTM provider info fetched:', info);
           setProviderInfo(info);
           
           // Initialize DTM settings with default values when provider changes
@@ -94,7 +94,7 @@ export const useDTMProviders = (coordinatesInput) => {
               }
             });
             
-            logger.info('Initializing DTM settings with defaults:', defaultSettings);
+            // logger.info('Initializing DTM settings with defaults:', defaultSettings);
             setDtmSettings(defaultSettings);
           } else {
             setDtmSettings({});

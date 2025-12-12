@@ -22,15 +22,15 @@ import logger from '../utils/logger';
  */
 export async function getDTMProviders(lat, lon) {
   try {
-    logger.info(`Getting DTM providers for coordinates: ${lat}, ${lon}`);
+    // logger.info(`Getting DTM providers for coordinates: ${lat}, ${lon}`);
     
     const response = await apiService.post('/dtm/list', {
       lat: lat,
       lon: lon
     });
 
-    logger.info(`Retrieved ${Object.keys(response).length} DTM providers`);
-    logger.debug('DTM providers:', response);
+    // logger.info(`Retrieved ${Object.keys(response).length} DTM providers`);
+    // logger.debug('DTM providers:', response);
     
     return response;
   } catch (error) {
@@ -58,12 +58,12 @@ export async function getDTMProviders(lat, lon) {
  */
 export async function getDTMProviderInfo(providerCode) {
   try {
-    logger.info(`Getting DTM provider info for: ${providerCode}`);
+    // logger.info(`Getting DTM provider info for: ${providerCode}`);
     
     const response = await apiService.post('/dtm/info', { code: providerCode });
 
-    logger.info(`Retrieved DTM provider info for ${providerCode}`);
-    logger.debug('DTM provider info:', response);
+    // logger.info(`Retrieved DTM provider info for ${providerCode}`);
+    // logger.debug('DTM provider info:', response);
     
     return response;
   } catch (error) {
@@ -74,12 +74,12 @@ export async function getDTMProviderInfo(providerCode) {
 
 export async function isDTMCodeValid(dtmCode) {
   try {
-    logger.info(`Validating DTM code: ${dtmCode}`);
+    // logger.info(`Validating DTM code: ${dtmCode}`);
     
     const response = await apiService.post('/dtm/info', { code: dtmCode });
 
     // If we get a response without error, the DTM code is valid
-    logger.info(`DTM code ${dtmCode} is valid`);
+    // logger.info(`DTM code ${dtmCode} is valid`);
     return { isValid: true };
   } catch (error) {
     logger.error('Failed to validate DTM code:', error.message);

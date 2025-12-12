@@ -15,7 +15,7 @@ export async function POST(request) {
     };
      
     // Log to server console (will appear in terminal)
-    logger.info(JSON.stringify(logEntry));
+    // logger.info(JSON.stringify(logEntry));
 
     return NextResponse.json({ success: true });
   } catch (error) {

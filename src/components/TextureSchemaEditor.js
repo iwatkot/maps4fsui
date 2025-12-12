@@ -114,13 +114,11 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
   });
 
   const handleEditTexture = (texture) => {
-    console.log('Editing texture:', texture);
     setEditingTexture(texture);
     setShowJsonModal(true);
   };
 
   const handleJsonSave = (updatedJson) => {
-    console.log('Saving texture:', updatedJson);
     if (editingTexture) {
       const updatedTextures = textures.map(texture => 
         texture.name === editingTexture.name ? updatedJson : texture
@@ -132,18 +130,11 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
   };
 
   const generateFinalSchema = () => {
-    console.log('Textures array:', textures);
-    console.log('Textures length:', textures.length);
     setShowSchemaModal(true);
   };
 
   const handleSaveSchema = () => {
     setShowSaveModal(true);
-  };
-
-  const handleSaveSuccess = (result) => {
-    console.log('Schema saved successfully:', result);
-    // You can add a toast notification here if desired
   };
 
   const downloadSchema = () => {
