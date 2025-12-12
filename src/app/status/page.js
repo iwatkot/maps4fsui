@@ -15,7 +15,7 @@ const ENDPOINTS = USE_DEBUG ? [
   'http://localhost:8001/info/health'
 ] : [
   'https://api.maps4fs.xyz/backend1/info/health',
-  'https://api.maps4fs.xyz/backend1/info/health'
+  'https://api.maps4fs.xyz/backend2/info/health'
 ];
 
 // Status color mapping
