@@ -48,8 +48,15 @@ export default function StickyFooter() {
             </a>
           </div>
 
-          {/* Right side - Main sites */}
+          {/* Right side - Main sites and contact */}
           <div className="flex items-center space-x-2">
+            <a
+              href="mailto:contact@maps4fs.xyz"
+              className="hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+            >
+              contact@maps4fs.xyz
+            </a>
+            <span className="text-gray-300 dark:text-gray-600">•</span>
             <a
               href="https://maps4fs.xyz"
               target="_blank"
