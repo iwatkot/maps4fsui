@@ -8,6 +8,7 @@ import TooltipSwitch  from '@/components/TooltipSwitch';
 import Slider from '@/components/Slider';
 import ErrorDisplay from '@/components/ErrorDisplay';
 import MapWidget from '@/components/MapWidget';
+import BackendUnavailableDisplay from '@/components/BackendUnavailableDisplay';
 import PageNavigator from '@/components/PageNavigator';
 import SlideNavigator from '@/components/SlideNavigator';
 import PreviewGallery from '@/components/PreviewGallery';
@@ -1112,67 +1113,10 @@ export default function GeneratorTab({
         <div className="flex-1 relative">
         {isBackendAvailable === false ? (
           /* Backend Unavailable Message */
-          <div className="w-full h-full rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 relative overflow-hidden">
-            {/* Background Image */}
-            <div className="absolute inset-0 opacity-20">
-              <img 
-                src="https://github.com/iwatkot/maps4fs/releases/download/2.1.2/502.jpg"
-                alt="Maps4FS Preview"
-                className="w-full h-full object-cover"
-              />
-            </div>
-            
-            {/* Content Overlay */}
-            <div className="relative z-10 w-full h-full flex flex-col items-center justify-center p-8">
-              <div className="text-center space-y-6 max-w-md bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm rounded-lg p-6 shadow-lg border border-gray-200 dark:border-gray-700">
-                <div className="text-2xl font-bold text-gray-700 dark:text-gray-300">Backend Service Unavailable</div>
-                <div className="text-lg text-gray-600 dark:text-gray-400">
-                  {isPublicVersion 
-                    ? "Backend is unavailable. Please try again later."
-                    : "Unable to connect to the backend server."
-                  }
-                </div>
-                {!isPublicVersion && backendError && (
-                  <div className="text-sm bg-gray-200 dark:bg-gray-700 p-3 rounded-lg border border-gray-300 dark:border-gray-600">
-                    <strong>Technical Details:</strong> <span className="font-mono text-xs break-words">{backendError}</span>
-                  </div>
-                )}
-                <div className="flex flex-col space-y-3">
-                  {isPublicVersion ? (
-                    <>
-                      <a
-                        href="https://maps4fs.xyz/download"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
-                      >
-                        <i className="zmdi zmdi-download mr-2"></i>
-                        Download Windows App
-                      </a>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
-                        Run the tool on your Windows machine for full control and reliability.
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <a
-                        href="https://maps4fs.gitbook.io/docs/setup-and-installation/local_deployment#troubleshooting"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200"
-                      >
-                        <i className="zmdi zmdi-help-outline mr-2"></i>
-                        Troubleshooting Guide
-                      </a>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
-                        Make sure the server is running and accessible.
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
+          <BackendUnavailableDisplay 
+            isPublicVersion={isPublicVersion}
+            backendError={backendError}
+          />
         ) : isBackendAvailable === null ? (
           /* Loading Backend Status */
           <div className="w-full h-full rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 flex flex-col items-center justify-center">
