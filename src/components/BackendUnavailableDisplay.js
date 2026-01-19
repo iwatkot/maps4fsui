@@ -38,10 +38,10 @@ export default function BackendUnavailableDisplay({
             {/* Call to Action */}
             <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
               <div className="text-sm font-semibold text-blue-900 dark:text-blue-300 mb-3">
-                Help us keep maps4fs running!
+                Help me keep maps4fs running!
               </div>
               <div className="text-sm text-blue-800 dark:text-blue-200 mb-4">
-                Every donation counts, even small amounts help us cover hosting costs and keep the service available for everyone.
+                Every donation counts, even small amounts help me cover hosting costs and keep the service available for everyone.
               </div>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <a
