@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import StructuredData from "../components/StructuredData";
 import WelcomeTooltip from "../components/WelcomeTooltip";
+import DonationPopup from "../components/DonationPopup";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -117,6 +118,7 @@ export default function RootLayout({ children }) {
       >
         <StructuredData />
         <WelcomeTooltip />
+        <DonationPopup />
         {children}
       </body>
     </html>
