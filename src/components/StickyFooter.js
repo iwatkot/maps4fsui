@@ -48,7 +48,7 @@ export default function StickyFooter() {
             </a>
           </div>
 
-          {/* Right side - Main sites and contact */}
+          {/* Right side - Main sites, support, and contact */}
           <div className="flex items-center space-x-2">
             <a
               href="mailto:contact@maps4fs.xyz"
@@ -73,6 +73,15 @@ export default function StickyFooter() {
               className="hover:text-green-600 dark:hover:text-green-400 transition-colors font-medium"
             >
               atlasfs.xyz
+            </a>
+            <span className="text-gray-300 dark:text-gray-600">•</span>
+            <a
+              href="https://maps4fs.gitbook.io/docs/legal-information/support"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3 py-1 bg-gradient-to-r from-amber-400 to-orange-500 dark:from-amber-500 dark:to-orange-600 text-white rounded-full font-medium hover:from-amber-500 hover:to-orange-600 dark:hover:from-amber-600 dark:hover:to-orange-700 transition-all shadow-sm hover:shadow-md transform hover:scale-105"
+            >
+              ☕ Support Maps4FS
             </a>
           </div>
         </div>
