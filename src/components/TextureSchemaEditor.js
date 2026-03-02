@@ -137,6 +137,10 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
     setShowSaveModal(true);
   };
 
+  const handleSaveSuccess = (result) => {
+    // You can add a toast notification here if desired
+  };
+
   const downloadSchema = () => {
     const schemaData = {
       textures: textures,
