@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useServerUpgrade } from '@/hooks/useServerUpgrade';
+import { useLocale } from '@/contexts/LocaleContext';
 
 export default function UpdateIndicator({ 
   currentVersion, 
@@ -14,6 +15,7 @@ export default function UpdateIndicator({
   const [showUpgradeOverlay, setShowUpgradeOverlay] = useState(false);
   const badgeRef = useRef(null);
   
+  const { t } = useLocale();
   const { 
     isUpgradable, 
     isUpgrading, 
@@ -116,7 +118,7 @@ export default function UpdateIndicator({
           onMouseLeave={handleMouseLeave}
         >
           <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
-          <span className="font-medium">New version available</span>
+          <span className="font-medium">{t('docker.new_version_is_available.label', 'New version available')}</span>
           
           {/* Upgrade Button */}
           <button
@@ -137,7 +139,7 @@ export default function UpdateIndicator({
             ) : (
               <div className="flex items-center space-x-1">
                 <i className="zmdi zmdi-download"></i>
-                <span>Upgrade</span>
+                <span>{t('docker.upgrade.label', 'Upgrade')}</span>
               </div>
             )}
           </button>

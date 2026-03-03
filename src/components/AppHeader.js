@@ -78,9 +78,6 @@ export default function AppHeader({
   // Define right navigation links
   const rightNavLinks = (
     <>
-      {/* Language Selector - first so it's always visible */}
-      <LocaleSelector />
-
       {/* Status Icon - only show in public version */}
       {isPublicVersion && (
         <Link
@@ -165,6 +162,8 @@ export default function AppHeader({
           </span>
         </div>
       )}
+      {/* Language Selector - far right */}
+      <LocaleSelector />
     </>
   );
 

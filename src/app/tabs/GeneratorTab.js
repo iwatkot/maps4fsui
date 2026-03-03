@@ -492,7 +492,7 @@ export default function GeneratorTab({
   // Calculate total pages: Map page (1) + Preview pages (1 for PNG gallery + 1 per STL)
   const previewPages = (hasPngPreviews ? 1 : 0) + (stlModels ? stlModels.length : 0);
   const totalPages = showPreviewsPage ? 1 + previewPages : 1;
-  const pageLabels = ['Map Preview', ...(showPreviewsPage ? ['Generated Previews'] : [])];
+  const pageLabels = [t('docker.map_preview.label', 'Map Preview'), ...(showPreviewsPage ? ['Generated Previews'] : [])];
   
   // Helper function to check if current page is a preview page
   const isPreviewPage = (page) => showPreviewsPage && page >= PAGES.PREVIEWS_START;
@@ -512,9 +512,9 @@ export default function GeneratorTab({
 
   // Compute display status based on form state
   const displayStatusText = !isGenerateEnabled && statusText === "Ready" 
-    ? "Enter valid coordinates, check the settings and click Generate map."
+    ? t('docker.generate_map.tooltip', 'Enter valid coordinates, check the settings and click Generate map.')
     : statusText === "Ready" && isGenerateEnabled 
-    ? "Click Generate map to start the generation process."
+    ? t('docker.ready_to_generate.tooltip', 'Click Generate map to start the generation process.')
     : statusText;
 
   return (
@@ -728,7 +728,7 @@ export default function GeneratorTab({
                   ? 'text-yellow-900 dark:text-yellow-100' 
                   : 'text-blue-900 dark:text-blue-100'
               }`}>
-                Quick Load Presets
+                {t('docker.quick_load_presets.label', 'Quick Load Presets')}
               </h3>
             </div>
             
@@ -1168,9 +1168,9 @@ export default function GeneratorTab({
           <div className="w-full h-full rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 flex flex-col items-center justify-center">
             <div className="text-center text-gray-500 dark:text-gray-400 space-y-2">
               <div className="text-2xl">🗺️</div>
-              <div className="text-lg font-medium">Map Preview</div>
+              <div className="text-lg font-medium">{t('docker.map_preview.label', 'Map Preview')}</div>
               <div className="text-sm max-w-sm">
-                Enter valid coordinates in the left panel to see your map preview here
+                {t('docker.map_preview.tooltip', 'Enter valid coordinates in the left panel to see your map preview here.')}
               </div>
             </div>
           </div>

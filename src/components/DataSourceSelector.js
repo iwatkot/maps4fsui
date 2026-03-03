@@ -4,6 +4,7 @@ import { useState } from 'react';
 import InfoIcon from './InfoIcon';
 import OsmFileUpload from './OsmFileUpload';
 import { processOsmFile } from '@/utils/osmUtils';
+import { useLocale } from '@/contexts/LocaleContext';
 
 const DATA_SOURCES = {
   PUBLIC: 'public',
@@ -19,6 +20,7 @@ export default function DataSourceSelector({
   onOsmDataProcessed,
   disabled = false
 }) {
+  const { t } = useLocale();
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingError, setProcessingError] = useState(null);
   
@@ -102,10 +104,10 @@ export default function DataSourceSelector({
             <i className="zmdi zmdi-globe text-blue-600 dark:text-blue-400"></i>
             <div>
               <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                Public OpenStreetMap
+                {t('docker.public_osm.label', 'Public OpenStreetMap')}
               </span>
               <div className="text-xs text-gray-500 dark:text-gray-400">
-                Real-time OSM data
+                {t('docker.public_osm.tooltip', 'Real-time OSM data')}
               </div>
             </div>
           </div>
@@ -133,10 +135,10 @@ export default function DataSourceSelector({
             <i className="zmdi zmdi-file text-orange-600 dark:text-orange-400"></i>
             <div>
               <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                Custom OSM File
+                {t('docker.custom_osm_file.label', 'Custom OSM File')}
               </span>
               <div className="text-xs text-gray-500 dark:text-gray-400">
-                Upload your own data
+                {t('docker.custom_osm_file.tooltip', 'Upload your own data')}
               </div>
             </div>
           </div>
