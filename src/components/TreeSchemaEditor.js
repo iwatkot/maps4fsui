@@ -6,6 +6,7 @@ import SaveSchemaModal from '@/components/SaveSchemaModal';
 import SelectorCompact from '@/components/SelectorCompact';
 import { getTreeSchema } from '../api/schemas';
 import config from '@/app/config.js';
+import { useLocale } from '@/contexts/LocaleContext';
 
 // Hardcoded tree data (keep this for images)
 const TREE_DATA = {
@@ -94,6 +95,7 @@ const TREE_DATA = {
 };
 
 const TreeSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
+  const { t } = useLocale();
   const [selectedTrees, setSelectedTrees] = useState(new Set());
   const [showJSONModal, setShowJSONModal] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
@@ -212,8 +214,8 @@ const TreeSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
             {/* Schema Type Selector */}
             <SelectorCompact
               options={[
-                { value: 'tree', label: '🌳 Trees' },
-                { value: 'texture', label: '🖼️ Textures' }
+                { value: 'tree', label: `🌳 ${t('docker.trees.label', 'Trees')}` },
+                { value: 'texture', label: `🖼️ ${t('docker.textures.label', 'Textures')}` }
               ]}
               value={activeSchemaType}
               onChange={(value) => onSchemaTypeChange && onSchemaTypeChange(value)}
@@ -224,7 +226,7 @@ const TreeSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
             <div className="relative">
               <input
                 type="text"
-                placeholder="Search trees..."
+                placeholder={t('docker.search_trees.label', 'Search trees...')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-64 px-4 py-2 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -258,21 +260,21 @@ const TreeSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
               className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center"
             >
               <i className="zmdi zmdi-check-all mr-2"></i>
-              Select All
+              {t('docker.select_all.label', 'Select All')}
             </button>
             <button
               onClick={deselectAll}
               className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center"
             >
               <i className="zmdi zmdi-close mr-2"></i>
-              Deselect All
+              {t('docker.deselect_all.label', 'Deselect All')}
             </button>
             <button
               onClick={handleShowJSON}
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center"
             >
               <i className="zmdi zmdi-code mr-2"></i>
-              Show Schema
+              {t('docker.show_schema.label', 'Show Schema')}
             </button>
             {!config.isPublicVersion && (
               <button

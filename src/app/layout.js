@@ -3,6 +3,7 @@ import "./globals.css";
 import StructuredData from "../components/StructuredData";
 import WelcomeTooltip from "../components/WelcomeTooltip";
 import DonationPopup from "../components/DonationPopup";
+import { LocaleProvider } from "../contexts/LocaleContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -116,10 +117,12 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <StructuredData />
-        <WelcomeTooltip />
-        <DonationPopup />
-        {children}
+        <LocaleProvider>
+          <StructuredData />
+          <WelcomeTooltip />
+          <DonationPopup />
+          {children}
+        </LocaleProvider>
       </body>
     </html>
   );

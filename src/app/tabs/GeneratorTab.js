@@ -40,6 +40,7 @@ import BuildingSettingsContent from '@/app/settings/buildingSettings';
 import PresetSelector from '@/components/PresetSelector';
 import DownloadLinkWidget from '@/components/DownloadLinkWidget';
 import apiService from '@/utils/apiService';
+import { useLocale } from '@/contexts/LocaleContext';
 
 const isPublicVersion = config.isPublicVersion;
 const backendUrl = config.backendUrl;
@@ -98,6 +99,9 @@ export default function GeneratorTab({
   // State for selected preset files (OSM and DEM)
   const [selectedOsmPreset, setSelectedOsmPreset] = useState(null);
   const [selectedDemPreset, setSelectedDemPreset] = useState(null);
+
+  // Locale
+  const { t } = useLocale();
 
     // State for queue management (public version only)
   const [queueSize, setQueueSize] = useState(0);
@@ -439,13 +443,13 @@ export default function GeneratorTab({
   const satelliteSettings = pendingGenerationSettings?.SatelliteSettings || {};
   const buildingSettings = pendingGenerationSettings?.BuildingSettings || {};
 
-  const { content: demContent, values: demValues } = DemSettingsContent(!onlyPopularSettings, demSettings);
-  const { content: backgroundContent, values: backgroundValues } = BackgroundSettingsContent(!onlyPopularSettings, isPublicVersion, backgroundSettings);
-  const { content: grleContent, values: grleValues } = GrleSettingsContent(!onlyPopularSettings, isPublicVersion, grleSettings);
-  const { content: i3dContent, values: i3dValues } = I3dSettingsContent(!onlyPopularSettings, isPublicVersion, i3dSettings);
-  const { content: textureContent, values: textureValues } = TextureSettingsContent(!onlyPopularSettings, isPublicVersion, textureSettings);
-  const { content: satelliteContent, values: satelliteValues } = SatelliteSettingsContent(!onlyPopularSettings, isPublicVersion, satelliteSettings);
-  const { content: buildingContent, values: buildingValues } = BuildingSettingsContent(!onlyPopularSettings, isPublicVersion, buildingSettings);
+  const { content: demContent, values: demValues } = DemSettingsContent(!onlyPopularSettings, demSettings, t);
+  const { content: backgroundContent, values: backgroundValues } = BackgroundSettingsContent(!onlyPopularSettings, isPublicVersion, backgroundSettings, t);
+  const { content: grleContent, values: grleValues } = GrleSettingsContent(!onlyPopularSettings, isPublicVersion, grleSettings, t);
+  const { content: i3dContent, values: i3dValues } = I3dSettingsContent(!onlyPopularSettings, isPublicVersion, i3dSettings, t);
+  const { content: textureContent, values: textureValues } = TextureSettingsContent(!onlyPopularSettings, isPublicVersion, textureSettings, t);
+  const { content: satelliteContent, values: satelliteValues } = SatelliteSettingsContent(!onlyPopularSettings, isPublicVersion, satelliteSettings, t);
+  const { content: buildingContent, values: buildingValues } = BuildingSettingsContent(!onlyPopularSettings, isPublicVersion, buildingSettings, t);
 
   // Apply pending generation settings from duplication
   useEffect(() => {
@@ -488,7 +492,7 @@ export default function GeneratorTab({
   // Calculate total pages: Map page (1) + Preview pages (1 for PNG gallery + 1 per STL)
   const previewPages = (hasPngPreviews ? 1 : 0) + (stlModels ? stlModels.length : 0);
   const totalPages = showPreviewsPage ? 1 + previewPages : 1;
-  const pageLabels = ['Map Preview', ...(showPreviewsPage ? ['Generated Previews'] : [])];
+  const pageLabels = [t('docker.map_preview.label', 'Map Preview'), ...(showPreviewsPage ? ['Generated Previews'] : [])];
   
   // Helper function to check if current page is a preview page
   const isPreviewPage = (page) => showPreviewsPage && page >= PAGES.PREVIEWS_START;
@@ -508,9 +512,9 @@ export default function GeneratorTab({
 
   // Compute display status based on form state
   const displayStatusText = !isGenerateEnabled && statusText === "Ready" 
-    ? "Enter valid coordinates, check the settings and click Generate map."
+    ? t('docker.generate_map.tooltip', 'Enter valid coordinates, check the settings and click Generate map.')
     : statusText === "Ready" && isGenerateEnabled 
-    ? "Click Generate map to start the generation process."
+    ? t('docker.ready_to_generate.tooltip', 'Click Generate map to start the generation process.')
     : statusText;
 
   return (
@@ -724,7 +728,7 @@ export default function GeneratorTab({
                   ? 'text-yellow-900 dark:text-yellow-100' 
                   : 'text-blue-900 dark:text-blue-100'
               }`}>
-                Quick Load Presets
+                {t('docker.quick_load_presets.label', 'Quick Load Presets')}
               </h3>
             </div>
             
@@ -749,7 +753,7 @@ export default function GeneratorTab({
               <PresetSelector
                 key={`mainSettings-${presetsDisabled}`}
                 type="mainSettings"
-                label="Main Settings"
+                label={t('docker.main_settings.label', 'Main Settings')}
                 icon={<i className="zmdi zmdi-settings"></i>}
                 disabled={presetsDisabled}
                 onPresetSelect={(preset) => {
@@ -761,7 +765,7 @@ export default function GeneratorTab({
               <PresetSelector
                 key={`generationSettings-${presetsDisabled}`}
                 type="generationSettings"
-                label="Generation Settings"
+                label={t('docker.generation_settings.label', 'Generation Settings')}
                 icon={<i className="zmdi zmdi-tune"></i>}
                 disabled={presetsDisabled}
                 onPresetSelect={(preset) => {
@@ -773,7 +777,7 @@ export default function GeneratorTab({
               <PresetSelector
                 key={`osm-${presetsDisabled}`}
                 type="osm"
-                label="Custom OSM"
+                label={t('docker.custom_osm.label', 'Custom OSM')}
                 icon={<i className="zmdi zmdi-map"></i>}
                 disabled={presetsDisabled}
                 onPresetSelect={(preset) => {
@@ -788,7 +792,7 @@ export default function GeneratorTab({
               <PresetSelector
                 key={`dem-${presetsDisabled}`}
                 type="dem"
-                label="Custom DEM"
+                label={t('docker.custom_dem.label', 'Custom DEM')}
                 icon={<i className="zmdi zmdi-landscape"></i>}
                 disabled={presetsDisabled}
                 onPresetSelect={(preset) => {
@@ -806,38 +810,38 @@ export default function GeneratorTab({
 
         {/* Game Selector */}
         <Selector
-          label="Game Version"
+          label={t('main_settings.fields.game.label', 'Game Version')}
           options={gameOptions}
           value={selectedGame}
           onChange={setSelectedGame}
           placeholder="Choose your game version..."
           labelWidth='w-40'
-          tooltip="Game for which map should be generated. Note, that some features may not be available in all versions."
+          tooltip={t('main_settings.fields.game.tooltip', 'Game for which map should be generated. Note, that some features may not be available in all versions.')}
           size="sm"
         />
 
         {/* Coordinates Input */}
         <TextInput
-          label="Coordinates"
+          label={t('main_settings.fields.coordinates.label', 'Coordinates')}
           value={coordinatesInput}
           onChange={setCoordinatesInput}
           placeholder="45.26, 19.79"
           labelWidth='w-40'
           validator={validateCoordinates}
           errorMessage="Enter valid coordinates (latitude, longitude) separated by comma or space. Example: 45.26, 19.79"
-          tooltip="Coordinates of the center point of the map in decimal latitude and longitude."
+          tooltip={t('main_settings.fields.coordinates.tooltip', 'Coordinates of the center point of the map in decimal latitude and longitude.')}
           size="sm"
         />
 
         {/* DTM Provider Selector */}
         <Selector
-          label="DTM Provider"
+          label={t('main_settings.fields.dtm_provider.label', 'DTM Provider')}
           options={dtmOptions}
           value={selectedDTMProvider}
           onChange={setSelectedDTMProvider}
           placeholder="Select DTM provider..."
           labelWidth='w-40'
-          tooltip="Digital Terrain Model provider for elevation data. Different providers have different coverage and resolution."
+          tooltip={t('main_settings.fields.dtm_provider.tooltip', 'Digital Terrain Model provider for elevation data. Different providers have different coverage and resolution.')}
           size="sm"
           loading={dtmLoading}
           disabled={!validateCoordinates(coordinatesInput)}
@@ -914,13 +918,13 @@ export default function GeneratorTab({
 
         {/* Size Selector */}
         <Selector
-          label="Map Size"
+          label={t('main_settings.fields.size.label', 'Map Size')}
           options={sizeOptions}
           value={selectedSize}
           onChange={setSelectedSize}
           placeholder="Choose map size..."
           labelWidth='w-40'
-          tooltip="Size of the generated map. Larger maps take more time and resources to generate."
+          tooltip={t('main_settings.fields.size.tooltip', 'Size of the generated map. Larger maps take more time and resources to generate.')}
           size="sm"
         />
 
@@ -942,12 +946,12 @@ export default function GeneratorTab({
         {/* Output Size (only if custom size selected) */}
         {selectedSize === "custom" && (
           <NumberInput
-            label="Output Size"
+            label={t('main_settings.fields.output_size.label', 'Output Size')}
             value={outputSize}
             onChange={setOutputSize}
             placeholder="Enter output size"
             labelWidth='w-40'
-            tooltip={`Output size in pixels. Note that when downgrading the map size, some details may be lost.${isPublicVersion ? ` Maximum ${getMaxOutputSize(isPublicVersion)} pixels in public version.` : ''}`}
+            tooltip={t('main_settings.fields.output_size.tooltip', `Output size in pixels. Note that when downgrading the map size, some details may be lost.${isPublicVersion ? ` Maximum ${getMaxOutputSize(isPublicVersion)} pixels in public version.` : ''}`)}
             min={1}
             max={getMaxOutputSize(isPublicVersion)}
             size="sm"
@@ -956,21 +960,21 @@ export default function GeneratorTab({
 
         {/* Rotation Slider */}
         <Slider
-          label="Rotation"
+          label={t('main_settings.fields.rotation.label', 'Rotation')}
           value={rotation}
           onChange={setRotation}
           min={constraints.rotation.min}
           max={constraints.rotation.max}
           step={1}
           labelWidth='w-40'
-          tooltip="Rotation angle of the map in degrees. 0 means north is up."
+          tooltip={t('main_settings.fields.rotation.tooltip', 'Rotation angle of the map in degrees. 0 means north is up.')}
           size="sm"
         />
 
         {/* Toggle Popular Settings */}
         <TooltipSwitch
-          label="Show only popular"
-          description="Show only the most commonly used settings to simplify the interface."
+          label={t('docker.show_only_popular.label', 'Show only popular')}
+          description={t('docker.show_only_popular.tooltip', 'Show only the most commonly used settings to simplify the interface.')}
           value={onlyPopularSettings}
           onChange={setOnlyPopularSettings}
           size="sm"
@@ -1011,7 +1015,7 @@ export default function GeneratorTab({
           )}
           
           <ButtonProgress
-            label="Generate map"
+            label={t('docker.generate_map.label', 'Generate map')}
             downloadLabel="Download map"
             onClick={() => {
               // Collect all form data
@@ -1164,9 +1168,9 @@ export default function GeneratorTab({
           <div className="w-full h-full rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 flex flex-col items-center justify-center">
             <div className="text-center text-gray-500 dark:text-gray-400 space-y-2">
               <div className="text-2xl">🗺️</div>
-              <div className="text-lg font-medium">Map Preview</div>
+              <div className="text-lg font-medium">{t('docker.map_preview.label', 'Map Preview')}</div>
               <div className="text-sm max-w-sm">
-                Enter valid coordinates in the left panel to see your map preview here
+                {t('docker.map_preview.tooltip', 'Enter valid coordinates in the left panel to see your map preview here.')}
               </div>
             </div>
           </div>

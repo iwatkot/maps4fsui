@@ -40,4 +40,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# locale yml files are fetched from github.com/iwatkot/maps4fslocale during Docker build
+/public/locales/*.yml
+
 20250903_193440_fs25_45_000_19_000

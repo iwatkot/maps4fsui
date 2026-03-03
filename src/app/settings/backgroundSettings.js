@@ -7,7 +7,7 @@ import {
     constraints
 } from '@/config/validation';
 
-export default function BackgroundSettingsContent(showAll = false, onPublic = false, initialValues = {}){
+export default function BackgroundSettingsContent(showAll = false, onPublic = false, initialValues = {}, t = (_, fb) => fb) {
     const [generateBackground, setGenerateBackground] = useState(initialValues.generate_background ?? defaultValues.generateBackground);
     const [generateWater, setGenerateWater] = useState(initialValues.generate_water ?? defaultValues.generateWater);
     const generateBackgroundSummary = generateBackground ? " │ Generate background" : "";
@@ -42,67 +42,67 @@ export default function BackgroundSettingsContent(showAll = false, onPublic = fa
 
     return { 
         content: <Expander
-            label="Background Settings"
+            label={t('generation_settings.background.label', 'Background Settings')}
             summary={expanderSummary}
-            tooltip="Settings related to the background generation."    
+            tooltip={t('generation_settings.background.tooltip', 'Settings related to the background generation.')}
             labelWidth='w-40'
             size="sm"
         >
             <Switch
-                label="Generate Background"
+                label={t('generation_settings.background.fields.generate_background.label', 'Generate Background')}
                 checked={generateBackground}
                 onChange={setGenerateBackground}
                 size="sm"
                 labelWidth='w-40'
-                tooltip="Enable this option to generate a background terrain mesh for the map."
+                tooltip={t('generation_settings.background.fields.generate_background.tooltip', 'Enable this option to generate a background terrain mesh for the map.')}
             />
             <Switch
-                label="Generate Water"
+                label={t('generation_settings.background.fields.generate_water.label', 'Generate Water')}
                 checked={generateWater}
                 onChange={setGenerateWater}
                 size="sm"
                 labelWidth='w-40'
-                tooltip="Enable this option to generate water meshes for the map."
+                tooltip={t('generation_settings.background.fields.generate_water.tooltip', 'Enable this option to generate water meshes for the map.')}
             />
 
 
             {showAll && (
                 <>
                     <NumberInput
-                        label="Water Blurriness"
+                        label={t('generation_settings.background.fields.water_blurriness.label', 'Water Blurriness')}
                         value={waterBlurriness}
                         onChange={setWaterBlurriness}
                         step={1}
                         labelWidth='w-40'
-                        tooltip="Use to blur the water mesh. Increasing this value will make the water appear more smooth."
+                        tooltip={t('generation_settings.background.fields.water_blurriness.tooltip', 'Use to blur the water mesh. Increasing this value will make the water appear more smooth.')}
                         size="sm"
                         min={constraints.waterBlurriness.min}
                         max={constraints.waterBlurriness.max}
                     />
                     <Switch
-                        label="Remove Center"
+                        label={t('generation_settings.background.fields.remove_center.label', 'Remove Center')}
                         checked={removeCenter}
                         onChange={setRemoveCenter}
                         labelWidth='w-40'
-                        tooltip="Enable this option to remove the center part of the background terrain mesh, which is usually covered by the main terrain."
+                        tooltip={t('generation_settings.background.fields.remove_center.tooltip', 'Enable this option to remove the center part of the background terrain mesh, which is usually covered by the main terrain.')}
                         size="sm"
                     />
                     <Switch
-                        label="Flatten Roads"
+                        label={t('generation_settings.background.fields.flatten_roads.label', 'Flatten Roads')}
                         checked={flattenRoads}
                         onChange={setFlattenRoads}
                         labelWidth='w-40'
-                        tooltip="Enable this option to flatten the terrain under the roads, making them more drivable."
+                        tooltip={t('generation_settings.background.fields.flatten_roads.tooltip', 'Enable this option to flatten the terrain under the roads, making them more drivable.')}
                         size="sm"
                         disabled={onPublic}
                         disabledTooltip="This setting is not available in the public version of the app."
                     />
                     <Switch
-                        label="Flatten Water"
+                        label={t('generation_settings.background.fields.flatten_water.label', 'Flatten Water')}
                         checked={flattenWater}
                         onChange={setFlattenWater}
                         labelWidth='w-40'
-                        tooltip="Enable this option to flatten the bottom under the water resources."
+                        tooltip={t('generation_settings.background.fields.flatten_water.tooltip', 'Enable this option to flatten the bottom under the water resources.')}
                         size="sm"
                     />
                 </>

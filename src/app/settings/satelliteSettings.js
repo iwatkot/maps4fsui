@@ -7,7 +7,7 @@ import {
     constraints
 } from '@/config/validation';
 
-export default function SatelliteSettingsContent(showAll = false, onPublic = false, initialValues = {}){
+export default function SatelliteSettingsContent(showAll = false, onPublic = false, initialValues = {}, t = (_, fb) => fb) {
     const [downloadImages, setDownloadImages] = useState(initialValues.download_images ?? defaultValues.downloadImages);
     const downloadImagesSummary = downloadImages ? "Download images     " : "";
     const [zoomLevel, setZoomLevel] = useState(initialValues.zoom_level ?? defaultValues.zoomLevel);
@@ -30,28 +30,28 @@ export default function SatelliteSettingsContent(showAll = false, onPublic = fal
 
     return { 
         content: <Expander
-            label="Satellite Settings"
+            label={t('generation_settings.satellite.label', 'Satellite Settings')}
             summary={expanderSummary}
-            tooltip="Settings related to the satellite imagery."
+            tooltip={t('generation_settings.satellite.tooltip', 'Settings related to the satellite imagery.')}
             labelWidth='w-40'
             size="sm"
         >
             <Switch
-                label="Download Images"
+                label={t('generation_settings.satellite.fields.download_images.label', 'Download Images')}
                 checked={downloadImages}
                 onChange={setDownloadImages}
                 labelWidth='w-40'
-                tooltip="Enable this option to download satellite images."
+                tooltip={t('generation_settings.satellite.fields.download_images.tooltip', 'Enable this option to download satellite images.')}
                 size="sm"
             />
 
             <NumberInput
-                label="Zoom Level"
+                label={t('generation_settings.satellite.fields.zoom_level.label', 'Zoom Level')}
                 value={zoomLevel}
                 onChange={setZoomLevel}
                 step={1}
                 labelWidth='w-40'
-                tooltip="Adjust the zoom level for satellite imagery."
+                tooltip={t('generation_settings.satellite.fields.zoom_level.tooltip', 'Adjust the zoom level for satellite imagery.')}
                 size="sm"
                 min={constraints.zoomLevel.min}
                 max={maxZoomLevel}

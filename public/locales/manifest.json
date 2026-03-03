@@ -1,0 +1,9 @@
+{
+  "locales": [
+    { "code": "en", "full": "English", "localized": "English" },
+    { "code": "sr", "full": "Serbian", "localized": "Srpski" },
+    { "code": "de", "full": "German", "localized": "Deutsch" },
+    { "code": "fr", "full": "French", "localized": "Français" },
+    { "code": "it", "full": "Italian", "localized": "Italiano" }
+  ]
+}
