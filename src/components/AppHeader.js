@@ -4,6 +4,8 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import MainTabs from '@/components/MainTabs';
 import UpdateIndicator from '@/components/UpdateIndicator';
+import LocaleSelector from '@/components/LocaleSelector';
+import { useLocale } from '@/contexts/LocaleContext';
 import { useBackendVersion } from '@/hooks/useBackendVersion';
 import { useVersionStatus } from '@/hooks/useVersionStatus';
 import config from '@/app/config';
@@ -27,6 +29,9 @@ export default function AppHeader({
   // Version status for update checking
   const { hasUpdateAvailable, versionStatus } = useVersionStatus();
 
+  // Locale
+  const { t } = useLocale();
+
   // Note: Consider using context/provider for backend version instead of global mutation
   // For now, consumers can use currentBackendVersion directly from the hook
 
@@ -34,30 +39,30 @@ export default function AppHeader({
   const tabs = [
     {
       id: 'generator',
-      label: 'Map Generator',
+      label: t('docker.map_generator.label', 'Map Generator'),
       icon: <i className="zmdi zmdi-landscape"></i>
     },
     // Only show My Maps tab in non-public version
     ...(!isPublicVersion ? [{
       id: 'my-maps',
-      label: 'My Maps',
+      label: t('docker.my_maps.label', 'My Maps'),
       icon: <i className="zmdi zmdi-collection-folder-image"></i>,
     }] : []),
     // Only show Presets tab in non-public version
     ...(!isPublicVersion ? [{
       id: 'presets',
-      label: 'Presets',
+      label: t('docker.presets.label', 'Presets'),
       icon: <i className="zmdi zmdi-storage"></i>
     }] : []),
     {
       id: 'schemas',
-      label: 'Schemas Editor',
+      label: t('docker.schemas_editor.label', 'Schemas Editor'),
       icon: <i className="zmdi zmdi-folder-outline"></i>
     },
     // Only show Settings tab in non-public version
     ...(!isPublicVersion ? [{
       id: 'settings',
-      label: 'Settings',
+      label: t('docker.settings.label', 'Settings'),
       icon: <i className="zmdi zmdi-settings"></i>
     }] : []),
     // Atlas FS - external link tab
@@ -73,6 +78,9 @@ export default function AppHeader({
   // Define right navigation links
   const rightNavLinks = (
     <>
+      {/* Language Selector - first so it's always visible */}
+      <LocaleSelector />
+
       {/* Status Icon - only show in public version */}
       {isPublicVersion && (
         <Link
@@ -149,7 +157,6 @@ export default function AppHeader({
           latestVersion={versionStatus.latestVersion}
         />
       )}
-      
       {/* Backend Version Badge */}
       {currentBackendVersion && (
         <div className="flex items-center mr-4">

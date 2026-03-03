@@ -7,7 +7,7 @@ import {
     constraints
 } from '@/config/validation';
 
-export default function TextureSettingsContent(showAll = false, onPublic = false, initialValues = {}){
+export default function TextureSettingsContent(showAll = false, onPublic = false, initialValues = {}, t = (_, fb) => fb) {
     const [fieldsPadding, setFieldsPadding] = useState(initialValues.fields_padding ?? defaultValues.fieldsPadding);
     const [dissolve, setDissolve] = useState(initialValues.dissolve ?? defaultValues.dissolve);
     const dissolveSummary = dissolve ? " │ Dissolve" : "";
@@ -39,39 +39,39 @@ export default function TextureSettingsContent(showAll = false, onPublic = false
 
     return { 
         content: <Expander
-            label="Texture Settings"
+            label={t('generation_settings.texture.label', 'Texture Settings')}
             summary={expanderSummary}
-            tooltip="Settings related to the texture generation."
+            tooltip={t('generation_settings.texture.tooltip', 'Settings related to the texture generation.')}
             labelWidth='w-40'
             size="sm"
         >
             <NumberInput
-                label="Fields Padding"
+                label={t('generation_settings.texture.fields.fields_padding.label', 'Fields Padding')}
                 value={fieldsPadding}
                 onChange={setFieldsPadding}
                 step={1}
                 labelWidth='w-40'
-                tooltip="Makes the fields region bigger."
+                tooltip={t('generation_settings.texture.fields.fields_padding.tooltip', 'Makes the fields region bigger.')}
                 size="sm"
                 min={constraints.fieldsPadding.min}
                 max={constraints.fieldsPadding.max}
             />
             <Switch
-                label="Dissolve"
+                label={t('generation_settings.texture.fields.dissolve.label', 'Dissolve')}
                 checked={dissolve}
                 onChange={setDissolve}
                 labelWidth='w-40'
-                tooltip="Enable this option to dissolve the texture edges."
+                tooltip={t('generation_settings.texture.fields.dissolve.tooltip', 'Enable this option to dissolve the texture edges.')}
                 size="sm"
                 disabled={onPublic}
                 disabledTooltip="This setting is not available in the public version of the app."
             />
             <Switch
-                label="Skip Drains"
+                label={t('generation_settings.texture.fields.skip_drains.label', 'Skip Drains')}
                 checked={skipDrains}
                 onChange={setSkipDrains}
                 labelWidth='w-40'
-                tooltip="Enable this option to skip the drains in the texture generation."
+                tooltip={t('generation_settings.texture.fields.skip_drains.tooltip', 'Enable this option to skip the drains in the texture generation.')}
                 size="sm"
             />
 
@@ -79,19 +79,19 @@ export default function TextureSettingsContent(showAll = false, onPublic = false
             {showAll && (
                 <>
                 <Switch
-                    label="Use Cache"
+                    label={t('generation_settings.texture.fields.use_cache.label', 'Use Cache')}
                     checked={useCache}
                     onChange={setUseCache}
                     labelWidth='w-40'
-                    tooltip="Enable this option to use cached textures."
+                    tooltip={t('generation_settings.texture.fields.use_cache.tooltip', 'Enable this option to use cached textures.')}
                     size="sm"
                 />
                 <Switch
-                    label="Use Precise Tags"
+                    label={t('generation_settings.texture.fields.use_precise_tags.label', 'Use Precise Tags')}
                     checked={usePreciseTags}
                     onChange={setUsePreciseTags}
                     labelWidth='w-40'
-                    tooltip="Enable this option to use precise tags for texture generation."
+                    tooltip={t('generation_settings.texture.fields.use_precise_tags.tooltip', 'Enable this option to use precise tags for texture generation.')}
                     size="sm"
                 />
                 </>

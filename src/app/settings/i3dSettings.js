@@ -8,7 +8,7 @@ import {
     constraints
 } from '@/config/validation';
 
-export default function I3dSettingsContent(showAll = false, onPublic = false, initialValues = {}){
+export default function I3dSettingsContent(showAll = false, onPublic = false, initialValues = {}, t = (_, fb) => fb) {
     const [addTrees, setAddTrees] = useState(initialValues.add_trees ?? defaultValues.addTrees);
     const [forestDensity, setForestDensity] = useState(initialValues.forest_density ?? defaultValues.forestDensity);
     const [treeLimit, setTreeLimit] = useState(initialValues.tree_limit ?? defaultValues.treeLimit);
@@ -49,14 +49,14 @@ export default function I3dSettingsContent(showAll = false, onPublic = false, in
 
     return { 
         content: <Expander
-            label="I3D Settings"
+            label={t('generation_settings.i3d.label', 'I3D Settings')}
             summary={expanderSummary}
-            tooltip="Settings related to the I3D generation."    
+            tooltip={t('generation_settings.i3d.tooltip', 'Settings related to the I3D generation.')}
             labelWidth='w-40'
             size="sm"
         >
             <TextInput
-                label="License Plate Prefix"
+                label={t('generation_settings.i3d.fields.license_plate_prefix.label', 'License Plate Prefix')}
                 value={licensePlatePrefix}
                 onChange={setLicensePlatePrefix}
                 placeholder="e.g., ABC"
@@ -68,38 +68,38 @@ export default function I3dSettingsContent(showAll = false, onPublic = false, in
                 errorMessage={`Must be ${constraints.licensePlatePrefix.minLength}-${constraints.licensePlatePrefix.maxLength} characters long`}
                 size="sm"
                 labelWidth='w-40'
-                tooltip="Set a custom prefix for license plates on vehicles. Leave empty for default."
+                tooltip={t('generation_settings.i3d.fields.license_plate_prefix.tooltip', 'Set a custom prefix for license plates on vehicles. Leave empty for default.')}
             />
 
             <Switch
-                label="Add Trees"
+                label={t('generation_settings.i3d.fields.add_trees.label', 'Add Trees')}
                 checked={addTrees}
                 onChange={setAddTrees}
                 size="sm"
                 labelWidth='w-40'
-                tooltip="Enable this option to add trees to the map."
+                tooltip={t('generation_settings.i3d.fields.add_trees.tooltip', 'Enable this option to add trees to the map.')}
             />
 
             <NumberInput
-                label="Forest Density"
+                label={t('generation_settings.i3d.fields.forest_density.label', 'Forest Density')}
                 value={forestDensity}
                 onChange={setForestDensity}
                 min={constraints.forestDensity.min}
                 max={constraints.forestDensity.max}
                 size="sm"
                 labelWidth='w-40'
-                tooltip="Set the distance between trees."
+                tooltip={t('generation_settings.i3d.fields.forest_density.tooltip', 'Set the distance between trees.')}
             />
 
             <NumberInput
-                label="Tree Limit"
+                label={t('generation_settings.i3d.fields.tree_limit.label', 'Tree Limit')}
                 value={treeLimit}
                 onChange={setTreeLimit}
                 min={constraints.treeLimit.min}
                 max={constraints.treeLimit.max}
                 size="sm"
                 labelWidth='w-40'
-                tooltip="Sets the soft limit for the number of trees on the map. If set to 0, there will be no limit."
+                tooltip={t('generation_settings.i3d.fields.tree_limit.tooltip', 'Sets the soft limit for the number of trees on the map. If set to 0, there will be no limit.')}
             />
 
             {showAll && (

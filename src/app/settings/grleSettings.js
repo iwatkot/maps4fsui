@@ -8,7 +8,7 @@ import {
     constraints
 } from '@/config/validation';
 
-export default function GrleSettingsContent(showAll = false, onPublic = false, initialValues = {}){
+export default function GrleSettingsContent(showAll = false, onPublic = false, initialValues = {}, t = (_, fb) => fb) {
     const [farmlandMargin, setFarmlandMargin] = useState(initialValues.farmland_margin ?? defaultValues.farmlandMargin);
     const [addGrass, setAddGrass] = useState(initialValues.add_grass ?? defaultValues.addGrass);
     const addGrassSummary = addGrass ? " │ Add grass" : "";
@@ -46,37 +46,37 @@ export default function GrleSettingsContent(showAll = false, onPublic = false, i
 
     return { 
         content: <Expander
-            label="GRLE Settings"
+            label={t('generation_settings.grle.label', 'GRLE Settings')}
             summary={expanderSummary}
-            tooltip="Settings related to the GRLE generation."    
+            tooltip={t('generation_settings.grle.tooltip', 'Settings related to the GRLE generation.')}
             labelWidth='w-40'
             size="sm"
         >
 
             <NumberInput
-                label="Farmland Margin"
+                label={t('generation_settings.grle.fields.farmland_margin.label', 'Farmland Margin')}
                 value={farmlandMargin}
                 onChange={setFarmlandMargin}
                 step={1}
                 labelWidth='w-40'
-                tooltip="The farmland margin value will make the farmlands bigger than on the OSM data."
+                tooltip={t('generation_settings.grle.fields.farmland_margin.tooltip', 'The farmland margin value will make the farmlands bigger than on the OSM data.')}
                 size="sm"
                 min={constraints.farmlandMargin.min}
                 max={constraints.farmlandMargin.max}
             />
             <Switch
-                label="Add Grass"
+                label={t('generation_settings.grle.fields.add_grass.label', 'Add Grass')}
                 checked={addGrass}
                 onChange={setAddGrass}
-                tooltip="Enable or disable grass generation."
+                tooltip={t('generation_settings.grle.fields.add_grass.tooltip', 'Enable or disable grass generation.')}
                 size="sm"
                 labelWidth='w-40'
             />
             <Switch
-                label="Random Plants"
+                label={t('generation_settings.grle.fields.random_plants.label', 'Random Plants')}
                 checked={randomPlants}
                 onChange={setRandomPlants}
-                tooltip="Enable or disable random plant generation."
+                tooltip={t('generation_settings.grle.fields.random_plants.tooltip', 'Enable or disable random plant generation.')}
                 size="sm"
                 labelWidth='w-40'
             />
@@ -84,32 +84,32 @@ export default function GrleSettingsContent(showAll = false, onPublic = false, i
             {showAll && (
                 <>
                     <Selector
-                        label="Base Grass"
+                        label={t('generation_settings.grle.fields.base_grass.label', 'Base Grass')}
                         value={baseGrass}
                         onChange={setBaseGrass}
                         options={[
                             { value: "smallDenseMix", label: "Small Dense Mix" , description: "Decorative grass that can not be collected after mowing."},
                             { value: "meadow", label: "Meadow", description: "Can be mowed and collected."},
                         ]}
-                        tooltip="Select the base grass type."
+                        tooltip={t('generation_settings.grle.fields.base_grass.tooltip', 'Select the base grass type.')}
                         size="sm"
                         labelWidth='w-40'
                     />
                     <Switch
-                        label="Add Farmyards"
+                        label={t('generation_settings.grle.fields.add_farmyards.label', 'Add Farmyards')}
                         checked={addFarmyards}
                         onChange={setAddFarmyards}
-                        tooltip="If enabled, regions marked as farmyards on OSM data, will be added to the in-game buyable farmlands."
+                        tooltip={t('generation_settings.grle.fields.add_farmyards.tooltip', 'If enabled, regions marked as farmyards on OSM data, will be added to the in-game buyable farmlands.')}
                         size="sm"
                         labelWidth='w-40'
                     />
                     <NumberInput
-                        label="Base Price"
+                        label={t('generation_settings.grle.fields.base_price.label', 'Base Price')}
                         value={basePrice}
                         onChange={setBasePrice}
                         step={1000}
                         labelWidth='w-40'
-                        tooltip="The base price for the farmland."
+                        tooltip={t('generation_settings.grle.fields.base_price.tooltip', 'The base price for the farmland.')}
                         size="sm"
                         min={constraints.basePrice.min}
                         max={constraints.basePrice.max}

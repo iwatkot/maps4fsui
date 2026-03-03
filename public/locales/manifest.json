@@ -1,0 +1,6 @@
+{
+  "locales": [
+    { "code": "en", "full": "English", "localized": "English" },
+    { "code": "sr", "full": "Serbian", "localized": "Srpski" }
+  ]
+}

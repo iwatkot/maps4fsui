@@ -25,6 +25,15 @@ COPY . .
 # Uncomment the following line in case you want to disable telemetry during the build.
 ENV NEXT_TELEMETRY_DISABLED=1
 
+# Download latest locale files from the locale repository
+# This replaces any locale files already present in the image with the latest versions.
+RUN apk add --no-cache git && \
+    git clone --depth=1 https://github.com/iwatkot/maps4fslocale.git /tmp/maps4fslocale && \
+    mkdir -p public/locales && \
+    cp /tmp/maps4fslocale/languages/*.yml public/locales/ && \
+    node -e "const fs=require('fs');const yaml=require('js-yaml');const files=fs.readdirSync('public/locales').filter(f=>f.endsWith('.yml'));const locales=files.map(f=>{try{const d=yaml.load(fs.readFileSync('public/locales/'+f,'utf8'));return d.meta||null;}catch(e){return null;}}).filter(Boolean);fs.writeFileSync('public/locales/manifest.json',JSON.stringify({locales},null,2));" && \
+    rm -rf /tmp/maps4fslocale
+
 RUN npm run build
 
 # If using npm comment out above and use below instead
