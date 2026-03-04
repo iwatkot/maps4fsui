@@ -5,6 +5,7 @@ import MixedPreviewGallery from '@/components/MixedPreviewGallery';
 import SlideNavigator from '@/components/SlideNavigator';
 import JSONEditorModal from '@/components/JSONEditorModal';
 import { separateFilesByType } from '@/utils/fileTypeUtils';
+import { useLocale } from '@/contexts/LocaleContext';
 
 // Helper function to format coordinates for display
 const formatCoordinates = (coordinates) => {
@@ -40,8 +41,7 @@ export default function MyMapsTab({ onDuplicateMap }) {
   const [deleting, setDeleting] = useState(false);
   const [toast, setToast] = useState({ show: false, message: '', type: 'success' });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  
-  // Search and filter states
+  const { t } = useLocale();
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilters, setStatusFilters] = useState({
     completed: true,
@@ -540,7 +540,7 @@ export default function MyMapsTab({ onDuplicateMap }) {
             <div className="flex-1 relative">
               <input
                 type="text"
-                placeholder="Search by name or coordinates"
+                placeholder={t('docker.my_maps.search_maps.label', 'Search by name or coordinates')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full px-3 py-2 pl-10 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -559,7 +559,7 @@ export default function MyMapsTab({ onDuplicateMap }) {
                 }}
               >
                 <i className="zmdi zmdi-filter-list mr-2"></i>
-                Status
+                {t('docker.my_maps.status.label', 'Status')}
               </button>
               <div id="status-dropdown" className="hidden absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-10">
                 <div className="p-3 space-y-2">
@@ -589,7 +589,7 @@ export default function MyMapsTab({ onDuplicateMap }) {
               onClick={fetchMaps}
               disabled={loading}
               className="w-10 h-10 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-lg transition-colors flex items-center justify-center"
-              title="Refresh maps"
+              title={t('docker.my_maps.refresh_maps.label', 'Refresh maps')}
             >
               <i className={`zmdi zmdi-refresh ${loading ? 'animate-spin' : ''}`}></i>
             </button>
@@ -941,9 +941,9 @@ export default function MyMapsTab({ onDuplicateMap }) {
           <div className="w-full h-full rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 flex flex-col items-center justify-center">
             <div className="text-center text-gray-500 dark:text-gray-400 space-y-2">
               <div className="text-2xl">📋</div>
-              <div className="text-lg font-medium">Map Details</div>
+              <div className="text-lg font-medium">{t('docker.my_maps.map_details.label', 'Map Details')}</div>
               <div className="text-sm max-w-sm">
-                Select a map from the list to see its details and available actions
+                {t('docker.my_maps.map_details.description', 'Select a map from the list to see its details and available actions')}
               </div>
             </div>
           </div>
@@ -1109,10 +1109,10 @@ export default function MyMapsTab({ onDuplicateMap }) {
                 <div className="w-full h-full flex flex-col items-center justify-center space-y-2">
                   <div className="text-4xl">⏸️</div>
                   <div className="text-lg font-medium text-yellow-600 dark:text-yellow-400">
-                    Generation Incomplete
+                    {t('docker.my_maps.generation_incomplete.label', 'Generation Incomplete')}
                   </div>
                   <div className="text-sm text-gray-600 dark:text-gray-400 text-center max-w-sm">
-                    Map generation was stopped or not finished yet
+                    {t('docker.my_maps.generation_incomplete.description', 'Map generation was stopped or not finished yet')}
                   </div>
                 </div>
               ) : (
@@ -1132,19 +1132,19 @@ export default function MyMapsTab({ onDuplicateMap }) {
             <div className="grid grid-cols-2 gap-6 items-start">
               {/* Map Information - Left Column */}
               <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 h-full">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Map Information</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{t('docker.my_maps.map_information.label', 'Map Information')}</h3>
                 <div className="space-y-3 text-sm">
                   <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-600">
                     <span className="flex items-center text-gray-600 dark:text-gray-400">
                       <i className="zmdi zmdi-pin text-blue-500 w-6 mr-3 text-lg flex-shrink-0"></i>
-                      Coordinates:
+                      {t('docker.my_maps.coordinates.label', 'Coordinates')}:
                     </span>
                     <span className="font-mono text-xs text-gray-900 dark:text-gray-100 text-right">{formatCoordinates(selectedMap.coordinates)}</span>
                   </div>
                   <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-600">
                     <span className="flex items-center text-gray-600 dark:text-gray-400">
                       <i className="zmdi zmdi-crop-landscape text-green-500 w-6 mr-3 text-lg flex-shrink-0"></i>
-                      Size:
+                      {t('docker.my_maps.size.label', 'Size')}:
                     </span>
                     <span className="font-semibold text-gray-900 dark:text-gray-100 text-lg">{selectedMap.size}<span className="text-sm text-gray-500 ml-1">meters</span></span>
                   </div>
@@ -1169,14 +1169,14 @@ export default function MyMapsTab({ onDuplicateMap }) {
                   <div className="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-600">
                     <span className="flex items-center text-gray-600 dark:text-gray-400">
                       <i className="zmdi zmdi-gamepad text-indigo-500 w-6 mr-3 text-lg flex-shrink-0"></i>
-                      Game:
+                      {t('docker.my_maps.game.label', 'Game')}:
                     </span>
                     <span className="font-semibold text-gray-900 dark:text-gray-100">{selectedMap.game}</span>
                   </div>
                   <div className="flex justify-between items-center py-2">
                     <span className="flex items-center text-gray-600 dark:text-gray-400">
                       <i className="zmdi zmdi-time text-gray-500 w-6 mr-3 text-lg flex-shrink-0"></i>
-                      Created:
+                      {t('docker.my_maps.created.label', 'Created')}:
                     </span>
                     <span className="font-semibold text-gray-900 dark:text-gray-100">{selectedMap.createdAt}</span>
                   </div>
@@ -1185,7 +1185,7 @@ export default function MyMapsTab({ onDuplicateMap }) {
 
               {/* Actions - Right Column */}
               <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4 h-full flex flex-col">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">Actions</h3>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4">{t('docker.presets.actions.label', 'Actions')}</h3>
                 <div className="space-y-3 flex-1 flex flex-col justify-start">
                   {/* Status-specific actions first */}
                   {selectedMap.status === 'completed' && (
@@ -1206,7 +1206,7 @@ export default function MyMapsTab({ onDuplicateMap }) {
                       ) : (
                         <>
                           <i className="zmdi zmdi-download mr-2"></i>
-                          Download Map
+                          {t('docker.my_maps.download_map.label', 'Download Map')}
                         </>
                       )}
                     </button>
@@ -1219,7 +1219,7 @@ export default function MyMapsTab({ onDuplicateMap }) {
                       className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
                     >
                       <i className="zmdi zmdi-copy mr-2"></i>
-                      Duplicate Map
+                      {t('docker.my_maps.duplicate_map.label', 'Duplicate Map')}
                     </button>
                   )}
                   
@@ -1230,7 +1230,7 @@ export default function MyMapsTab({ onDuplicateMap }) {
                       className="flex-1 px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
                     >
                       <i className="zmdi zmdi-settings mr-2"></i>
-                      Main Settings
+                      {t('docker.my_maps.main_settings.label', 'Main Settings')}
                     </button>
                     <button
                       onClick={() => handleSaveToPresets('mainSettings', selectedMap.mainSettings, selectedMap.name)}
@@ -1246,7 +1246,7 @@ export default function MyMapsTab({ onDuplicateMap }) {
                       className="flex-1 px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
                     >
                       <i className="zmdi zmdi-code mr-2"></i>
-                      Generation Settings
+                      {t('docker.my_maps.generation_settings.label', 'Generation Settings')}
                     </button>
                     <button
                       onClick={() => handleSaveToPresets('generationSettings', selectedMap.generationSettings, selectedMap.name)}
@@ -1261,7 +1261,7 @@ export default function MyMapsTab({ onDuplicateMap }) {
                     className="w-full px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors text-left flex items-center"
                   >
                     <i className="zmdi zmdi-info mr-2"></i>
-                    Generation Info
+                    {t('docker.my_maps.generation_info.label', 'Generation Info')}
                   </button>
                   
                   {/* Custom OSM and DEM Actions */}
@@ -1414,7 +1414,7 @@ export default function MyMapsTab({ onDuplicateMap }) {
                     ) : (
                       <>
                         <i className="zmdi zmdi-delete mr-2"></i>
-                        Delete Map
+                        {t('docker.my_maps.delete_map.label', 'Delete Map')}
                       </>
                     )}
                   </button>
@@ -1450,7 +1450,7 @@ export default function MyMapsTab({ onDuplicateMap }) {
                 <i className="zmdi zmdi-alert-triangle text-red-600 dark:text-red-400 text-lg"></i>
               </div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-                Delete Map
+                {t('docker.my_maps.delete_map.label', 'Delete Map')}
               </h3>
             </div>
             
@@ -1488,7 +1488,7 @@ export default function MyMapsTab({ onDuplicateMap }) {
                 ) : (
                   <>
                     <i className="zmdi zmdi-delete mr-2"></i>
-                    Delete Map
+                    {t('docker.my_maps.delete_map.label', 'Delete Map')}
                   </>
                 )}
               </button>

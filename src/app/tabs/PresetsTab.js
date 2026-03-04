@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import JSONEditorModal from '@/components/JSONEditorModal';
 import config from '@/app/config';
 import { getAuthenticatedFetch } from '@/utils/authenticatedFetch';
+import { useLocale } from '@/contexts/LocaleContext';
 
 /**
  * PresetsTab - Tab for managing presets (OSM, DEM, Main Settings, Generation Settings)
@@ -44,11 +45,12 @@ export default function PresetsTab() {
   }, []);
 
   // Tab configuration
+  const { t } = useLocale();
   const tabs = [
-    { id: 'mainSettings', label: 'Main Settings', icon: <i className="zmdi zmdi-settings"></i> },
-    { id: 'generationSettings', label: 'Generation Settings', icon: <i className="zmdi zmdi-tune"></i> },
-    { id: 'osm', label: 'OSM', icon: <i className="zmdi zmdi-map"></i> },
-    { id: 'dem', label: 'DEM', icon: <i className="zmdi zmdi-landscape"></i> }
+    { id: 'mainSettings', label: t('docker.presets.main_settings.label', 'Main Settings'), icon: <i className="zmdi zmdi-settings"></i> },
+    { id: 'generationSettings', label: t('docker.presets.generation_settings.label', 'Generation Settings'), icon: <i className="zmdi zmdi-tune"></i> },
+    { id: 'osm', label: t('docker.presets.osm.label', 'OSM'), icon: <i className="zmdi zmdi-map"></i> },
+    { id: 'dem', label: t('docker.presets.dem.label', 'DEM'), icon: <i className="zmdi zmdi-landscape"></i> }
   ];
 
   // Load files for all sections
@@ -500,19 +502,19 @@ export default function PresetsTab() {
             <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Name
+                  {t('docker.presets.name.label', 'Name')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Size
+                  {t('docker.presets.size.label', 'Size')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Created
+                  {t('docker.presets.created.label', 'Created')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Modified
+                  {t('docker.presets.modified.label', 'Modified')}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Actions
+                  {t('docker.presets.actions.label', 'Actions')}
                 </th>
               </tr>
             </thead>

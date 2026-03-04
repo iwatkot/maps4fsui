@@ -515,6 +515,8 @@ export default function GeneratorTab({
     ? t('docker.generate_map.tooltip', 'Enter valid coordinates, check the settings and click Generate map.')
     : statusText === "Ready" && isGenerateEnabled 
     ? t('docker.ready_to_generate.tooltip', 'Click Generate map to start the generation process.')
+    : statusText === "Generating the map..."
+    ? t('docker.generating_map.label', 'Generating the map...')
     : statusText;
 
   return (

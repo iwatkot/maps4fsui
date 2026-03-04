@@ -249,7 +249,7 @@ const TreeSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
 
             {/* Selection info */}
             <div className="text-sm text-gray-600 dark:text-gray-400">
-              {selectedTrees.size} / {treeSchema.length} trees selected
+              {selectedTrees.size} / {treeSchema.length} {t('docker.schemas_editor.trees_selected.label', 'trees selected')}
             </div>
           </div>
 
@@ -282,7 +282,7 @@ const TreeSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
                 className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center"
               >
                 <i className="zmdi zmdi-save mr-2"></i>
-                Save Schema
+                {t('docker.schemas_editor.save_schema.label', 'Save Schema')}
               </button>
             )}
           </div>

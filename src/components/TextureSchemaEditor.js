@@ -241,7 +241,7 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
 
             {/* Texture count info */}
             <div className="text-sm text-gray-600 dark:text-gray-400">
-              {filteredTextures.length} / {textures.length} textures shown
+              {filteredTextures.length} / {textures.length} {t('docker.schemas_editor.textures_shown.label', 'textures shown')}
             </div>
           </div>
 
@@ -260,7 +260,7 @@ const TextureSchemaEditor = ({ activeSchemaType, onSchemaTypeChange }) => {
                 className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center"
               >
                 <i className="zmdi zmdi-save mr-2"></i>
-                Save Schema
+                {t('docker.schemas_editor.save_schema.label', 'Save Schema')}
               </button>
             )}
           </div>

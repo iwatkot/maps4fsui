@@ -5,11 +5,13 @@ import JSONEditorModal from '@/components/JSONEditorModal';
 import config from '@/app/config';
 import { getAuthenticatedFetch } from '@/utils/authenticatedFetch';
 import apiService from '@/utils/apiService';
+import { useLocale } from '@/contexts/LocaleContext';
 
 /**
  * ServerManagementSection - Component for managing server operations
  */
 function ServerManagementSection({ showToast }) {
+  const { t } = useLocale();
   const [isCleaningCache, setIsCleaningCache] = useState(false);
   const [isReloadingTemplates, setIsReloadingTemplates] = useState(false);
   const [isClearingLocalStorage, setIsClearingLocalStorage] = useState(false);
@@ -109,13 +111,12 @@ function ServerManagementSection({ showToast }) {
                 <i className="zmdi zmdi-delete text-red-600 dark:text-red-400 text-lg"></i>
               </div>
               <div>
-                <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100">Clean Cache</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Remove cached data and temporary files</p>
+                <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100">{t('docker.settings.clean_cache.label', 'Clean Cache')}</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{t('docker.settings.clean_cache.tooltip', 'Remove cached data and temporary files')}</p>
               </div>
             </div>
             <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 flex-grow">
-              Clears all cached data, temporary files, and processing artifacts. This can help resolve issues 
-              with outdated data or free up disk space.
+              {t('docker.settings.clean_cache.description', 'Clears all cached data, temporary files, and processing artifacts. This can help resolve issues with outdated data or free up disk space.')}
             </p>
             <button
               onClick={handleCleanCache}
@@ -134,7 +135,7 @@ function ServerManagementSection({ showToast }) {
               ) : (
                 <>
                   <i className="zmdi zmdi-delete mr-2"></i>
-                  Clean Cache
+                  {t('docker.settings.clean_cache.label', 'Clean Cache')}
                 </>
               )}
             </button>
@@ -147,13 +148,12 @@ function ServerManagementSection({ showToast }) {
                 <i className="zmdi zmdi-refresh text-blue-600 dark:text-blue-400 text-lg"></i>
               </div>
               <div>
-                <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100">Reload Templates</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Download and update default templates</p>
+                <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100">{t('docker.settings.reload_templates.label', 'Reload Templates')}</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{t('docker.settings.reload_templates.tooltip', 'Download and update default templates')}</p>
               </div>
             </div>
             <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 flex-grow">
-              Downloads the latest default templates from the remote repository. This ensures you have 
-              the most up-to-date schemas and configurations.
+              {t('docker.settings.reload_templates.description', 'Downloads the latest default templates from the remote repository. This ensures you have the most up-to-date schemas and configurations.')}
             </p>
             <button
               onClick={handleReloadTemplates}
@@ -172,7 +172,7 @@ function ServerManagementSection({ showToast }) {
               ) : (
                 <>
                   <i className="zmdi zmdi-refresh mr-2"></i>
-                  Reload Templates
+                  {t('docker.settings.reload_templates.label', 'Reload Templates')}
                 </>
               )}
             </button>
@@ -185,13 +185,12 @@ function ServerManagementSection({ showToast }) {
                 <i className="zmdi zmdi-storage text-orange-600 dark:text-orange-400 text-lg"></i>
               </div>
               <div>
-                <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100">Clear Browser Settings</h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400">Reset all local preferences and defaults</p>
+                <h4 className="text-lg font-medium text-gray-900 dark:text-gray-100">{t('docker.settings.clear_browser_settings.label', 'Clear Browser Settings')}</h4>
+                <p className="text-sm text-gray-600 dark:text-gray-400">{t('docker.settings.clear_browser_settings.tooltip', 'Reset all local preferences and defaults')}</p>
               </div>
             </div>
             <p className="text-gray-600 dark:text-gray-400 text-sm mb-4 flex-grow">
-              Removes all stored preferences including default templates, presets, survey responses, 
-              and other settings saved in your browser&apos;s local storage.
+              {t('docker.settings.clear_browser_settings.description', "Removes all stored preferences including default templates, presets, survey responses, and other settings saved in your browser's local storage.")}
             </p>
             <button
               onClick={handleClearLocalStorage}
@@ -210,7 +209,7 @@ function ServerManagementSection({ showToast }) {
               ) : (
                 <>
                   <i className="zmdi zmdi-storage mr-2"></i>
-                  Clear Settings
+                  {t('docker.settings.clear_browser_settings.label', 'Clear Settings')}
                 </>
               )}
             </button>
@@ -226,6 +225,7 @@ function ServerManagementSection({ showToast }) {
  * Only visible in public version
  */
 export default function SettingsTab() {
+  const { t } = useLocale();
   const [selectedGame, setSelectedGame] = useState('fs25');
   const [activeSection, setActiveSection] = useState('texture_schemas');
   const [files, setFiles] = useState({
@@ -297,7 +297,7 @@ export default function SettingsTab() {
     if (selectedGame === 'general') {
       return [{
         id: 'general_settings',
-        label: 'Server Settings',
+        label: t('docker.settings.server_settings.label', 'Server Settings'),
         icon: <i className="zmdi zmdi-settings"></i>,
         description: 'Server management and local preferences.',
         available: true
@@ -308,25 +308,25 @@ export default function SettingsTab() {
     const sections = getGameSections(selectedGame);
     const sectionConfig = {
       texture_schemas: { 
-        label: `Texture Schemas`, 
+        label: t('docker.settings.texture_schemas.label', 'Texture Schemas'), 
         icon: <i className="zmdi zmdi-image"></i>,
         description: 'JSON files that define texture mapping and materials for terrain generation.',
         available: true // Always available
       },
       tree_schemas: { 
-        label: `Tree Schemas`, 
+        label: t('docker.settings.tree_schemas.label', 'Tree Schemas'), 
         icon: <i className="zmdi zmdi-nature"></i>,
         description: 'JSON files that define tree placement patterns and species for forest generation. (FS25 only)',
         available: selectedGame === 'fs25' // Only for FS25
       },
       buildings_schemas: { 
-        label: `Buildings Schemas`, 
+        label: t('docker.settings.buildings_schemas.label', 'Buildings Schemas'), 
         icon: <i className="zmdi zmdi-home"></i>,
         description: 'JSON files that define building placement patterns and types for settlement generation. (FS25 only)',
         available: selectedGame === 'fs25' // Only for FS25
       },
       map_templates: { 
-        label: `Map Templates`, 
+        label: t('docker.settings.map_templates.label', 'Map Templates'), 
         icon: <i className="zmdi zmdi-file-text"></i>,
         description: 'ZIP files containing pre-configured map templates with specific layouts and settings.',
         available: true // Always available
@@ -820,7 +820,7 @@ export default function SettingsTab() {
       <div className="flex-shrink-0 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center space-x-4">
-            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Game Version:</span>
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('docker.settings.game_version.label', 'Game Version')}:</span>
             <div className="flex space-x-2">
               {gameOptions.map((game) => (
                 <button
