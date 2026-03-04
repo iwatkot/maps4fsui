@@ -71,6 +71,24 @@ export default function DownloadPage() {
             </p>
           </div>
 
+          {/* Info Section */}
+          <div className="mb-8 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
+            <h3 className="text-blue-900 dark:text-blue-300 font-semibold mb-3 flex items-center">
+              <i className="zmdi zmdi-info text-xl mr-2"></i>
+              How to Use
+            </h3>
+            <ol className="list-decimal list-inside space-y-2 text-blue-800 dark:text-blue-300 text-sm">
+              <li>Download the latest .exe file from the list below</li>
+              <li><strong>No installation required</strong> - this is a portable standalone application</li>
+              <li>Simply run the .exe file to launch Maps4FS</li>
+              <li>Start generating maps with full features!</li>
+              <li>
+                <strong>For Background Center Removal feature:</strong> Blender 4.3 must be installed on your machine. 
+                Download from: <a href="https://www.blender.org/download/" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-600 dark:hover:text-blue-400">blender.org/download</a>
+              </li>
+            </ol>
+          </div>
+
           {/* Loading State */}
           {loading && (
             <div className="flex items-center justify-center py-12">
@@ -134,26 +152,6 @@ export default function DownloadPage() {
                   </div>
                 </div>
               ))}
-            </div>
-          )}
-
-          {/* Info Section */}
-          {!loading && !error && files.length > 0 && (
-            <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6">
-              <h3 className="text-blue-900 dark:text-blue-300 font-semibold mb-3 flex items-center">
-                <i className="zmdi zmdi-info text-xl mr-2"></i>
-                How to Use
-              </h3>
-              <ol className="list-decimal list-inside space-y-2 text-blue-800 dark:text-blue-300 text-sm">
-                <li>Download the latest .exe file from the list above</li>
-                <li><strong>No installation required</strong> - this is a portable standalone application</li>
-                <li>Simply run the .exe file to launch Maps4FS</li>
-                <li>Start generating maps with full features!</li>
-                <li>
-                  <strong>For Background Center Removal feature:</strong> Blender 4.3 must be installed on your machine. 
-                  Download from: <a href="https://www.blender.org/download/" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-600 dark:hover:text-blue-400">blender.org/download</a>
-                </li>
-              </ol>
             </div>
           )}
 
