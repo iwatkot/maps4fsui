@@ -79,10 +79,9 @@ ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
 
 # Automatically restart the container if Next.js becomes unresponsive
-HEALTHCHECK --interval=30s --timeout=10s --start-period=30s --retries=3 \
-  CMD wget -qO- http://localhost:3000/ > /dev/null || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+  CMD wget -qO- http://localhost:3000/api/health > /dev/null || exit 1
 
 # server.js is created by next build from the standalone output
 # https://nextjs.org/docs/pages/api-reference/next-config-js/output
-# --max-old-space-size caps Node.js heap to prevent silent OOM hangs
-CMD ["node", "--max-old-space-size=512", "server.js"]
+CMD ["node", "server.js"]
