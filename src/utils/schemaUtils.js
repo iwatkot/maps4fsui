@@ -65,9 +65,8 @@ export function getAvailableGamesForSchema(schemaType) {
     return [{ value: 'fs25', label: 'FS25' }];
   }
   
-  // Texture schemas are available for both
+  // Texture schemas are available for FS25
   return [
-    { value: 'fs25', label: 'FS25' },
-    { value: 'fs22', label: 'FS22' }
+    { value: 'fs25', label: 'FS25' }
   ];
 }

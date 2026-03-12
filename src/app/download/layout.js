@@ -1,6 +1,6 @@
 export const metadata = {
   title: "Download Windows App - Maps4FS",
-  description: "Download the standalone Windows application for Maps4FS. Run the map generator locally on your machine with full offline access to all features. No installation required - portable executable for Farming Simulator 22 & 25 map creation.",
+  description: "Download the standalone Windows application for Maps4FS. Run the map generator locally on your machine with full offline access to all features. No installation required - portable executable for Farming Simulator 25 map creation.",
   keywords: [
     "maps4fs download",
     "maps4fs windows app",
@@ -9,7 +9,6 @@ export const metadata = {
     "portable app",
     "maps4fs standalone",
     "windows application",
-    "farming simulator 22 download",
     "farming simulator 25 download",
     "map generation tool"
   ].join(", "),

@@ -12,7 +12,6 @@ export const metadata = {
     "map generation errors",
     "technical support",
     "bug reports",
-    "farming simulator 22 help",
     "farming simulator 25 help",
     "openstreetmap issues",
     "height map problems"

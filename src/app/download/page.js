@@ -51,6 +51,23 @@ export default function DownloadPage() {
     });
   };
 
+  const FS22_PINNED = 'maps4fs-0.5.4.exe';
+
+  const getSortedFiles = (files) => {
+    if (files.length === 0) return files;
+    const pinned = files.find(f => f.name === FS22_PINNED);
+    const rest = files.filter(f => f.name !== FS22_PINNED);
+    if (!pinned) return rest;
+    // latest first, then FS22 pinned, then the rest
+    return [rest[0], pinned, ...rest.slice(1)].filter(Boolean);
+  };
+
+  const getButtonStyle = (file, index) => {
+    if (index === 0) return 'bg-green-600 hover:bg-green-700 text-white';
+    if (file.name === FS22_PINNED) return 'bg-amber-500 hover:bg-amber-600 text-white';
+    return 'bg-gray-400 hover:bg-gray-500 text-white cursor-default';
+  };
+
   return (
     <div className="h-screen bg-white dark:bg-gray-900 flex flex-col overflow-hidden" style={{ minWidth: '1000px' }}>
       <AppHeader 
@@ -119,7 +136,7 @@ export default function DownloadPage() {
 
           {!loading && !error && files.length > 0 && (
             <div className="space-y-4">
-              {files.map((file, index) => (
+              {getSortedFiles(files).map((file, index) => (
                 <div 
                   key={index}
                   className="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-lg transition-shadow"
@@ -131,6 +148,16 @@ export default function DownloadPage() {
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                           {file.name}
                         </h3>
+                        {index === 0 && (
+                          <span className="ml-3 px-2 py-0.5 text-xs font-semibold bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 rounded-full">
+                            Latest
+                          </span>
+                        )}
+                        {file.name === FS22_PINNED && (
+                          <span className="ml-3 px-2 py-0.5 text-xs font-semibold bg-amber-100 dark:bg-amber-900/40 text-amber-800 dark:text-amber-300 rounded-full">
+                            Last version with FS22 support
+                          </span>
+                        )}
                       </div>
                       <div className="ml-9 space-y-1">
                         <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -144,7 +171,7 @@ export default function DownloadPage() {
                     <a
                       href={file.url}
                       download
-                      className="ml-4 inline-flex items-center px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors"
+                      className={`ml-4 inline-flex items-center px-6 py-3 font-medium rounded-lg transition-colors ${getButtonStyle(file, index)}`}
                     >
                       <i className="zmdi zmdi-download mr-2"></i>
                       Download

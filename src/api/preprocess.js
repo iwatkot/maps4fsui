@@ -136,7 +136,7 @@ export const parseCoordinates = (value) => {
  * @returns {boolean} - Whether the game code is valid
  */
 const validateGameCode = (gameCode) => {
-  const validGameCodes = ['fs22', 'fs25'];
+  const validGameCodes = ['fs25'];
   return validGameCodes.includes(gameCode);
 };
 
