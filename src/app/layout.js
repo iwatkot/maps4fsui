@@ -17,12 +17,11 @@ const geistMono = Geist_Mono({
 
 export const metadata = {
   title: "Maps4FS - Generate Realistic Farming Simulator Maps from Real Places",
-  description: "Create authentic Farming Simulator 22 & 25 map templates from real-world terrain data. Automatically generates fields, farmlands, forests, water planes, roads, and realistic height maps using OpenStreetMap and SRTM datasets. Supports 2x2, 4x4, 8x8, 16x16 km maps with custom scaling and rotation. Free, open-source tool with 100+ GitHub stars.",
+  description: "Create authentic Farming Simulator 25 map templates from real-world terrain data. Automatically generates fields, farmlands, forests, water planes, roads, and realistic height maps using OpenStreetMap and SRTM datasets. Supports 2x2, 4x4, 8x8, 16x16 km maps with custom scaling and rotation. Free, open-source tool with 100+ GitHub stars.",
   keywords: [
     "farming simulator",
     "map generator",
     "real terrain",
-    "farming simulator 22",
     "farming simulator 25",
     "openstreetmap",
     "height map",
@@ -55,7 +54,7 @@ export const metadata = {
     locale: "en_US",
     url: "https://maps4fs.xyz",
     title: "Maps4FS - Generate Realistic Farming Simulator Maps from Real Places",
-    description: "Create authentic Farming Simulator 22 & 25 map templates from real-world terrain data. Automatically generates fields, farmlands, forests, water planes, roads, and realistic height maps using OpenStreetMap and SRTM datasets. Supports 2x2, 4x4, 8x8, 16x16 km maps with custom scaling and rotation. Free, open-source tool with 100+ GitHub stars.",
+    description: "Create authentic Farming Simulator 25 map templates from real-world terrain data. Automatically generates fields, farmlands, forests, water planes, roads, and realistic height maps using OpenStreetMap and SRTM datasets. Supports 2x2, 4x4, 8x8, 16x16 km maps with custom scaling and rotation. Free, open-source tool with 100+ GitHub stars.",
     siteName: "Maps4FS",
     images: [
       {
@@ -69,7 +68,7 @@ export const metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Maps4FS - Generate Realistic Farming Simulator Maps from Real Places",
-    description: "Create authentic Farming Simulator 22 & 25 map templates from real-world terrain data. Free, open-source tool with automated field, forest, and terrain generation.",
+    description: "Create authentic Farming Simulator 25 map templates from real-world terrain data. Free, open-source tool with automated field, forest, and terrain generation.",
     images: ["https://maps4fs.xyz/og-image.jpg"],
     creator: "@iwatkot",
   },

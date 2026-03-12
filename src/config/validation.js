@@ -4,12 +4,7 @@ export const gameOptions = [
   { 
     value: 'fs25', 
     label: 'Farming Simulator 25', 
-    description: 'All features are supported.' 
-  },
-  { 
-    value: 'fs22', 
-    label: 'Farming Simulator 22', 
-    description: 'Support discontinued, new features will not be added. Fields, trees and grass are not supported.'
+    description: 'Currently the latest version of the game.' 
   }
 ];
 

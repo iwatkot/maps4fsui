@@ -282,7 +282,6 @@ export default function SettingsTab() {
   // Game options (General last since it's used less)
   const gameOptions = [
     { id: 'fs25', label: 'Farming Simulator 25' },
-    { id: 'fs22', label: 'Farming Simulator 22' },
     { id: 'general', label: 'General' }
   ];
 

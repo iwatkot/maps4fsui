@@ -6,7 +6,7 @@ export default function StructuredData() {
     "@type": "WebApplication",
     "name": "Maps4FS",
     "alternateName": "Maps4FS - Farming Simulator Map Generator",
-    "description": "Create authentic Farming Simulator 22 & 25 map templates from real-world terrain data. Automatically generates fields, farmlands, forests, water planes, roads, and realistic height maps using OpenStreetMap and different DTM providers.",
+    "description": "Create authentic Farming Simulator 25 map templates from real-world terrain data. Automatically generates fields, farmlands, forests, water planes, roads, and realistic height maps using OpenStreetMap and different DTM providers.",
     "url": "https://maps4fs.xyz",
     "sameAs": [
       "https://github.com/iwatkot/maps4fs",
@@ -35,8 +35,7 @@ export default function StructuredData() {
       "farming simulator",
       "map generator",
       "real terrain",
-      "farming simulator 22",
-      "farming simulator 25", 
+      "farming simulator 25",
       "openstreetmap",
       "height map",
       "srtm",
