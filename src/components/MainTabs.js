@@ -10,6 +10,19 @@ const MainTabs = ({ tabs, activeTab, onTabChange, rightContent }) => {
           {tabs.map((tab) => {
             // Handle external link tabs
             if (tab.isExternal && tab.href) {
+              if (tab.isCTA) {
+                return (
+                  <a
+                    key={tab.id}
+                    href={tab.href}
+                    className="px-6 py-3 rounded-lg font-medium text-base transition-colors duration-200 flex items-center min-h-[48px] text-purple-700 dark:text-purple-300 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-purple-800 dark:hover:text-purple-200 border border-transparent"
+                  >
+                    {tab.icon && <span className="mr-3">{tab.icon}</span>}
+                    {tab.label}
+                  </a>
+                );
+              }
+
               return (
                 <a
                   key={tab.id}

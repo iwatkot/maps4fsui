@@ -646,22 +646,6 @@ export default function GeneratorTab({
           <p className="text-xs text-blue-700 dark:text-blue-300 mb-2">
             Something missing or incorrect? Data comes from OpenStreetMap - you can contribute improvements there.
           </p>
-          {(
-            <p className="text-xs text-blue-700 dark:text-blue-300 mb-3">
-              <span className="inline-flex items-center bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-200 px-2 py-0.5 rounded font-semibold mr-1">
-                🎉 NEW
-              </span>
-              <a 
-                href="https://maps4fs.xyz/download"
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="underline hover:text-purple-600 dark:hover:text-purple-400 font-semibold"
-              >
-                Standalone Windows App available
-              </a>
-              {' '}- no Docker required!
-            </p>
-          )}
           <div className="flex flex-wrap gap-2 text-xs">
             <a 
               href="https://maps4fs.xyz/download"

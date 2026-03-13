@@ -72,7 +72,26 @@ export default function AppHeader({
       icon: <i className="zmdi zmdi-globe"></i>,
       isExternal: true,
       href: 'https://atlasfs.xyz'
-    }
+    },
+    // Public-only download CTA next to tabs
+    ...(isPublicVersion ? [{
+      id: 'download-app',
+      label: 'Download',
+      icon: (
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 24 24"
+          fill="currentColor"
+          aria-hidden="true"
+        >
+          <path d="M2 3.5l9-1.25v9.25H2V3.5zm0 9.75h9v9.25L2 21.25v-8zm11 0h9v9.95L13 22v-8.75zm0-11l9-1.25v10.5h-9V2.25z" />
+        </svg>
+      ),
+      isExternal: true,
+      href: '/download',
+      isCTA: true
+    }] : [])
   ];
 
   // Define right navigation links
