@@ -99,10 +99,6 @@ export default function DownloadPage() {
               <li><strong>No installation required</strong> - this is a portable standalone application</li>
               <li>Simply run the .exe file to launch Maps4FS</li>
               <li>Start generating maps with full features!</li>
-              <li>
-                <strong>For Background Center Removal feature:</strong> Blender 4.3 must be installed on your machine. 
-                Download from: <a href="https://www.blender.org/download/" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-600 dark:hover:text-blue-400">blender.org/download</a>
-              </li>
             </ol>
           </div>
 
