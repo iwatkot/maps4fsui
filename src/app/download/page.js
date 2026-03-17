@@ -86,6 +86,17 @@ export default function DownloadPage() {
             <p className="text-gray-600 dark:text-gray-400">
               Download the standalone Windows application to run Maps4FS locally on your machine with full access to all features.
             </p>
+            <p className="mt-3 text-gray-700 dark:text-gray-300">
+              Having challenges with the download?{' '}
+              <a
+                href="https://iwatkot.itch.io/maps4fs"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300 underline"
+              >
+                Use itch.io
+              </a>
+            </p>
           </div>
 
           {/* Info Section */}
