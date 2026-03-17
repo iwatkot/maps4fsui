@@ -55,8 +55,8 @@ export default function DonationPopup() {
 
         {/* Header */}
         <div className="bg-gradient-to-r from-amber-400 to-orange-500 dark:from-amber-500 dark:to-orange-600 px-6 py-6">
-          <h2 className="text-2xl font-bold text-white mb-2">☕ Maps4FS Needs Your Help</h2>
-          <p className="text-amber-50">Keep this project running</p>
+          <h2 className="text-2xl font-bold text-white mb-2">☕ Support Maps4FS</h2>
+          <p className="text-amber-50">Help this project grow</p>
         </div>
 
         {/* Content */}
@@ -66,31 +66,50 @@ export default function DonationPopup() {
           </p>
 
           <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-            To keep this project running, I need to cover essential costs such as:
+            If Maps4FS is useful for you, you can support the project and help me keep improving it for everyone.
           </p>
-
-          <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
-            <li className="flex items-start">
-              <span className="mr-2">🌐</span>
-              <span>Hosting services for the website and generation features</span>
-            </li>
-            <li className="flex items-start">
-              <span className="mr-2">🔗</span>
-              <span>Domain registrations to keep platforms accessible</span>
-            </li>
-            <li className="flex items-start">
-              <span className="mr-2">⚙️</span>
-              <span>Infrastructure costs for reliable downloads and map generation</span>
-            </li>
-            <li className="flex items-start">
-              <span className="mr-2">🚀</span>
-              <span>Development resources to continue improving features</span>
-            </li>
-          </ul>
 
           <p className="text-gray-700 dark:text-gray-300 text-sm font-medium pt-2">
-            If you find Maps4FS valuable, please consider supporting it. Every contribution helps! 🙏
+            You can support the project completely for free: subscribe on social media, drop a like, and share Maps4FS.
           </p>
+
+          <div className="flex items-center justify-center gap-3 pt-1">
+            <a
+              href="https://www.youtube.com/@iwatkot"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="YouTube"
+              className="w-10 h-10 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition-colors"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2a31 31 0 0 0 0 11.6 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1 31 31 0 0 0 0-11.6ZM9.6 15.5V8.5l6.2 3.5-6.2 3.5Z" />
+              </svg>
+            </a>
+            <a
+              href="https://www.instagram.com/iwatkot"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              className="w-10 h-10 rounded-full bg-pink-500 hover:bg-pink-600 text-white flex items-center justify-center transition-colors"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <rect x="3" y="3" width="18" height="18" rx="5" />
+                <circle cx="12" cy="12" r="4" />
+                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+              </svg>
+            </a>
+            <a
+              href="https://www.tiktok.com/@iwatkot"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="TikTok"
+              className="w-10 h-10 rounded-full bg-gray-900 hover:bg-black text-white flex items-center justify-center transition-colors"
+            >
+              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M16.4 3.2c.7 2 2.1 3.3 4.1 3.9v3.3a8.7 8.7 0 0 1-3.4-.8v6.1A5.8 5.8 0 1 1 11.3 10c.4 0 .8 0 1.1.1v3.2a2.5 2.5 0 1 0 1.4 2.3V3.2h2.6Z" />
+              </svg>
+            </a>
+          </div>
         </div>
 
         {/* Donation Links */}
@@ -121,16 +140,6 @@ export default function DonationPopup() {
             >
               💙 Ko-fi
             </a>
-          </div>
-
-          {/* Crypto Option */}
-          <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
-            <p className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide mb-2">Crypto (USDT on TRC20):</p>
-            <div className="bg-gray-50 dark:bg-gray-900 p-3 rounded-lg">
-              <p className="text-xs text-gray-700 dark:text-gray-300 font-mono break-all">
-                TGm46LNqe4RcVdsz5sWJw5eLZBp4W8ZSLk
-              </p>
-            </div>
           </div>
         </div>
 
