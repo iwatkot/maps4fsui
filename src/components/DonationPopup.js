@@ -9,31 +9,76 @@ import { useState, useEffect } from 'react';
 export default function DonationPopup() {
   const [isOpen, setIsOpen] = useState(false);
 
+  const VISIT_COUNT_KEY = 'maps4fs_visit_count';
+  const HIDDEN_KEY = 'maps4fs-donation-popup-hidden';
+  const ACTIVE_KEY = 'maps4fs-donation-popup-active';
+
+  const publishPopupState = (isActive) => {
+    if (typeof window === 'undefined') return;
+
+    try {
+      localStorage.setItem(ACTIVE_KEY, isActive ? 'true' : 'false');
+      window.dispatchEvent(
+        new CustomEvent('maps4fs:donation-popup-state', {
+          detail: { isActive },
+        })
+      );
+    } catch (error) {
+      console.error('Error updating donation popup state:', error);
+    }
+  };
+
   useEffect(() => {
     // Check if this is a browser environment
     if (typeof window === 'undefined') return;
 
-    const STORAGE_KEY = 'maps4fs_visit_count';
     const POPUP_INTERVAL = 3; // Show every 3rd visit
 
     try {
+      const isHiddenForever = localStorage.getItem(HIDDEN_KEY) === 'true';
+      if (isHiddenForever) {
+        setIsOpen(false);
+        publishPopupState(false);
+        return;
+      }
+
       // Get current visit count
-      let visitCount = parseInt(localStorage.getItem(STORAGE_KEY) || '0', 10);
+      let visitCount = parseInt(localStorage.getItem(VISIT_COUNT_KEY) || '0', 10);
       visitCount += 1;
 
       // Store updated count
-      localStorage.setItem(STORAGE_KEY, visitCount.toString());
+      localStorage.setItem(VISIT_COUNT_KEY, visitCount.toString());
 
       // Show popup every 3rd visit
       if (visitCount % POPUP_INTERVAL === 0) {
         setIsOpen(true);
+      } else {
+        publishPopupState(false);
       }
     } catch (error) {
       console.error('Error accessing localStorage:', error);
     }
-  }, []);
+  }, [HIDDEN_KEY, VISIT_COUNT_KEY]);
+
+  useEffect(() => {
+    publishPopupState(isOpen);
+
+    return () => {
+      publishPopupState(false);
+    };
+  }, [isOpen]);
 
   const handleClose = () => {
+    setIsOpen(false);
+  };
+
+  const handleDontShowAgain = () => {
+    try {
+      localStorage.setItem(HIDDEN_KEY, 'true');
+    } catch (error) {
+      console.error('Error saving donation popup preference:', error);
+    }
+
     setIsOpen(false);
   };
 
@@ -143,13 +188,19 @@ export default function DonationPopup() {
           </div>
         </div>
 
-        {/* Close Button */}
-        <div className="px-6 py-3 border-t border-gray-200 dark:border-gray-700">
+        {/* Footer Actions */}
+        <div className="px-6 py-3 border-t border-gray-200 dark:border-gray-700 flex items-center justify-center gap-2">
           <button
             onClick={handleClose}
-            className="w-full px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg font-medium transition-colors"
+            className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg font-medium transition-colors"
           >
             Close
+          </button>
+          <button
+            onClick={handleDontShowAgain}
+            className="px-4 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg font-medium transition-colors"
+          >
+            Don&apos;t show again
           </button>
         </div>
       </div>

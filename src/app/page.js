@@ -7,8 +7,7 @@ import MyMapsTab from '@/app/tabs/MyMapsTab';
 import PresetsTab from '@/app/tabs/PresetsTab';
 import SettingsTab from '@/app/tabs/SettingsTab';
 import SchemasTab from '@/app/tabs/SchemasTab';
-import SlideOutPromo from '@/components/SlideOutPromo';
-import SurveyPopup from '@/components/SurveyPopup';
+import TopVideoPromo from '@/components/TopVideoPromo';
 import { useBackendVersion } from '@/hooks/useBackendVersion';
 import { useVersionStatus } from '@/hooks/useVersionStatus';
 import StickyFooter from '@/components/StickyFooter';
@@ -27,18 +26,33 @@ export default function Home() {
   // Map duplication state
   const [duplicateMapData, setDuplicateMapData] = useState(null);
 
-  // Promo state (only for public version) - avoid hydration mismatch
-  const [showPromo, setShowPromo] = useState(isPublicVersion);
+  // Trailer promo state (only for public version) - avoid hydration mismatch
+  const [showTrailerPromo, setShowTrailerPromo] = useState(isPublicVersion);
+  const [isDonationPopupActive, setIsDonationPopupActive] = useState(isPublicVersion);
   const [isClient, setIsClient] = useState(false);
 
   // Handle client-side mounting and localStorage check
   useEffect(() => {
     setIsClient(true);
     if (isPublicVersion) {
-      const promoClosed = localStorage.getItem('maps4fs-promo-closed');
+      const promoClosed = localStorage.getItem('maps4fs-trailer-promo-hidden');
       if (promoClosed === 'true') {
-        setShowPromo(false);
+        setShowTrailerPromo(false);
       }
+
+      const donationActive = localStorage.getItem('maps4fs-donation-popup-active') === 'true';
+      setIsDonationPopupActive(donationActive);
+
+      const handleDonationPopupState = (event) => {
+        const isActive = Boolean(event?.detail?.isActive);
+        setIsDonationPopupActive(isActive);
+      };
+
+      window.addEventListener('maps4fs:donation-popup-state', handleDonationPopupState);
+
+      return () => {
+        window.removeEventListener('maps4fs:donation-popup-state', handleDonationPopupState);
+      };
     }
     
     // Log page visit with IP
@@ -52,10 +66,15 @@ export default function Home() {
     }).catch(() => {}); // Silent fail
   }, []);
 
-  // Handler to close promo and save to localStorage
-  const handleClosePromo = () => {
-    setShowPromo(false);
-    localStorage.setItem('maps4fs-promo-closed', 'true');
+  // Handler to close promo for this visit only
+  const handleCloseTrailerPromo = () => {
+    setShowTrailerPromo(false);
+  };
+
+  // Handler to close promo and remember preference
+  const handleDontShowTrailerAgain = () => {
+    setShowTrailerPromo(false);
+    localStorage.setItem('maps4fs-trailer-promo-hidden', 'true');
   };
 
   // Handler for map duplication
@@ -118,24 +137,14 @@ export default function Home() {
         )}
       </div>
 
-      {/* Slide-out Promo (only for public version) */}
-      {/* Temporarily disabled */}
-      {/* {isClient && isPublicVersion && (
-        <SlideOutPromo
-          title="Download Windows App"
-          message="Run Maps4FS on your Windows machine without limitations. No Docker required, just download and run!"
-          buttonText="Download Now"
-          buttonLink="https://maps4fs.xyz/download"
-          isVisible={showPromo}
-          onClose={handleClosePromo}
+      {/* Trailer promo (only for public version) */}
+      {isClient && isPublicVersion && !isDonationPopupActive && (
+        <TopVideoPromo
+          isVisible={showTrailerPromo}
+          onClose={handleCloseTrailerPromo}
+          onDontShowAgain={handleDontShowTrailerAgain}
         />
-      )} */}
-
-      {/* Survey Popup (show on generator tab) */}
-      {/* Temporarily disabled */}
-      {/* {isClient && activeTab === 'generator' && (
-        <SurveyPopup isPublic={isPublicVersion} />
-      )} */}
+      )}
 
       {/* Footer */}
       <StickyFooter />
